@@ -10,6 +10,9 @@ apply plugin: 'android'
 
 repositories {
     mavenCentral()
+    maven {
+        url 'http://JRAF.org/static/maven/2'
+    }
 }
 
 android {
@@ -39,6 +42,9 @@ dependencies {
 
     compile project(':style:actionbar')
     compile project(':style:widgets')
+
+    // https://github.com/BoD/android-switch-backport
+    compile 'org.jraf:android-switch-backport-apklib:1.2'
 
     // You must install or update the Support Repository through the SDK manager to use this dependency.
     // The Support Repository (separate from the corresponding library) can be found in the Extras category.
