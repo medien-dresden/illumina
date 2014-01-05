@@ -44,9 +44,6 @@ dependencies {
     compile project(':style:actionbar')
     compile project(':style:widgets')
 
-    // https://github.com/BoD/android-switch-backport
-    compile 'org.jraf:android-switch-backport:1.2'
-
     compile 'com.android.support:support-v4:19.0.+'
     compile 'com.android.support:appcompat-v7:19.0.+'
 }

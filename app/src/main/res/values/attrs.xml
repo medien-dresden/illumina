@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="popupMenuStyle" format="reference"/>
+    <attr name="actionDropDownStyle" format="reference"/>
+    <attr name="dropdownListPreferredItemHeight" format="reference"/>
+    <attr name="listChoiceBackgroundIndicator" format="reference"/>
+    <attr name="panelMenuListTheme" format="reference"/>
+    <attr name="panelMenuListWidth" format="reference"/>
+</resources>
+
