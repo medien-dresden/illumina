@@ -30,6 +30,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_7
         targetCompatibility JavaVersion.VERSION_1_7
     }
+
     buildTypes {
         release {
             runProguard false
@@ -44,20 +45,8 @@ dependencies {
     compile project(':style:widgets')
 
     // https://github.com/BoD/android-switch-backport
-    compile 'org.jraf:android-switch-backport-apklib:1.2'
+    compile 'org.jraf:android-switch-backport:1.2'
 
-    // You must install or update the Support Repository through the SDK manager to use this dependency.
-    // The Support Repository (separate from the corresponding library) can be found in the Extras category.
     compile 'com.android.support:support-v4:19.0.+'
-
-    // You must install or update the Support Repository through the SDK manager to use this dependency.
-    // The Support Repository (separate from the corresponding library) can be found in the Extras category.
     compile 'com.android.support:appcompat-v7:19.0.+'
-    // You must install or update the Support Repository through the SDK manager to use this dependency.
-    // The Support Repository (separate from the corresponding library) can be found in the Extras category.
-    // 
-
-    // You must install or update the Support Repository through the SDK manager to use this dependency.
-    // The Support Repository (separate from the corresponding library) can be found in the Extras category.
-    //
 }
