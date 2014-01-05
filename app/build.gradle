@@ -37,7 +37,8 @@ android {
 
 dependencies {
 
-    compile project(':theme')
+    compile project(':style:actionbar')
+    compile project(':style:widgets')
 
     // You must install or update the Support Repository through the SDK manager to use this dependency.
     // The Support Repository (separate from the corresponding library) can be found in the Extras category.

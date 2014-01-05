@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Generated with http://android-holo-colors.com -->
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <style name="AutoCompleteTextViewIllumina" parent="android:Widget.Holo.AutoCompleteTextView">
+      <item name="android:dropDownSelector">@drawable/illumina_list_selector_holo_dark</item>
+	    <item name="android:background">@drawable/illumina_edit_text_holo_dark</item>
+  </style>
+
+  <style name="ButtonIllumina" parent="android:Widget.Holo.Button">
+	  <item name="android:background">@drawable/illumina_btn_default_holo_dark</item>
+  </style>
+
+  <style name="ImageButtonIllumina" parent="android:Widget.Holo.ImageButton">
+	  <item name="android:background">@drawable/illumina_btn_default_holo_dark</item>
+  </style>
+
+  <style name="SpinnerIllumina" parent="android:Widget.Holo.Spinner">
+      <item name="android:background">@drawable/illumina_spinner_background_holo_dark</item>
+      <item name="android:dropDownSelector">@drawable/illumina_list_selector_holo_dark</item>
+  </style>
+
+  <style name="ProgressBarIllumina" parent="android:Widget.Holo.ProgressBar.Horizontal">
+      <item name="android:progressDrawable">@drawable/illumina_progress_horizontal_holo_dark</item>
+      <item name="android:indeterminateDrawable">@drawable/illumina_progress_indeterminate_horizontal_holo_dark</item>
+  </style>
+
+  <style name="SeekBarIllumina" parent="android:Widget.Holo.SeekBar">
+      <item name="android:progressDrawable">@drawable/illumina_scrubber_progress_horizontal_holo_dark</item>
+      <item name="android:indeterminateDrawable">@drawable/illumina_scrubber_progress_horizontal_holo_dark</item>
+      <item name="android:thumb">@drawable/illumina_scrubber_control_selector_holo_dark</item>
+  </style>
+
+  <style name="RatingBarIllumina" parent="android:Widget.Holo.RatingBar">
+      <item name="android:progressDrawable">@drawable/illumina_ratingbar_full_holo_dark</item>
+      <item name="android:indeterminateDrawable">@drawable/illumina_ratingbar_full_holo_dark</item>
+  </style>
+
+  <style name="RatingBarBigIllumina" parent="android:Widget.Holo.RatingBar.Indicator">
+      <item name="android:progressDrawable">@drawable/illumina_ratingbar_holo_dark</item>
+      <item name="android:indeterminateDrawable">@drawable/illumina_ratingbar_holo_dark</item>
+  </style>
+
+  <style name="RatingBarSmallIllumina" parent="android:Widget.Holo.RatingBar.Small">
+      <item name="android:progressDrawable">@drawable/illumina_ratingbar_small_holo_dark</item>
+      <item name="android:indeterminateDrawable">@drawable/illumina_ratingbar_small_holo_dark</item>
+  </style>
+
+  <style name="ToggleIllumina" parent="android:Widget.Holo.Button.Toggle">
+      <item name="android:background">@drawable/illumina_btn_toggle_holo_dark</item>
+  </style>
+
+</resources>

@@ -2,9 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/style/actionbar/actionbar.iml" filepath="$PROJECT_DIR$/style/actionbar/actionbar.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/illumina.iml" filepath="$PROJECT_DIR$/illumina.iml" />
-      <module fileurl="file://$PROJECT_DIR$/theme/theme.iml" filepath="$PROJECT_DIR$/theme/theme.iml" />
+      <module fileurl="file://$PROJECT_DIR$/style/style.iml" filepath="$PROJECT_DIR$/style/style.iml" />
+      <module fileurl="file://$PROJECT_DIR$/style/widgets/widgets.iml" filepath="$PROJECT_DIR$/style/widgets/widgets.iml" />
     </modules>
   </component>
 </project>
