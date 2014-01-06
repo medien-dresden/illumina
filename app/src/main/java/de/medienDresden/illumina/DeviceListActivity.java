@@ -1,22 +1,24 @@
 package de.medienDresden.illumina;
 
-import java.util.Locale;
-
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-import android.view.Gravity;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import java.util.Locale;
+
+import de.medienDresden.Illumina;
 
 public class DeviceListActivity extends ActionBarActivity implements ActionBar.TabListener {
 
@@ -75,6 +77,23 @@ public class DeviceListActivity extends ActionBarActivity implements ActionBar.T
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        final Intent intent = new Intent(Illumina.ACTION_CONNECT);
+        intent.putExtra(Illumina.EXTRA_HOST, "192.168.2.4");
+        intent.putExtra(Illumina.EXTRA_PORT, 5000);
+
+        sendBroadcast(intent);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        sendBroadcast(new Intent(Illumina.ACTION_DISCONNECT));
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
