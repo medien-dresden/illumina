@@ -1,1 +1,1 @@
-include ':app', ':style:actionbar', ':style:widgets'
+include ':app'
