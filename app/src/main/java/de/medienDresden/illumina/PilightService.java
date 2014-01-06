@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -34,18 +35,28 @@ public class PilightService extends Service {
     private final Handler mPilightHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
+            final Bundle data = msg.getData();
+
             switch (msg.what) {
                 case StreamingSocket.MSG_CONNECTED:
-                    mState = PilightState.HandshakePending;
+                    onSocketConnected();
                     break;
 
                 case StreamingSocket.MSG_DISCONNECTED:
-                    mState = PilightState.Disconnected;
+                    assert data != null;
+                    final boolean isError = data.getBoolean(StreamingSocket.EXTRA_ERROR, false);
+
+                    if (isError) {
+                        onSocketDisconnectedWithError();
+                    } else {
+                        onSocketDisconnected();
+                    }
+
                     break;
 
                 case StreamingSocket.MSG_MESSAGE_RECEIVED:
                     assert msg.getData() != null;
-                    Log.e(TAG, msg.getData().getString(StreamingSocket.EXTRA_MESSAGE));
+                    onPilightMessage(msg.getData().getString(StreamingSocket.EXTRA_MESSAGE));
                     break;
 
                 default:
@@ -62,16 +73,11 @@ public class PilightService extends Service {
 
             switch (action) {
                 case Illumina.ACTION_CONNECT:
-                    mState = PilightState.Connecting;
-
-                    mPilight.connect(
-                            intent.getStringExtra(Illumina.EXTRA_HOST),
-                            intent.getIntExtra(Illumina.EXTRA_PORT, 0));
-
+                    onConnectRequest(intent);
                     break;
 
                 case Illumina.ACTION_DISCONNECT:
-                    mPilight.disconnect();
+                    onDisconnectRequest();
                     break;
 
                 default:
@@ -82,6 +88,45 @@ public class PilightService extends Service {
     };
 
     private final StreamingSocket mPilight = new StreamingSocketImpl(mPilightHandler);
+
+    private void onSocketDisconnectedWithError() {
+        mState = PilightState.Disconnected;
+    }
+
+    private void onSocketDisconnected() {
+        mState = PilightState.Disconnected;
+    }
+
+    private void onSocketConnected() {
+        mState = PilightState.HandshakePending;
+        mPilight.send("{\"message\":\"client gui\"}");
+    }
+
+    private void onPilightMessage(String message) {
+        Log.e(TAG, message);
+    }
+
+    private void onConnectRequest(Intent intent) {
+        if (mState != PilightState.Disconnected) {
+            Log.i(TAG, "connect request ignored - not in disconnected state");
+            return;
+        }
+
+        mPilight.connect(
+                intent.getStringExtra(Illumina.EXTRA_HOST),
+                intent.getIntExtra(Illumina.EXTRA_PORT, 0));
+
+        mState = PilightState.Connecting;
+    }
+
+    private void onDisconnectRequest() {
+        if (mState == PilightState.Disconnected) {
+            Log.i(TAG, "disconnect request ignored - already disconnected");
+            return;
+        }
+
+        mPilight.disconnect();
+    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {

@@ -6,6 +6,7 @@ public interface StreamingSocket {
     public static final int MSG_CONNECTED = 2;
     public static final int MSG_DISCONNECTED = 3;
     String EXTRA_MESSAGE = "message";
+    String EXTRA_ERROR = "error";
 
     boolean isConnected();
 

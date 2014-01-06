@@ -64,9 +64,16 @@ public class StreamingSocketImpl implements StreamingSocket {
                 mHandler.sendMessage(mHandler.obtainMessage(MSG_CONNECTED));
 
             } catch (IOException exception) {
+                exception.printStackTrace();
                 mIsConnected = false;
 
-                mHandler.sendMessage(mHandler.obtainMessage(MSG_DISCONNECTED));
+                final Message msg = mHandler.obtainMessage(MSG_DISCONNECTED);
+                final Bundle bundle = new Bundle();
+
+                bundle.putString(EXTRA_ERROR, exception.getMessage());
+                msg.setData(bundle);
+
+                mHandler.sendMessage(msg);
             }
         }
     };
