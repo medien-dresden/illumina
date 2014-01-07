@@ -1,6 +1,9 @@
 package de.medienDresden.illumina;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -21,6 +24,24 @@ import java.util.Locale;
 import de.medienDresden.Illumina;
 
 public class DeviceListActivity extends ActionBarActivity implements ActionBar.TabListener {
+
+    private final BroadcastReceiver mServiceListener = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case Illumina.ACTION_SERVICE_AVAILABLE:
+                    final Intent connectIntent = new Intent(PilightService.ACTION_CONNECT);
+                    connectIntent.putExtra(PilightService.EXTRA_HOST, "192.168.2.4");
+                    connectIntent.putExtra(PilightService.EXTRA_PORT, 5000);
+                    sendBroadcast(connectIntent);
+                    break;
+
+                default:
+                    // ignore
+                    break;
+            }
+        }
+    };
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -81,18 +102,19 @@ public class DeviceListActivity extends ActionBarActivity implements ActionBar.T
     protected void onResume() {
         super.onResume();
 
-        final Intent intent = new Intent(Illumina.ACTION_CONNECT);
-        intent.putExtra(Illumina.EXTRA_HOST, "192.168.2.4");
-        intent.putExtra(Illumina.EXTRA_PORT, 5000);
+        final IntentFilter filter = new IntentFilter();
+        filter.addAction(Illumina.ACTION_SERVICE_AVAILABLE);
 
-        sendBroadcast(intent);
+        registerReceiver(mServiceListener, filter);
+        sendBroadcast(new Intent(Illumina.ACTION_MAKE_SERVICE_AVAILABLE));
     }
 
     @Override
     protected void onPause() {
         super.onPause();
 
-        sendBroadcast(new Intent(Illumina.ACTION_DISCONNECT));
+        sendBroadcast(new Intent(PilightService.ACTION_DISCONNECT));
+        unregisterReceiver(mServiceListener);
     }
 
     @Override

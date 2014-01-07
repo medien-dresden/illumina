@@ -20,6 +20,14 @@ public class PilightService extends Service {
 
     public static final String TAG = PilightService.class.getSimpleName();
 
+    public static final String ACTION_CONNECT = Illumina.PACKAGE_NAME + ".CONNECT";
+
+    public static final String ACTION_DISCONNECT = Illumina.PACKAGE_NAME + ".DISCONNECT";
+
+    public static final String EXTRA_HOST = Illumina.PACKAGE_NAME + ".EXTRA_HOST";
+
+    public static final String EXTRA_PORT = Illumina.PACKAGE_NAME + ".EXTRA_PORT";
+
     private final IBinder mBinder = new Binder();
 
     private enum PilightState {
@@ -72,11 +80,11 @@ public class PilightService extends Service {
             final String action = intent.getAction();
 
             switch (action) {
-                case Illumina.ACTION_CONNECT:
+                case ACTION_CONNECT:
                     onConnectRequest(intent);
                     break;
 
-                case Illumina.ACTION_DISCONNECT:
+                case ACTION_DISCONNECT:
                     onDisconnectRequest();
                     break;
 
@@ -103,7 +111,7 @@ public class PilightService extends Service {
     }
 
     private void onPilightMessage(String message) {
-        Log.e(TAG, message);
+
     }
 
     private void onConnectRequest(Intent intent) {
@@ -113,8 +121,8 @@ public class PilightService extends Service {
         }
 
         mPilight.connect(
-                intent.getStringExtra(Illumina.EXTRA_HOST),
-                intent.getIntExtra(Illumina.EXTRA_PORT, 0));
+                intent.getStringExtra(EXTRA_HOST),
+                intent.getIntExtra(EXTRA_PORT, 0));
 
         mState = PilightState.Connecting;
     }
@@ -138,10 +146,11 @@ public class PilightService extends Service {
         super.onCreate();
 
         final IntentFilter filter = new IntentFilter();
-        filter.addAction(Illumina.ACTION_CONNECT);
-        filter.addAction(Illumina.ACTION_DISCONNECT);
+        filter.addAction(ACTION_CONNECT);
+        filter.addAction(ACTION_DISCONNECT);
 
         registerReceiver(mReceiver, filter);
+        sendBroadcast(new Intent(Illumina.ACTION_SERVICE_AVAILABLE));
     }
 
     @Override
