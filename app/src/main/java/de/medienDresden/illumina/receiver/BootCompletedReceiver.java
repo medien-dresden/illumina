@@ -10,7 +10,7 @@ public class BootCompletedReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        context.sendBroadcast(new Intent(Illumina.ACTION_SERVICE_MAKE_AVAILABLE));
+        context.sendBroadcast(new Intent(Illumina.ACTION_SERVICE_AVAILABILITY_REQUEST));
     }
 
 }

@@ -81,11 +81,11 @@ public class PilightService extends Service {
             final String action = intent.getAction();
 
             switch (action) {
-                case Illumina.ACTION_SERVICE_CONNECT:
+                case Illumina.ACTION_CONNECT_REQUEST:
                     onConnectRequest(intent);
                     break;
 
-                case Illumina.ACTION_SERVICE_DISCONNECT:
+                case Illumina.ACTION_DISCONNECT:
                     onDisconnectRequest();
                     break;
 
@@ -98,6 +98,12 @@ public class PilightService extends Service {
 
     private final StreamingSocket mPilight = new StreamingSocketImpl(mPilightHandler);
 
+    private void broadcastError(int errorCode) {
+        final Intent intent = new Intent(Illumina.ACTION_SERVICE_ERROR);
+        intent.putExtra(Illumina.EXTRA_ERROR_CODE, errorCode);
+        sendBroadcast(intent);
+    }
+
     private void send(JSONObject json) {
         final String jsonString = json.toString();
 
@@ -107,9 +113,7 @@ public class PilightService extends Service {
 
     private void onSocketConnectionFailed() {
         Log.w(TAG, "pilight connection failed");
-
-        // TODO send error
-
+        broadcastError(Illumina.ServiceError.CONNECTION_FAILED);
         mState = PilightState.Disconnected;
     }
 
@@ -118,7 +122,7 @@ public class PilightService extends Service {
 
         if (mState != PilightState.Disconnecting) {
             Log.w(TAG, "- closed by remote");
-            // TODO send error
+            broadcastError(Illumina.ServiceError.REMOTE_CLOSED_CONNECTION);
         }
 
         mState = PilightState.Disconnected;
@@ -194,7 +198,8 @@ public class PilightService extends Service {
         if (!json.isNull("config")) {
             try {
                 mSetting = Setting.create(json.getJSONObject("config"));
-                // TODO send ACTION_CONNECTED
+                sendBroadcast(new Intent(Illumina.ACTION_CONNECTED));
+                mState = PilightState.Connected;
                 return;
 
             } catch (JSONException exception) {
@@ -202,7 +207,7 @@ public class PilightService extends Service {
             }
         }
 
-        // TODO send error
+        broadcastError(Illumina.ServiceError.HANDSHAKE_FAILED);
         mState = PilightState.Error;
     }
 
@@ -236,7 +241,7 @@ public class PilightService extends Service {
             }
         }
 
-        // TODO send error
+        broadcastError(Illumina.ServiceError.HANDSHAKE_FAILED);
         mState = PilightState.Error;
     }
 
@@ -278,8 +283,8 @@ public class PilightService extends Service {
         super.onCreate();
 
         final IntentFilter filter = new IntentFilter();
-        filter.addAction(Illumina.ACTION_SERVICE_CONNECT);
-        filter.addAction(Illumina.ACTION_SERVICE_DISCONNECT);
+        filter.addAction(Illumina.ACTION_CONNECT_REQUEST);
+        filter.addAction(Illumina.ACTION_DISCONNECT);
 
         registerReceiver(mReceiver, filter);
         sendBroadcast(new Intent(Illumina.ACTION_SERVICE_AVAILABLE));

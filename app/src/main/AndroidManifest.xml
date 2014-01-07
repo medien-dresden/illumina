@@ -44,7 +44,7 @@
             android:permission="de.medienDresden.illumina.SERVICE"
             android:exported="true">
             <intent-filter>
-                <action android:name="de.medienDresden.illumina.ACTION_SERVICE_MAKE_AVAILABLE" />
+                <action android:name="de.medienDresden.illumina.ACTION_SERVICE_AVAILABILITY_REQUEST" />
             </intent-filter>
         </receiver>
 

@@ -30,7 +30,7 @@ public class DeviceListActivity extends ActionBarActivity implements ActionBar.T
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()) {
                 case Illumina.ACTION_SERVICE_AVAILABLE:
-                    final Intent connectIntent = new Intent(Illumina.ACTION_SERVICE_CONNECT);
+                    final Intent connectIntent = new Intent(Illumina.ACTION_CONNECT_REQUEST);
                     connectIntent.putExtra(Illumina.EXTRA_HOST, "192.168.2.4");
                     connectIntent.putExtra(Illumina.EXTRA_PORT, 5000);
                     sendBroadcast(connectIntent);
@@ -106,7 +106,7 @@ public class DeviceListActivity extends ActionBarActivity implements ActionBar.T
         filter.addAction(Illumina.ACTION_SERVICE_AVAILABLE);
 
         registerReceiver(mServiceListener, filter);
-        sendBroadcast(new Intent(Illumina.ACTION_SERVICE_MAKE_AVAILABLE));
+        sendBroadcast(new Intent(Illumina.ACTION_SERVICE_AVAILABILITY_REQUEST));
     }
 
     @Override
