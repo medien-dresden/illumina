@@ -5,6 +5,7 @@ public interface StreamingSocket {
     public static final int MSG_MESSAGE_RECEIVED = 1;
     public static final int MSG_CONNECTED = 2;
     public static final int MSG_DISCONNECTED = 3;
+
     String EXTRA_MESSAGE = "message";
     String EXTRA_ERROR = "error";
 
@@ -15,4 +16,9 @@ public interface StreamingSocket {
     void disconnect();
 
     void send(String message);
+
+    String getHost();
+
+    int getPort();
+
 }

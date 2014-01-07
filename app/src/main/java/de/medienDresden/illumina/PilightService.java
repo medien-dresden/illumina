@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.Log;
 
 import de.medienDresden.Illumina;
@@ -115,15 +116,17 @@ public class PilightService extends Service {
     }
 
     private void onConnectRequest(Intent intent) {
-        if (mState != PilightState.Disconnected) {
+        final String newHost = intent.getStringExtra(EXTRA_HOST);
+        final int newPort = intent.getIntExtra(EXTRA_PORT, 0);
+        final boolean isEndpointUnchanged = newPort == mPilight.getPort()
+                && TextUtils.equals(newHost, mPilight.getHost());
+
+        if (mState != PilightState.Disconnected && isEndpointUnchanged) {
             Log.i(TAG, "connect request ignored - not in disconnected state");
             return;
         }
 
-        mPilight.connect(
-                intent.getStringExtra(EXTRA_HOST),
-                intent.getIntExtra(EXTRA_PORT, 0));
-
+        mPilight.connect(newHost, newPort);
         mState = PilightState.Connecting;
     }
 

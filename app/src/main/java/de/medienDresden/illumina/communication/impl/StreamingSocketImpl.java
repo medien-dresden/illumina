@@ -92,6 +92,10 @@ public class StreamingSocketImpl implements StreamingSocket {
         mHost = host;
         mPort = port;
 
+        if (mIsConnected) {
+            disconnect();
+        }
+
         Executors.defaultThreadFactory().newThread(mConnectRunnable).start();
     }
 
@@ -114,6 +118,16 @@ public class StreamingSocketImpl implements StreamingSocket {
     public void send(final String message) {
         mWriter.write(message);
         mWriter.flush();
+    }
+
+    @Override
+    public String getHost() {
+        return mHost;
+    }
+
+    @Override
+    public int getPort() {
+        return mPort;
     }
 
 }

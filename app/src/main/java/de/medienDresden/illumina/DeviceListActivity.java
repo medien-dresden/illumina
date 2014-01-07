@@ -113,7 +113,6 @@ public class DeviceListActivity extends ActionBarActivity implements ActionBar.T
     protected void onPause() {
         super.onPause();
 
-        sendBroadcast(new Intent(PilightService.ACTION_DISCONNECT));
         unregisterReceiver(mServiceListener);
     }
 
