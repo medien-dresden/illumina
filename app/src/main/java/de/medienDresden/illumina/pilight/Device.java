@@ -4,7 +4,10 @@ import java.util.ArrayList;
 
 public class Device {
 
-    public static final int TYPE_SWITCH = 1;
+    public enum Type {
+        Switch,
+        Dimmer
+    }
 
     private String mName;
 
@@ -14,7 +17,9 @@ public class Device {
 
     private ArrayList<String> mValues;
 
-    private int mType;
+    private Type mType = Type.Switch;
+
+    private int mDimLevel;
 
     public int getOrder() {
         return mOrder;
@@ -40,11 +45,11 @@ public class Device {
         mValues = values;
     }
 
-    public int getType() {
+    public Type getType() {
         return mType;
     }
 
-    public void setType(int type) {
+    public void setType(Type type) {
         mType = type;
     }
 
@@ -54,6 +59,14 @@ public class Device {
 
     public void setName(String name) {
         mName = name;
+    }
+
+    public void setDimLevel(int dimLevel) {
+        mDimLevel = dimLevel;
+    }
+
+    public int getDimLevel() {
+        return mDimLevel;
     }
 
 }

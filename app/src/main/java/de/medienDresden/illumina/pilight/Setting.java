@@ -78,12 +78,13 @@ public class Setting extends HashMap<String, Location> {
                     device.setOrder(jsonDevice.optInt(currentDeviceAttribute));
                     break;
 
-                case "type":
-                    device.setType(jsonDevice.optInt(currentDeviceAttribute));
-                    break;
-
                 case "state":
                     device.setValue(jsonDevice.optString(currentDeviceAttribute));
+                    break;
+
+                case "dimlevel":
+                    device.setType(Device.Type.Dimmer); // assuming dimmer device
+                    device.setDimLevel(jsonDevice.optInt(currentDeviceAttribute));
                     break;
 
                 case "values":
