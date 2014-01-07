@@ -19,12 +19,15 @@ import org.json.JSONObject;
 import de.medienDresden.Illumina;
 import de.medienDresden.illumina.communication.StreamingSocket;
 import de.medienDresden.illumina.communication.impl.StreamingSocketImpl;
+import de.medienDresden.illumina.pilight.Setting;
 
 public class PilightService extends Service {
 
     public static final String TAG = PilightService.class.getSimpleName();
 
     private final IBinder mBinder = new Binder();
+
+    private Setting mSetting;
 
     private enum PilightState {
         Connected,
@@ -97,15 +100,15 @@ public class PilightService extends Service {
 
     private void send(JSONObject json) {
         final String jsonString = json.toString();
-        Log.i(TAG, "sending " + jsonString);
 
+        Log.i(TAG, "sending " + jsonString);
         mPilight.send(jsonString);
     }
 
     private void onSocketConnectionFailed() {
         Log.w(TAG, "pilight connection failed");
 
-        // TODO send disconnect message
+        // TODO send error
 
         mState = PilightState.Disconnected;
     }
@@ -115,7 +118,7 @@ public class PilightService extends Service {
 
         if (mState != PilightState.Disconnecting) {
             Log.w(TAG, "- closed by remote");
-            // TODO send disconnect message
+            // TODO send error
         }
 
         mState = PilightState.Disconnected;
@@ -156,7 +159,7 @@ public class PilightService extends Service {
         switch (mState) {
 
             case ConfigRequested:
-                // TODO config response
+                onPilightConfigResponse(json);
                 break;
 
             case HandshakePending:
@@ -183,6 +186,24 @@ public class PilightService extends Service {
                 // nothing
                 break;
         }
+    }
+
+    private void onPilightConfigResponse(JSONObject json) {
+        Log.i(TAG, "pilight config response");
+
+        if (!json.isNull("config")) {
+            try {
+                mSetting = Setting.create(json.getJSONObject("config"));
+                // TODO send ACTION_CONNECTED
+                return;
+
+            } catch (JSONException exception) {
+                Log.i(TAG, "- error reading config " + exception.getMessage());
+            }
+        }
+
+        // TODO send error
+        mState = PilightState.Error;
     }
 
     private void onPilightHandshakeResponse(JSONObject json) {
@@ -215,6 +236,7 @@ public class PilightService extends Service {
             }
         }
 
+        // TODO send error
         mState = PilightState.Error;
     }
 
