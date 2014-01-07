@@ -13,6 +13,9 @@ import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import de.medienDresden.Illumina;
 import de.medienDresden.illumina.communication.StreamingSocket;
 import de.medienDresden.illumina.communication.impl.StreamingSocketImpl;
@@ -57,7 +60,7 @@ public class PilightService extends Service {
                     final boolean isError = data.getBoolean(StreamingSocket.EXTRA_ERROR, false);
 
                     if (isError) {
-                        onSocketDisconnectedWithError();
+                        onSocketConnectionFailed();
                     } else {
                         onSocketDisconnected();
                     }
@@ -99,9 +102,16 @@ public class PilightService extends Service {
 
     private final StreamingSocket mPilight = new StreamingSocketImpl(mPilightHandler);
 
-    private void onSocketDisconnectedWithError() {
-        Log.w(TAG, "pilight disconnected with error");
-        
+    private void send(JSONObject json) {
+        final String jsonString = json.toString();
+        Log.i(TAG, "sending " + jsonString);
+
+        mPilight.send(jsonString);
+    }
+
+    private void onSocketConnectionFailed() {
+        Log.w(TAG, "pilight connection failed");
+
         // TODO send disconnect message
 
         mState = PilightState.Disconnected;
@@ -121,8 +131,17 @@ public class PilightService extends Service {
     private void onSocketConnected() {
         Log.i(TAG, "pilight connected, handshake initiated");
 
+        final JSONObject json = new JSONObject();
+
+        try {
+            json.put("message", "client gui");
+        } catch (JSONException exception) {
+            Log.e(TAG, "error creating handshake message", exception);
+        }
+
+        send(json);
+
         mState = PilightState.HandshakePending;
-        mPilight.send("{\"message\":\"client gui\"}");
     }
 
     private void onPilightMessage(String message) {
