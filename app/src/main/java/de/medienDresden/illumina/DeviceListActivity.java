@@ -30,9 +30,9 @@ public class DeviceListActivity extends ActionBarActivity implements ActionBar.T
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()) {
                 case Illumina.ACTION_SERVICE_AVAILABLE:
-                    final Intent connectIntent = new Intent(PilightService.ACTION_CONNECT);
-                    connectIntent.putExtra(PilightService.EXTRA_HOST, "192.168.2.4");
-                    connectIntent.putExtra(PilightService.EXTRA_PORT, 5000);
+                    final Intent connectIntent = new Intent(Illumina.ACTION_SERVICE_CONNECT);
+                    connectIntent.putExtra(Illumina.EXTRA_HOST, "192.168.2.4");
+                    connectIntent.putExtra(Illumina.EXTRA_PORT, 5000);
                     sendBroadcast(connectIntent);
                     break;
 
@@ -106,7 +106,7 @@ public class DeviceListActivity extends ActionBarActivity implements ActionBar.T
         filter.addAction(Illumina.ACTION_SERVICE_AVAILABLE);
 
         registerReceiver(mServiceListener, filter);
-        sendBroadcast(new Intent(Illumina.ACTION_MAKE_SERVICE_AVAILABLE));
+        sendBroadcast(new Intent(Illumina.ACTION_SERVICE_MAKE_AVAILABLE));
     }
 
     @Override

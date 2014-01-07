@@ -5,9 +5,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <permission
-        android:name="de.medienDresden.illumina.SERVICE_AVAILABILITY"
-        android:label="@string/permission_label_service_availability"
-        android:description="@string/permission_description_service_availability"
+        android:name="de.medienDresden.illumina.SERVICE"
+        android:label="@string/permission_label_service"
+        android:description="@string/permission_description_service"
         android:icon="@drawable/ic_launcher" />
 
     <application
@@ -41,10 +41,10 @@
 
         <receiver
             android:name=".receiver.ServiceAvailabilityReceiver"
-            android:permission="de.medienDresden.illumina.SERVICE_AVAILABILITY"
+            android:permission="de.medienDresden.illumina.SERVICE"
             android:exported="true">
             <intent-filter>
-                <action android:name="de.medienDresden.illumina.ACTION_MAKE_SERVICE_AVAILABLE" />
+                <action android:name="de.medienDresden.illumina.ACTION_SERVICE_MAKE_AVAILABLE" />
             </intent-filter>
         </receiver>
 
