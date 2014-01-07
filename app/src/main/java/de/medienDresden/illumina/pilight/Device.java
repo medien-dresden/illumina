@@ -1,9 +1,12 @@
 package de.medienDresden.illumina.pilight;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 
-public class Device {
+public class Device implements Parcelable {
 
     public enum Type {
         Switch,
@@ -21,6 +24,21 @@ public class Device {
     private Type mType = Type.Switch;
 
     private int mDimLevel;
+
+    public static final Parcelable.Creator<Device> CREATOR
+            = new Parcelable.Creator<Device>() {
+
+        @Override
+        public Device createFromParcel(Parcel parcel) {
+            return new Device(parcel);
+        }
+
+        @Override
+        public Device[] newArray(int size) {
+            return new Device[size];
+        }
+
+    };
 
     public int getOrder() {
         return mOrder;
@@ -68,6 +86,36 @@ public class Device {
 
     public int getDimLevel() {
         return mDimLevel;
+    }
+
+    public Device() {
+        mValues = new ArrayList<>();
+    }
+
+    public Device(Parcel parcel) {
+        this();
+
+        mName = parcel.readString();
+        mOrder = parcel.readInt();
+        mValue = parcel.readString();
+        parcel.readStringList(mValues);
+        mType = (Type) parcel.readSerializable();
+        mDimLevel = parcel.readInt();
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int flags) {
+        parcel.writeString(mName);
+        parcel.writeInt(mOrder);
+        parcel.writeString(mValue);
+        parcel.writeStringList(mValues);
+        parcel.writeSerializable(mType);
+        parcel.writeInt(mDimLevel);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     public static class OrderComparator implements Comparator<Device> {
