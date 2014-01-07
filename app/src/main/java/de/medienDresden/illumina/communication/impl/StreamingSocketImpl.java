@@ -3,6 +3,7 @@ package de.medienDresden.illumina.communication.impl;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -15,7 +16,9 @@ import de.medienDresden.illumina.communication.StreamingSocket;
 
 public class StreamingSocketImpl implements StreamingSocket {
 
-    public static final int CONNECT_TIMEOUT = 1000;
+    private static final String TAG = StreamingSocketImpl.class.getSimpleName();
+
+    public static final int CONNECT_TIMEOUT = 5000;
     public static final int READ_TIMEOUT = 30000;
 
     private Socket mSocket;
@@ -64,13 +67,13 @@ public class StreamingSocketImpl implements StreamingSocket {
                 mHandler.sendMessage(mHandler.obtainMessage(MSG_CONNECTED));
 
             } catch (IOException exception) {
-                exception.printStackTrace();
+                Log.w(TAG, exception.getMessage());
                 mIsConnected = false;
 
                 final Message msg = mHandler.obtainMessage(MSG_DISCONNECTED);
                 final Bundle bundle = new Bundle();
 
-                bundle.putString(EXTRA_ERROR, exception.getMessage());
+                bundle.putBoolean(EXTRA_ERROR, true);
                 msg.setData(bundle);
 
                 mHandler.sendMessage(msg);
@@ -110,6 +113,8 @@ public class StreamingSocketImpl implements StreamingSocket {
         if (mWriter != null) {
             mWriter.close();
         }
+
+        mSocket = null;
 
         mHandler.sendMessage(mHandler.obtainMessage(MSG_DISCONNECTED));
     }

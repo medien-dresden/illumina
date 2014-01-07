@@ -32,11 +32,12 @@ public class PilightService extends Service {
     private final IBinder mBinder = new Binder();
 
     private enum PilightState {
-        Disconnected,
+        Connected,
         Connecting,
+        Disconnected,
+        Disconnecting,
         HandshakePending,
         ConfigRequested,
-        Connected
     }
 
     private PilightState mState = PilightState.Disconnected;
@@ -99,29 +100,44 @@ public class PilightService extends Service {
     private final StreamingSocket mPilight = new StreamingSocketImpl(mPilightHandler);
 
     private void onSocketDisconnectedWithError() {
+        Log.w(TAG, "pilight disconnected with error");
+        
+        // TODO send disconnect message
+
         mState = PilightState.Disconnected;
     }
 
     private void onSocketDisconnected() {
+        Log.i(TAG, "pilight disconnected");
+
+        if (mState != PilightState.Disconnecting) {
+            Log.w(TAG, "pilight connection closed by remote");
+            // TODO send disconnect message
+        }
+
         mState = PilightState.Disconnected;
     }
 
     private void onSocketConnected() {
+        Log.i(TAG, "pilight connected, handshake initiated");
+
         mState = PilightState.HandshakePending;
         mPilight.send("{\"message\":\"client gui\"}");
     }
 
     private void onPilightMessage(String message) {
-
+        Log.i(TAG, "pilight message received: " + message);
     }
 
     private void onConnectRequest(Intent intent) {
+        Log.i(TAG, "consuming connect request");
+
         final String newHost = intent.getStringExtra(EXTRA_HOST);
         final int newPort = intent.getIntExtra(EXTRA_PORT, 0);
         final boolean isEndpointUnchanged = newPort == mPilight.getPort()
                 && TextUtils.equals(newHost, mPilight.getHost());
 
-        if (mState != PilightState.Disconnected && isEndpointUnchanged) {
+        if (mPilight.isConnected() && isEndpointUnchanged) {
             Log.i(TAG, "connect request ignored - not in disconnected state");
             return;
         }
@@ -131,6 +147,8 @@ public class PilightService extends Service {
     }
 
     private void onDisconnectRequest() {
+        Log.i(TAG, "consuming disconnect request");
+
         if (mState == PilightState.Disconnected) {
             Log.i(TAG, "disconnect request ignored - already disconnected");
             return;
