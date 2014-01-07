@@ -1,6 +1,7 @@
 package de.medienDresden.illumina.pilight;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class Device {
 
@@ -67,6 +68,21 @@ public class Device {
 
     public int getDimLevel() {
         return mDimLevel;
+    }
+
+    public static class OrderComparator implements Comparator<Device> {
+
+        @Override
+        public int compare(Device d1, Device d2) {
+            if (d1.getOrder() > d2.getOrder()) {
+                return -1;
+            } else if (d1.getOrder() < d2.getOrder()) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+
     }
 
 }
