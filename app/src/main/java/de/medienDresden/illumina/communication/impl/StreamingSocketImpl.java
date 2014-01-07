@@ -45,6 +45,7 @@ public class StreamingSocketImpl implements StreamingSocket {
             final Bundle bundle = new Bundle();
 
             bundle.putString(EXTRA_MESSAGE, message);
+            msg.setData(bundle);
             mHandler.sendMessage(msg);
         }
     };

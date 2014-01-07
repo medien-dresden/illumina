@@ -4,6 +4,7 @@ import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.text.TextUtils;
 
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -37,8 +38,11 @@ public class ServiceAvailabilityReceiver extends BroadcastReceiver {
 
             if (runningServices != null) {
                 for (ActivityManager.RunningServiceInfo service : runningServices) {
-                    if (PilightService.class.getName().equals(service.service.getClassName())) {
+                    if (TextUtils.equals(PilightService.class.getName(),
+                            service.service.getClassName())) {
+
                         isAvailable = true;
+                        break;
                     }
                 }
             }

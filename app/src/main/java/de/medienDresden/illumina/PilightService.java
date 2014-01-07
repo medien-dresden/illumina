@@ -41,6 +41,7 @@ public class PilightService extends Service {
         Disconnecting,
         HandshakePending,
         ConfigRequested,
+        Error
     }
 
     private PilightState mState = PilightState.Disconnected;
@@ -121,7 +122,7 @@ public class PilightService extends Service {
         Log.i(TAG, "pilight disconnected");
 
         if (mState != PilightState.Disconnecting) {
-            Log.w(TAG, "pilight connection closed by remote");
+            Log.w(TAG, "- closed by remote");
             // TODO send disconnect message
         }
 
@@ -136,7 +137,7 @@ public class PilightService extends Service {
         try {
             json.put("message", "client gui");
         } catch (JSONException exception) {
-            Log.e(TAG, "error creating handshake message", exception);
+            Log.e(TAG, "- error creating handshake message", exception);
         }
 
         send(json);
@@ -146,6 +147,83 @@ public class PilightService extends Service {
 
     private void onPilightMessage(String message) {
         Log.i(TAG, "pilight message received: " + message);
+
+        JSONObject json = new JSONObject();
+
+        if (TextUtils.isEmpty(message)) {
+            Log.i(TAG, "- message is empty");
+
+        } else {
+            try {
+                json = new JSONObject(message);
+            } catch (JSONException exception) {
+                Log.i(TAG, "- decoding json failed with: " + exception.getMessage());
+            }
+        }
+
+        switch (mState) {
+
+            case ConfigRequested:
+                // TODO config response
+                break;
+
+            case HandshakePending:
+                onPilightHandshakeResponse(json);
+                break;
+
+            case Connected:
+                // TODO device change
+                break;
+
+            case Connecting:
+                Log.w(TAG, "- impossible state 'Connecting'");
+                break;
+
+            case Disconnected:
+                Log.w(TAG, "- impossible state 'Disconnected'");
+                break;
+
+            case Disconnecting:
+                Log.w(TAG, "- impossible state 'Disconnecting'");
+                break;
+
+            default:
+                // nothing
+                break;
+        }
+    }
+
+    private void onPilightHandshakeResponse(JSONObject json) {
+        Log.i(TAG, "pilight handshake response");
+
+        if (!json.isNull("message")) {
+            try {
+                final String message = json.getString("message");
+
+                if (TextUtils.equals("accept client", message)) {
+                    final JSONObject request = new JSONObject();
+
+                    try {
+                        request.put("message", "request config");
+                    } catch (JSONException exception) {
+                        Log.e(TAG, "- error creating config request message", exception);
+                    }
+
+                    send(request);
+                    mState = PilightState.ConfigRequested;
+
+                    return;
+
+                } else {
+                    Log.e(TAG, "- error with message: " + message);
+                }
+
+            } catch (JSONException exception) {
+                Log.i(TAG, "- error reading message " + exception.getMessage());
+            }
+        }
+
+        mState = PilightState.Error;
     }
 
     private void onConnectRequest(Intent intent) {
@@ -157,7 +235,7 @@ public class PilightService extends Service {
                 && TextUtils.equals(newHost, mPilight.getHost());
 
         if (mPilight.isConnected() && isEndpointUnchanged) {
-            Log.i(TAG, "connect request ignored - not in disconnected state");
+            Log.i(TAG, "- ignored, not in disconnected state");
             return;
         }
 
@@ -169,7 +247,7 @@ public class PilightService extends Service {
         Log.i(TAG, "consuming disconnect request");
 
         if (mState == PilightState.Disconnected) {
-            Log.i(TAG, "disconnect request ignored - already disconnected");
+            Log.i(TAG, "- ignored, already disconnected");
             return;
         }
 
