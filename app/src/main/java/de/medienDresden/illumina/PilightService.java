@@ -8,9 +8,8 @@ public interface PilightService {
         Unknown,
         ConnectionFailed,
         RemoteClosedConnection,
-        HandshakeFailed
+        HandshakeFailed;
     }
-
     interface ServiceHandler {
 
         void onPilightError(Error type);
@@ -18,7 +17,12 @@ public interface PilightService {
         void onPilightConnected(Setting setting);
 
         void onPilightDisconnected();
+
     }
+
+    boolean isConnected(String host, int port);
+
+    Setting getSetting();
 
     void connect(String host, int port);
 

@@ -64,7 +64,7 @@ public class PilightServiceImpl extends Service implements PilightService {
 
                 case StreamingSocket.MSG_MESSAGE_RECEIVED:
                     assert msg.getData() != null;
-                    onPilightMessage(msg.getData().getString(StreamingSocket.EXTRA_MESSAGE));
+                    onSocketMessage(msg.getData().getString(StreamingSocket.EXTRA_MESSAGE));
                     break;
 
                 default:
@@ -80,7 +80,7 @@ public class PilightServiceImpl extends Service implements PilightService {
         mServiceHandler = handler;
     }
 
-    private void send(JSONObject json) {
+    private void sendSocketMessage(JSONObject json) {
         final String jsonString = json.toString();
 
         Log.i(TAG, "sending " + jsonString);
@@ -117,13 +117,13 @@ public class PilightServiceImpl extends Service implements PilightService {
             Log.e(TAG, "- error creating handshake message", exception);
         }
 
-        send(json);
+        sendSocketMessage(json);
 
         mState = PilightState.HandshakePending;
     }
 
-    private void onPilightMessage(String message) {
-        Log.i(TAG, "pilight message received: " + message);
+    private void onSocketMessage(String message) {
+        Log.i(TAG, "message received: " + message);
 
         JSONObject json = new JSONObject();
 
@@ -149,7 +149,7 @@ public class PilightServiceImpl extends Service implements PilightService {
                 break;
 
             case Connected:
-                // TODO device change
+                onPilightMessage(json);
                 break;
 
             case Connecting:
@@ -167,6 +167,18 @@ public class PilightServiceImpl extends Service implements PilightService {
             default:
                 // nothing
                 break;
+        }
+    }
+
+    private void onPilightMessage(JSONObject json) {
+        Log.i(TAG, "pilight message received: " + json.toString());
+
+        if (json.isNull("origin")) {
+            Log.w(TAG, "- has no origin, ignored");
+        } else if (!TextUtils.equals(json.optString("origin"), "config")) {
+            Log.w(TAG, "- wrong origin, ignored");
+        } else {
+            mSetting.update(json);
         }
     }
 
@@ -205,7 +217,7 @@ public class PilightServiceImpl extends Service implements PilightService {
                         Log.e(TAG, "- error creating config request message", exception);
                     }
 
-                    send(request);
+                    sendSocketMessage(request);
                     mState = PilightState.ConfigRequested;
 
                     return;
@@ -224,16 +236,21 @@ public class PilightServiceImpl extends Service implements PilightService {
     }
 
     @Override
-    public void connect(String host, int port) {
-        Log.i(TAG, "connect request");
-
+    public boolean isConnected(String host, int port) {
         final boolean isEndpointUnchanged = port == mPilight.getPort()
                 && TextUtils.equals(host, mPilight.getHost());
 
-        if (mPilight.isConnected() && isEndpointUnchanged) {
-            Log.i(TAG, "- ignored, not in disconnected state");
-            return;
-        }
+        return isEndpointUnchanged && mPilight.isConnected();
+    }
+
+    @Override
+    public Setting getSetting() {
+        return mSetting;
+    }
+
+    @Override
+    public void connect(String host, int port) {
+        Log.i(TAG, "connect request");
 
         mPilight.connect(host, port);
         mState = PilightState.Connecting;
@@ -271,4 +288,17 @@ public class PilightServiceImpl extends Service implements PilightService {
 
     }
 
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        Log.i(TAG, "service created");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        Log.i(TAG, "service destroyed");
+    }
 }

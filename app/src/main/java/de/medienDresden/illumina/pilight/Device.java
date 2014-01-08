@@ -4,7 +4,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 
 public class Device implements Parcelable {
 
@@ -24,21 +23,6 @@ public class Device implements Parcelable {
     private Type mType = Type.Switch;
 
     private int mDimLevel;
-
-    public static final Parcelable.Creator<Device> CREATOR
-            = new Parcelable.Creator<Device>() {
-
-        @Override
-        public Device createFromParcel(Parcel parcel) {
-            return new Device(parcel);
-        }
-
-        @Override
-        public Device[] newArray(int size) {
-            return new Device[size];
-        }
-
-    };
 
     public int getOrder() {
         return mOrder;
@@ -92,6 +76,21 @@ public class Device implements Parcelable {
         mValues = new ArrayList<>();
     }
 
+    public static final Parcelable.Creator<Device> CREATOR
+            = new Parcelable.Creator<Device>() {
+
+        @Override
+        public Device createFromParcel(Parcel parcel) {
+            return new Device(parcel);
+        }
+
+        @Override
+        public Device[] newArray(int size) {
+            return new Device[size];
+        }
+
+    };
+
     public Device(Parcel parcel) {
         this();
 
@@ -116,21 +115,6 @@ public class Device implements Parcelable {
     @Override
     public int describeContents() {
         return 0;
-    }
-
-    public static class OrderComparator implements Comparator<Device> {
-
-        @Override
-        public int compare(Device d1, Device d2) {
-            if (d1.getOrder() > d2.getOrder()) {
-                return -1;
-            } else if (d1.getOrder() < d2.getOrder()) {
-                return 1;
-            } else {
-                return 0;
-            }
-        }
-
     }
 
 }
