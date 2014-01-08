@@ -1,9 +1,5 @@
 package de.medienDresden.illumina;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -18,30 +14,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Locale;
 
-import de.medienDresden.Illumina;
+import de.medienDresden.illumina.impl.PilightServiceConnection;
+import de.medienDresden.illumina.pilight.Setting;
 
-public class DeviceListActivity extends ActionBarActivity implements ActionBar.TabListener {
+public class DeviceListActivity extends ActionBarActivity implements ActionBar.TabListener,
+        PilightService.ServiceHandler, PilightServiceConnection.ConnectionHandler {
 
-    private final BroadcastReceiver mServiceListener = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            switch (intent.getAction()) {
-                case Illumina.ACTION_SERVICE_AVAILABLE:
-                    final Intent connectIntent = new Intent(Illumina.ACTION_CONNECT_REQUEST);
-                    connectIntent.putExtra(Illumina.EXTRA_HOST, "192.168.2.4");
-                    connectIntent.putExtra(Illumina.EXTRA_PORT, 5000);
-                    sendBroadcast(connectIntent);
-                    break;
-
-                default:
-                    // ignore
-                    break;
-            }
-        }
-    };
+    private PilightServiceConnection mServiceConnection;
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -96,24 +79,22 @@ public class DeviceListActivity extends ActionBarActivity implements ActionBar.T
                             .setText(mSectionsPagerAdapter.getPageTitle(i))
                             .setTabListener(this));
         }
+
+        mServiceConnection = new PilightServiceConnection(this, this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        final IntentFilter filter = new IntentFilter();
-        filter.addAction(Illumina.ACTION_SERVICE_AVAILABLE);
-
-        registerReceiver(mServiceListener, filter);
-        sendBroadcast(new Intent(Illumina.ACTION_SERVICE_AVAILABILITY_REQUEST));
+        mServiceConnection.bind(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
 
-        unregisterReceiver(mServiceListener);
+        unbindService(mServiceConnection);
     }
 
     @Override
@@ -130,6 +111,8 @@ public class DeviceListActivity extends ActionBarActivity implements ActionBar.T
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
@@ -149,6 +132,26 @@ public class DeviceListActivity extends ActionBarActivity implements ActionBar.T
 
     @Override
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+    }
+
+    @Override
+    public void onPilightError(PilightService.Error type) {
+        Toast.makeText(this, "ERROR", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onPilightConnected(Setting setting) {
+        Toast.makeText(this, "CONNECTED", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onPilightDisconnected() {
+        Toast.makeText(this, "DISCONNECTED", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onServiceBound() {
+        mServiceConnection.getService().connect("192.168.2.4", 5000);
     }
 
     /**
@@ -218,6 +221,8 @@ public class DeviceListActivity extends ActionBarActivity implements ActionBar.T
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_device_list, container, false);
+            assert rootView != null;
+
             TextView textView = (TextView) rootView.findViewById(R.id.section_label);
             textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
             return rootView;
