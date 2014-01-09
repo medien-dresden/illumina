@@ -11,7 +11,9 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import de.medienDresden.illumina.communication.StreamingSocket;
 
@@ -19,8 +21,9 @@ public class StreamingSocketImpl implements StreamingSocket {
 
     private static final String TAG = StreamingSocketImpl.class.getSimpleName();
 
-    public static final int HEARTBEAT_INTERVAL = 10 * 1000;
-    public static final int HEARTBEAT_TIMEOUT  = 15 * 1000;
+    @SuppressWarnings("PointlessArithmeticExpression")
+    public static final int HEARTBEAT_INTERVAL = 1  * 1000;
+    public static final int HEARTBEAT_TIMEOUT  = 2  * 1000;
     public static final int READ_TIMEOUT       = 30 * 1000;
     public static final int CONNECT_TIMEOUT    = 5  * 1000;
 
@@ -30,7 +33,7 @@ public class StreamingSocketImpl implements StreamingSocket {
 
     private ReaderThread mReader;
 
-    private PrintWriter mWriter;
+    private WriterThread mWriter;
 
     private boolean mIsConnected = false;
 
@@ -40,6 +43,8 @@ public class StreamingSocketImpl implements StreamingSocket {
 
     private int mPort;
 
+    private BlockingQueue<String> mWriterQueue = new LinkedBlockingQueue<>();
+
     private final Handler mReadHandler = new Handler() {
         @Override
         public void handleMessage(Message msgFromReader) {
@@ -48,9 +53,12 @@ public class StreamingSocketImpl implements StreamingSocket {
             assert data != null;
 
             final String message = data.getString(ReaderThread.EXTRA_MESSAGE);
+            final boolean isInterrupted = data.getBoolean(ReaderThread.EXTRA_INTERRUPTED);
 
-            if (TextUtils.equals("BEAT", message)) {
-                Log.d(TAG, "BEAT");
+            if (isInterrupted) {
+                disconnect();
+
+            } else if (TextUtils.equals("BEAT", message)) {
                 mLastHeartBeatResponse = System.currentTimeMillis();
 
             } else {
@@ -78,7 +86,6 @@ public class StreamingSocketImpl implements StreamingSocket {
                     // ignore
                 }
 
-                Log.d(TAG, "HEART");
                 send("HEART");
 
                 if (HEARTBEAT_TIMEOUT < System.currentTimeMillis() - mLastHeartBeatResponse) {
@@ -98,10 +105,11 @@ public class StreamingSocketImpl implements StreamingSocket {
                 mSocket.setSoTimeout(READ_TIMEOUT);
 
                 mReader = new ReaderThread(mSocket.getInputStream(), mReadHandler);
-                mWriter = new PrintWriter(new OutputStreamWriter(
-                        mSocket.getOutputStream(), "UTF-8"));
+                mWriter = new WriterThread(mWriterQueue, new PrintWriter(
+                                new OutputStreamWriter(mSocket.getOutputStream(), "UTF-8")));
 
                 mReader.start();
+                mWriter.start();
 
                 mHeartBeatThread = new Thread(mHeartBeat);
                 mHeartBeatThread.start();
@@ -159,7 +167,7 @@ public class StreamingSocketImpl implements StreamingSocket {
         }
 
         if (mWriter != null) {
-            mWriter.close();
+            mWriter.interrupt();
             mWriter = null;
         }
 
@@ -173,9 +181,8 @@ public class StreamingSocketImpl implements StreamingSocket {
     }
 
     @Override
-    public synchronized void send(final String message) {
-        mWriter.write(message);
-        mWriter.flush();
+    public void send(final String message) {
+        mWriterQueue.add(message);
     }
 
     @Override

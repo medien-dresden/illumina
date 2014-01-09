@@ -17,6 +17,8 @@ class ReaderThread extends Thread {
 
     public static final String EXTRA_MESSAGE = "message";
 
+    public static final String EXTRA_INTERRUPTED = "interrupted";
+
     private Handler mHandler;
 
     private Scanner mScanner;
@@ -35,20 +37,26 @@ class ReaderThread extends Thread {
 
     @Override
     public void run() {
-        final Bundle bundle = new Bundle();
+        String message;
 
         while (!Thread.currentThread().isInterrupted()) {
             final Message msg = mHandler.obtainMessage();
+            final Bundle bundle = new Bundle();
+
+            msg.setData(bundle);
 
             try {
-                bundle.putString(EXTRA_MESSAGE, mScanner.next());
+                message = mScanner.next();
+                Log.d(TAG, "RAW read:  " + message);
             } catch (NoSuchElementException exception) {
                 // happens even when disconnected on purpose
-                Log.i(TAG, "reading the socket has been interrupted");
+                Log.i(TAG, "reading was interrupted");
+                bundle.putBoolean(EXTRA_INTERRUPTED, true);
+                mHandler.sendMessage(msg);
                 break;
             }
 
-            msg.setData(bundle);
+            bundle.putString(EXTRA_MESSAGE, message);
             mHandler.sendMessage(msg);
         }
     }
