@@ -12,7 +12,7 @@
         android:theme="@style/Theme.Illumina" >
 
         <activity
-            android:name=".DeviceListActivity"
+            android:name=".LocationListActivity"
             android:label="@string/app_name" >
 
             <intent-filter>

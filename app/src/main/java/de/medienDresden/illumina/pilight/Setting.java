@@ -188,16 +188,6 @@ public class Setting extends LinkedHashMap<String, Location> {
         return new Setting(json);
     }
 
-    public List<String> getLocationNames() {
-        final List<String> locationList = new ArrayList<>();
-
-        for (Entry<String, Location> entry : entrySet()) {
-            locationList.add(entry.getValue().getName());
-        }
-
-        return locationList;
-    }
-
     public void update(JSONObject json) {
         Log.i(TAG, "update setting");
 
@@ -212,6 +202,23 @@ public class Setting extends LinkedHashMap<String, Location> {
             Log.i(TAG, "- updating location " + locationId);
             updateDevices(locationId, deviceIds, jsonValues);
         }
+    }
+
+    public Location getByIndex(int index) {
+        final Iterator<Entry<String, Location>> iterator = entrySet().iterator();
+        Location location = null;
+        int position = 0;
+
+        while (iterator.hasNext()) {
+            final Entry<String, Location> entry = iterator.next();
+
+            if (index == position++) {
+                location = entry.getValue();
+                break;
+            }
+        }
+
+        return location;
     }
 
 }

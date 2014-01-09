@@ -1,42 +1,33 @@
 package de.medienDresden.illumina;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import java.util.Locale;
 
 import de.medienDresden.illumina.impl.PilightServiceConnection;
 import de.medienDresden.illumina.pilight.Setting;
 
-public class DeviceListActivity extends ActionBarActivity implements ActionBar.TabListener,
+public class LocationListActivity extends ActionBarActivity implements ActionBar.TabListener,
         PilightService.ServiceHandler, PilightServiceConnection.ConnectionHandler {
 
-    private static final String TAG = DeviceListActivity.class.getSimpleName();
+    private static final String TAG = LocationListActivity.class.getSimpleName();
 
     private PilightServiceConnection mServiceConnection;
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
+     * {@link android.support.v4.app.FragmentPagerAdapter} derivative, which will keep every
      * loaded fragment in memory. If this becomes too memory intensive, it
      * may be best to switch to a
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
-    SectionsPagerAdapter mSectionsPagerAdapter;
+    LocationPagerAdapter mLocationPagerAdapter;
 
     /**
      * The {@link ViewPager} that will host the section contents.
@@ -46,10 +37,9 @@ public class DeviceListActivity extends ActionBarActivity implements ActionBar.T
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_device_list);
+        setContentView(R.layout.activity_location_list);
 
         final ActionBar actionBar = getSupportActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         actionBar.setIcon(R.drawable.ic_actionbar);
 
         mServiceConnection = new PilightServiceConnection(this, this);
@@ -134,16 +124,16 @@ public class DeviceListActivity extends ActionBarActivity implements ActionBar.T
     }
 
     private void refreshUi() {
+        final ActionBar actionBar = getSupportActionBar();
+
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(),
+        mLocationPagerAdapter = new LocationPagerAdapter(getSupportFragmentManager(),
                 mServiceConnection.getService().getSetting());
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.pager);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-
-        final ActionBar actionBar = getSupportActionBar();
+        mViewPager.setAdapter(mLocationPagerAdapter);
 
         // When swiping between different sections, select the corresponding
         // tab. We can also use ActionBar.Tab#select() to do this if we have
@@ -157,86 +147,21 @@ public class DeviceListActivity extends ActionBarActivity implements ActionBar.T
 
         actionBar.removeAllTabs();
 
-        // For each of the sections in the app, add a tab to the action bar.
-        for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
-            // Create a tab with text corresponding to the page title defined by
-            // the adapter. Also specify this Activity object, which implements
-            // the TabListener interface, as the callback (listener) for when
-            // this tab is selected.
-            actionBar.addTab(
-                    actionBar.newTab()
-                            .setText(mSectionsPagerAdapter.getPageTitle(i))
-                            .setTabListener(this));
-        }
-    }
-
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
-
-        private final Setting mSetting;
-
-        public SectionsPagerAdapter(FragmentManager fm, Setting setting) {
-            super(fm);
-
-            mSetting = setting;
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
-        }
-
-        @Override
-        public int getCount() {
-            return mSetting.size();
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            final Locale locale = Locale.getDefault();
-            return mSetting.getLocationNames().get(position).toUpperCase(locale);
-        }
-    }
-
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        public PlaceholderFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_device_list, container, false);
-            assert rootView != null;
-
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
-            return rootView;
+        if (mLocationPagerAdapter.getCount() < 2) {
+            actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+        } else {
+            actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+            // For each of the sections in the app, add a tab to the action bar.
+            for (int i = 0; i < mLocationPagerAdapter.getCount(); i++) {
+                // Create a tab with text corresponding to the page title defined by
+                // the adapter. Also specify this Activity object, which implements
+                // the TabListener interface, as the callback (listener) for when
+                // this tab is selected.
+                actionBar.addTab(
+                        actionBar.newTab()
+                                .setText(mLocationPagerAdapter.getPageTitle(i))
+                                .setTabListener(this));
+            }
         }
     }
 
