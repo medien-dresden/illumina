@@ -8,6 +8,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import de.medienDresden.illumina.impl.PilightServiceConnection;
 import de.medienDresden.illumina.pilight.Setting;
@@ -21,6 +23,8 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
 
     private ViewPager mViewPager;
 
+    private ProgressBar mProgressBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,12 +33,16 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
         final ActionBar actionBar = getSupportActionBar();
 
         mViewPager = (ViewPager) findViewById(R.id.pager);
+        mProgressBar = (ProgressBar) findViewById(android.R.id.progress);
+
         mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
                 actionBar.setSelectedNavigationItem(position);
             }
         });
+
+        mProgressBar.setIndeterminate(true);
 
         actionBar.setIcon(R.drawable.ic_actionbar);
 
@@ -45,6 +53,7 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
     protected void onResume() {
         super.onResume();
 
+        setBusy(true);
         mServiceConnection.bind(this);
     }
 
@@ -57,7 +66,7 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.device_list, menu);
+        getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
@@ -146,6 +155,21 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
                                 .setText(pagerAdapter.getPageTitle(i))
                                 .setTabListener(this));
             }
+        }
+
+        setBusy(false);
+    }
+
+    private void setBusy(boolean busy) {
+        final ActionBar actionBar = getSupportActionBar();
+
+        if (busy) {
+            mProgressBar.setVisibility(View.VISIBLE);
+            actionBar.setBackgroundDrawable(null);
+        } else {
+            mProgressBar.setVisibility(View.GONE);
+            actionBar.setBackgroundDrawable(getResources().getDrawable(
+                    R.drawable.abc_ab_transparent_dark_holo));
         }
     }
 
