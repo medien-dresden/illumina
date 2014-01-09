@@ -20,13 +20,26 @@ public class Setting extends LinkedHashMap<String, Location> {
 
     private static final String TAG = Setting.class.getSimpleName();
 
-    private Setting(JSONObject locationsJson) throws JSONException {
+    private final RemoteChangeHandler mRemoteChangeHandler;
+
+    public interface RemoteChangeHandler {
+
+        void onRemoteChange(Device device);
+
+    }
+
+    private Setting(RemoteChangeHandler handler,
+                    JSONObject locationsJson) throws JSONException {
+
+        mRemoteChangeHandler = handler;
+
         final Iterator locationsJsonIterator = locationsJson.keys();
         final Map<String, Location> unsortedLocations = new HashMap<>();
 
         while (locationsJsonIterator.hasNext()) {
             final String currentLocation = (String) locationsJsonIterator.next();
-            final Location location = parseLocation(locationsJson.getJSONObject(currentLocation));
+            final Location location = parseLocation(currentLocation,
+                    locationsJson.getJSONObject(currentLocation));
 
             unsortedLocations.put(currentLocation, location);
         }
@@ -34,10 +47,13 @@ public class Setting extends LinkedHashMap<String, Location> {
         addSorted(unsortedLocations);
     }
 
-    private Location parseLocation(JSONObject jsonLocation) throws JSONException {
+    private Location parseLocation(String locationId,
+                                   JSONObject jsonLocation) throws JSONException {
         final Location location = new Location();
         final Iterator locationJsonIterator = jsonLocation.keys();
         final Map<String, Device> devices = new HashMap<>();
+
+        location.setId(locationId);
 
         while (locationJsonIterator.hasNext()) {
             final String currentLocationAttribute = (String) locationJsonIterator.next();
@@ -52,10 +68,14 @@ public class Setting extends LinkedHashMap<String, Location> {
                     break;
 
                 default:
-                    final JSONObject device = jsonLocation.optJSONObject(currentLocationAttribute);
+                    final JSONObject jsonDevice = jsonLocation.optJSONObject(currentLocationAttribute);
 
-                    if (device != null) {
-                        devices.put(currentLocationAttribute, parseDevice(device));
+                    if (jsonDevice != null) {
+                        final Device device = parseDevice(jsonDevice);
+
+                        device.setId(currentLocationAttribute);
+                        device.setLocationId(location.getId());
+                        devices.put(currentLocationAttribute, device);
                     } else {
                         Log.d(TAG, "unhandled device parameter " + currentLocationAttribute
                                 + ":" + jsonLocation.optString(currentLocationAttribute));
@@ -135,6 +155,8 @@ public class Setting extends LinkedHashMap<String, Location> {
     private void updateDevice(Device device, JSONObject jsonValues) throws JSONException {
         final Iterator jsonValuesIterator = jsonValues.keys();
 
+        boolean isRealChange = false;
+
         while (jsonValuesIterator.hasNext()) {
             final String valueKey = (String) jsonValuesIterator.next();
 
@@ -142,12 +164,22 @@ public class Setting extends LinkedHashMap<String, Location> {
                 case "state":
                     final String state = jsonValues.getString(valueKey);
                     Log.i(TAG, "- set state to " + state);
+
+                    if (device.getValue() != state) {
+                        isRealChange = true;
+                    }
+
                     device.setValue(state);
                     break;
 
                 case "dimlevel":
                     final int dimLevel = jsonValues.getInt(valueKey);
                     Log.i(TAG, "- set dim level to " + dimLevel);
+
+                    if (device.getDimLevel() != dimLevel) {
+                        isRealChange = true;
+                    }
+
                     device.setDimLevel(dimLevel);
                     break;
 
@@ -155,6 +187,10 @@ public class Setting extends LinkedHashMap<String, Location> {
                     Log.i(TAG, "device value ignored: " + valueKey);
                     break;
             }
+        }
+
+        if (isRealChange) {
+            mRemoteChangeHandler.onRemoteChange(device);
         }
     }
 
@@ -184,8 +220,8 @@ public class Setting extends LinkedHashMap<String, Location> {
         }
     }
 
-    public static Setting create(JSONObject json) throws JSONException {
-        return new Setting(json);
+    public static Setting create(RemoteChangeHandler handler, JSONObject json) throws JSONException {
+        return new Setting(handler, json);
     }
 
     public void update(JSONObject json) {

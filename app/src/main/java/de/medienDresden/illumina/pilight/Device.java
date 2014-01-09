@@ -7,10 +7,16 @@ import java.util.ArrayList;
 
 public class Device implements Parcelable {
 
+    public static final CharSequence VALUE_ON = "on";
+
     public enum Type {
         Switch,
         Dimmer
     }
+
+    private String mId;
+
+    private String mLocationId;
 
     private String mName;
 
@@ -23,6 +29,22 @@ public class Device implements Parcelable {
     private Type mType = Type.Switch;
 
     private int mDimLevel;
+
+    public String getLocationId() {
+        return mLocationId;
+    }
+
+    public void setLocationId(String locationId) {
+        mLocationId = locationId;
+    }
+
+    public String getId() {
+        return mId;
+    }
+
+    public void setId(String id) {
+        mId = id;
+    }
 
     public int getOrder() {
         return mOrder;
@@ -94,6 +116,8 @@ public class Device implements Parcelable {
     public Device(Parcel parcel) {
         this();
 
+        mId = parcel.readString();
+        mLocationId = parcel.readString();
         mName = parcel.readString();
         mOrder = parcel.readInt();
         mValue = parcel.readString();
@@ -104,6 +128,8 @@ public class Device implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int flags) {
+        parcel.writeString(mId);
+        parcel.writeString(mLocationId);
         parcel.writeString(mName);
         parcel.writeInt(mOrder);
         parcel.writeString(mValue);

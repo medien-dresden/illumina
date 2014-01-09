@@ -19,9 +19,8 @@ public class StreamingSocketImpl implements StreamingSocket {
 
     private static final String TAG = StreamingSocketImpl.class.getSimpleName();
 
-    @SuppressWarnings("PointlessArithmeticExpression")
-    public static final int HEARTBEAT_INTERVAL = 1  * 1000;
-    public static final int HEARTBEAT_TIMEOUT  = 2  * 1000;
+    public static final int HEARTBEAT_INTERVAL = 10 * 1000;
+    public static final int HEARTBEAT_TIMEOUT  = 15 * 1000;
     public static final int READ_TIMEOUT       = 30 * 1000;
     public static final int CONNECT_TIMEOUT    = 5  * 1000;
 

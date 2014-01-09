@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -16,9 +17,10 @@ import org.json.JSONObject;
 import de.medienDresden.illumina.PilightService;
 import de.medienDresden.illumina.communication.StreamingSocket;
 import de.medienDresden.illumina.communication.impl.StreamingSocketImpl;
+import de.medienDresden.illumina.pilight.Device;
 import de.medienDresden.illumina.pilight.Setting;
 
-public class PilightServiceImpl extends Service implements PilightService {
+public class PilightServiceImpl extends Service implements PilightService, Setting.RemoteChangeHandler {
 
     public static final String TAG = PilightServiceImpl.class.getSimpleName();
 
@@ -27,6 +29,8 @@ public class PilightServiceImpl extends Service implements PilightService {
     private Setting mSetting;
 
     private ServiceHandler mServiceHandler;
+
+    private LocalBroadcastManager mBroadcastManager;
 
     private enum PilightState {
         Connected,
@@ -85,6 +89,13 @@ public class PilightServiceImpl extends Service implements PilightService {
 
         Log.i(TAG, "sending " + jsonString);
         mPilight.send(jsonString);
+    }
+
+    @Override
+    public void onRemoteChange(Device device) {
+        final Intent intent = new Intent(ACTION_REMOTE_CHANGE);
+        intent.putExtra(EXTRA_DEVICE, device);
+        mBroadcastManager.sendBroadcast(intent);
     }
 
     private void onSocketConnectionFailed() {
@@ -187,7 +198,7 @@ public class PilightServiceImpl extends Service implements PilightService {
 
         if (!json.isNull("config")) {
             try {
-                mSetting = Setting.create(json.getJSONObject("config"));
+                mSetting = Setting.create(this, json.getJSONObject("config"));
                 mServiceHandler.onPilightConnected(mSetting);
                 mState = PilightState.Connected;
                 return;
@@ -292,13 +303,7 @@ public class PilightServiceImpl extends Service implements PilightService {
     public void onCreate() {
         super.onCreate();
 
-        Log.i(TAG, "service created");
+        mBroadcastManager = LocalBroadcastManager.getInstance(getApplicationContext());
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        Log.i(TAG, "service destroyed");
-    }
 }

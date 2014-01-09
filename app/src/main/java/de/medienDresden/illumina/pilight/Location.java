@@ -17,6 +17,8 @@ public class Location extends HashMap<String, Device> implements Parcelable {
 
     private int mOrder;
 
+    private String mId;
+
     public int getOrder() {
         return mOrder;
     }
@@ -31,6 +33,14 @@ public class Location extends HashMap<String, Device> implements Parcelable {
 
     public void setName(String name) {
         mName = name;
+    }
+
+    public String getId() {
+        return mId;
+    }
+
+    public void setId(String id) {
+        mId = id;
     }
 
     public Location() {}
@@ -51,6 +61,7 @@ public class Location extends HashMap<String, Device> implements Parcelable {
     };
 
     public Location(Parcel parcel) {
+        mId = parcel.readString();
         mName = parcel.readString();
         mOrder = parcel.readInt();
 
@@ -66,6 +77,7 @@ public class Location extends HashMap<String, Device> implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int flags) {
+        parcel.writeString(mId);
         parcel.writeString(mName);
         parcel.writeInt(mOrder);
 
