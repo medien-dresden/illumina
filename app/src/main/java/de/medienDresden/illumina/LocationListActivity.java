@@ -121,6 +121,7 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
 
         if (actionBar != null) {
             actionBar.removeAllTabs();
+            actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         }
 
         if (mViewPager != null) {
@@ -136,9 +137,7 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
 
         mViewPager.setAdapter(pagerAdapter);
 
-        if (pagerAdapter.getCount() < 2) {
-            actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        } else {
+        if (pagerAdapter.getCount() > 1) {
             actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
             for (int i = 0; i < pagerAdapter.getCount(); i++) {

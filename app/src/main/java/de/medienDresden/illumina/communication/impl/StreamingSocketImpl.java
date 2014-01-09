@@ -19,10 +19,11 @@ public class StreamingSocketImpl implements StreamingSocket {
 
     private static final String TAG = StreamingSocketImpl.class.getSimpleName();
 
-    public static final int READ_TIMEOUT        = 30 * 1000;
-    public static final int CONNECT_TIMEOUT     = 5  * 1000;
-    public static final int HEARTBEAT_TIMEOUT   = 2  * 1000;
-    public static final long HEARTBEAT_INTERVAL = 5  * 1000;
+    @SuppressWarnings("PointlessArithmeticExpression")
+    public static final int HEARTBEAT_INTERVAL = 1  * 1000;
+    public static final int HEARTBEAT_TIMEOUT  = 2  * 1000;
+    public static final int READ_TIMEOUT       = 30 * 1000;
+    public static final int CONNECT_TIMEOUT    = 5  * 1000;
 
     private Socket mSocket;
 
@@ -34,7 +35,7 @@ public class StreamingSocketImpl implements StreamingSocket {
 
     private boolean mIsConnected = false;
 
-    private long mLastHeartBeatRequest;
+    private long mLastHeartBeatResponse;
 
     private String mHost;
 
@@ -43,19 +44,15 @@ public class StreamingSocketImpl implements StreamingSocket {
     private final Handler mReadHandler = new Handler() {
         @Override
         public void handleMessage(Message msgFromReader) {
-            assert msgFromReader.getData() != null;
+            final Bundle data = msgFromReader.getData();
 
-            final String message = msgFromReader.getData().getString(ReaderThread.EXTRA_MESSAGE);
+            assert data != null;
+
+            final String message = data.getString(ReaderThread.EXTRA_MESSAGE);
 
             if (TextUtils.equals("BEAT", message)) {
-                final long currentTime = System.currentTimeMillis();
-
                 Log.d(TAG, "BEAT");
-
-                if (HEARTBEAT_TIMEOUT < currentTime - mLastHeartBeatRequest) {
-                    dispatchError();
-                    disconnect();
-                }
+                mLastHeartBeatResponse = System.currentTimeMillis();
 
             } else {
                 final Message msg = mHandler.obtainMessage(MSG_MESSAGE_RECEIVED);
@@ -68,9 +65,13 @@ public class StreamingSocketImpl implements StreamingSocket {
         }
     };
 
-    private final Thread mHeartBeat = new Thread() {
+    private Thread mHeartBeatThread;
+
+    private final Runnable mHeartBeat = new Runnable() {
         @Override
         public void run() {
+            mLastHeartBeatResponse = System.currentTimeMillis();
+
             while (!Thread.currentThread().isInterrupted()) {
                 try {
                     Thread.sleep(HEARTBEAT_INTERVAL);
@@ -78,10 +79,13 @@ public class StreamingSocketImpl implements StreamingSocket {
                     // ignore
                 }
 
+                Log.d(TAG, "HEART");
                 send("HEART");
 
-                Log.d(TAG, "HEART");
-                mLastHeartBeatRequest = System.currentTimeMillis();
+                if (HEARTBEAT_TIMEOUT < System.currentTimeMillis() - mLastHeartBeatResponse) {
+                    dispatchError();
+                    disconnect();
+                }
             }
         }
     };
@@ -99,7 +103,9 @@ public class StreamingSocketImpl implements StreamingSocket {
                         mSocket.getOutputStream(), "UTF-8"));
 
                 mReader.start();
-                mHeartBeat.start();
+
+                mHeartBeatThread = new Thread(mHeartBeat);
+                mHeartBeatThread.start();
 
                 mIsConnected = true;
                 mHandler.sendMessage(mHandler.obtainMessage(MSG_CONNECTED));
@@ -108,6 +114,7 @@ public class StreamingSocketImpl implements StreamingSocket {
                 Log.w(TAG, exception.getMessage());
                 mIsConnected = false;
                 dispatchError();
+                disconnect();
             }
         }
     };
@@ -136,28 +143,34 @@ public class StreamingSocketImpl implements StreamingSocket {
         mHost = host;
         mPort = port;
 
-        if (mIsConnected) {
-            disconnect();
-        }
-
+        disconnect();
         Executors.defaultThreadFactory().newThread(mConnectRunnable).start();
     }
 
     @Override
     public void disconnect() {
-        mIsConnected = false;
-        mHeartBeat.interrupt();
+        if (mHeartBeatThread != null) {
+            mHeartBeatThread.interrupt();
+            mHeartBeatThread = null;
+        }
 
         if (mReader != null) {
             mReader.interrupt();
+            mReader = null;
         }
 
         if (mWriter != null) {
             mWriter.close();
+            mWriter = null;
         }
 
         mSocket = null;
-        mHandler.sendMessage(mHandler.obtainMessage(MSG_DISCONNECTED));
+
+        if (mIsConnected) {
+            mHandler.sendMessage(mHandler.obtainMessage(MSG_DISCONNECTED));
+        }
+
+        mIsConnected = false;
     }
 
     @Override
