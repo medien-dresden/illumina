@@ -8,7 +8,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import de.medienDresden.illumina.impl.PilightServiceConnection;
 import de.medienDresden.illumina.pilight.Setting;
@@ -64,14 +63,16 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                // TODO
+                break;
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
 
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 
     @Override
@@ -87,7 +88,8 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
 
     @Override
     public void onPilightError(PilightService.Error type) {
-        Toast.makeText(this, "ERROR", Toast.LENGTH_SHORT).show(); // TODO
+        // TODO check error type
+        clearUi();
     }
 
     @Override
@@ -97,7 +99,7 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
 
     @Override
     public void onPilightDisconnected() {
-        Toast.makeText(this, "DISCONNECTED", Toast.LENGTH_SHORT).show(); // TODO
+        clearUi();
     }
 
     @Override
