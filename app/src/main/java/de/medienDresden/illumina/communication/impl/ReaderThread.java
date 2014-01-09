@@ -44,6 +44,7 @@ class ReaderThread extends Thread {
                 bundle.putString(EXTRA_MESSAGE, mScanner.next());
             } catch (NoSuchElementException exception) {
                 // happens even when disconnected on purpose
+                Log.i(TAG, "reading the socket has been interrupted");
                 break;
             }
 
