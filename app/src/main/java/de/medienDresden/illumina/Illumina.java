@@ -11,6 +11,9 @@ public class Illumina extends Application {
     public void onCreate() {
         super.onCreate();
 
+        /* If this service isn't started explicitly, it would be
+         * destroyed if no more clients are bound */
         startService(new Intent(this, PilightServiceImpl.class));
     }
+
 }

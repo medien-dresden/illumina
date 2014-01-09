@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">illumina</string>
-    <string name="title_section1">Section 1</string>
-    <string name="title_section2">Section 2</string>
-    <string name="title_section3">Section 3</string>
-    <string name="action_example">Example action</string>
     <string name="action_settings">Settings</string>
-    <string name="permission_label_service">illumina Service</string>
-    <string name="permission_description_service">Control the illumina service</string>
-
+    <string name="dummy">dummy</string>
 </resources>
