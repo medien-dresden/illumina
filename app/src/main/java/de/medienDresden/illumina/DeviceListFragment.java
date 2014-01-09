@@ -60,6 +60,8 @@ public class DeviceListFragment extends ListFragment implements DeviceAdapter.Ch
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        getArguments().setClassLoader(Location.class.getClassLoader());
+
         mLocation = getArguments().getParcelable(ARG_LOCATION);
         mBroadcastManager = LocalBroadcastManager.getInstance(
                 getActivity().getApplicationContext());
