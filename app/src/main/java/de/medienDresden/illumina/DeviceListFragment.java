@@ -9,8 +9,10 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import java.util.ArrayList;
 
@@ -82,6 +84,17 @@ public class DeviceListFragment extends ListFragment implements DeviceAdapter.Ch
 
         setListAdapter(mAdapter);
         getListView().setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
+    }
+
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        final Intent intent = new Intent(PilightService.ACTION_LOCAL_CHANGE);
+        final Device device = (Device) getListAdapter().getItem(position);
+
+        device.toggle();
+
+        intent.putExtra(PilightService.EXTRA_DEVICE, device);
+        mBroadcastManager.sendBroadcast(intent);
     }
 
     @Override

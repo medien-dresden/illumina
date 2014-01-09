@@ -1,7 +1,10 @@
 package de.medienDresden.illumina.impl;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
@@ -32,6 +35,7 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
 
     private LocalBroadcastManager mBroadcastManager;
 
+
     private enum PilightState {
         Connected,
         Connecting,
@@ -39,9 +43,8 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
         Disconnecting,
         HandshakePending,
         ConfigRequested,
-        Error
+        Error;
     }
-
     private PilightState mState = PilightState.Disconnected;
 
     private final Handler mPilightHandler = new Handler() {
@@ -74,6 +77,33 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
                 default:
                     Log.w(TAG, "unhandled message from socket");
                     break;
+            }
+        }
+    };
+
+    private BroadcastReceiver mLocalChangeReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final JSONObject json = new JSONObject();
+            final JSONObject code = new JSONObject();
+
+            final Device device = intent.getParcelableExtra(EXTRA_DEVICE);
+
+            assert device != null;
+
+            try {
+                json.put("message", "send");
+                json.put("code", code);
+
+                code.put("location", device.getLocationId());
+                code.put("device", device.getId());
+                code.put("state", device.getValue());
+                code.put("dimlevel", device.getDimLevel());
+
+                sendSocketMessage(json);
+
+            } catch (JSONException exception) {
+                Log.e(TAG, "sending change failed with " + exception.getMessage());
             }
         }
     };
@@ -304,6 +334,16 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
         super.onCreate();
 
         mBroadcastManager = LocalBroadcastManager.getInstance(getApplicationContext());
+
+        mBroadcastManager.registerReceiver(
+                mLocalChangeReceiver, new IntentFilter(ACTION_LOCAL_CHANGE));
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        mBroadcastManager.unregisterReceiver(mLocalChangeReceiver);
     }
 
 }

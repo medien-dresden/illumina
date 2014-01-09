@@ -2,18 +2,24 @@ package de.medienDresden.illumina.pilight;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 
 import java.util.ArrayList;
 
 public class Device implements Parcelable {
 
-    public static final CharSequence VALUE_ON = "on";
+    public static final String VALUE_ON = "on";
+
+    public static final String VALUE_OFF = "off";
+
+    public static final int DIM_LEVEL_MAX = 15;
+
+    public static final int DIM_LEVEL_MIN = 0;
 
     public enum Type {
         Switch,
-        Dimmer
+        Dimmer;
     }
-
     private String mId;
 
     private String mLocationId;
@@ -59,7 +65,13 @@ public class Device implements Parcelable {
     }
 
     public void setValue(String value) {
-        mValue = value;
+        if (TextUtils.equals(value, VALUE_ON)) {
+            mDimLevel = DIM_LEVEL_MAX;
+            mValue = VALUE_ON;
+        } else {
+            mDimLevel = DIM_LEVEL_MIN;
+            mValue = VALUE_OFF;
+        }
     }
 
     public ArrayList<String> getValues() {
@@ -96,6 +108,16 @@ public class Device implements Parcelable {
 
     public Device() {
         mValues = new ArrayList<>();
+    }
+
+    public void toggle() {
+        if (TextUtils.equals(mValue, VALUE_ON)) {
+            mValue = VALUE_OFF;
+            mDimLevel = DIM_LEVEL_MIN;
+        } else {
+            mValue = VALUE_ON;
+            mDimLevel = DIM_LEVEL_MAX;
+        }
     }
 
     public static final Parcelable.Creator<Device> CREATOR
