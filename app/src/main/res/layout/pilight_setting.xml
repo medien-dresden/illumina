@@ -11,7 +11,7 @@
         android:layout_marginBottom="16dip"
         android:layout_alignLeft="@id/centered_layout"
         android:layout_alignRight="@id/centered_layout"
-        android:src="@drawable/info_en" />
+        android:src="?attr/question_drawable" />
 
     <RelativeLayout
         android:id="@id/centered_layout"

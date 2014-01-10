@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">illumina</string>
+    <string name="action_settings">Einstellungen</string>
+    <string name="dummy">dummy</string>
+    <string name="loading">laden</string>
+    <string name="connect">verbinden</string>
+    <string name="hostname_or_ip">Hostname oder IP</string>
+    <string name="port">Port</string>
+    <string name="connection_help">Voreinstellung bei pilight ist die Portnummer 5000. Nur IP oder Hostname, bzw. die Adresse des Raspberry hat keinen Standardwert. Für weitere Informationen geh auf http://wiki.pilight.org/doku.php/settings</string>
+    <string name="colon">:</string>
+    <string name="unknown_error">Sorry, ein unbekannter Fehler trat auf</string>
+    <string name="wrong_settings_error">Verbindung fehlgeschlagen! Bitte prüfe deine Einstellung zum Hostnamen und Port</string>
+    <string name="remote_closed_connection">Dein Raspberry hat die Verbindung beendet, versuch es bitte nochmal</string>
+    <string name="problem_with_pi">Verbindung fehlgeschlagen! Scheint als gäbe es ein Problem mit deinem Raspberry</string>
+</resources>
