@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">illumina</string>
-    <string name="action_settings">Einstellungen</string>
+    <string name="settings">Einstellungen</string>
     <string name="dummy">dummy</string>
     <string name="loading">laden</string>
     <string name="connect">verbinden</string>
@@ -14,5 +14,11 @@
     <string name="remote_closed_connection">Dein Raspberry hat die Verbindung beendet, versuch es bitte nochmal</string>
     <string name="problem_with_pi">Verbindung fehlgeschlagen! Scheint als gäbe es ein Problem mit deinem Raspberry</string>
     <string name="no_data">Nichts gefunden. Du musst erst ein paar Geräte auf deinem Raspberry einrichten. Sieh dir http://wiki.pilight.org/doku.php/config an</string>
-    <string name="action_play_store">illumina im Play Store</string>
+    <string name="notices_title">Lizenzen</string>
+    <string name="notices_close">schließen</string>
+    <string name="about">Über</string>
+    <string name="rate_illumina">illumina bewerten</string>
+    <string name="rate_illumina_summary">In den Google Play Store gehen und diese App bewerten</string>
+    <string name="licenses">Lizenzen</string>
+    <string name="licenses_summary">Lizenzen verwendeter Bibliotheken</string>
 </resources>

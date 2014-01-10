@@ -1,5 +1,6 @@
 package de.medienDresden.illumina;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -189,10 +190,7 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings:
-                break;
-
-            case R.id.action_play_store:
-                AppRater.rateNow(this);
+                startActivity(new Intent(this, IlluminaPreferenceActivity.class));
                 break;
 
             case R.id.action_connect:
@@ -269,6 +267,10 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
 
     private void connect() {
         onDisconnect();
+
+        if (TextUtils.isEmpty(mHost) && mPort < 1) {
+            return;
+        }
 
         if (!mServiceConnection.getService().isConnected(mHost, mPort)) {
             mServiceConnection.getService().connect(mHost, mPort);

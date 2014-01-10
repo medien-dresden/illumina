@@ -10,15 +10,8 @@
         app:showAsAction="always" />
 
     <item
-        android:id="@+id/action_play_store"
-        android:title="@string/action_play_store"
-        android:orderInCategory="100"
-        app:showAsAction="never" />
-
-    <item
         android:id="@+id/action_settings"
-        android:title="@string/action_settings"
-        android:visible="false"
+        android:title="@string/settings"
         android:orderInCategory="100"
         app:showAsAction="never" />
 

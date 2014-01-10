@@ -11,6 +11,9 @@ apply plugin: 'android'
 
 repositories {
     mavenCentral()
+
+    // FIXME remove with fix for licenses dialog
+    flatDir { dirs 'libs' }
 }
 
 android {
@@ -43,4 +46,9 @@ dependencies {
     compile 'com.android.support:appcompat-v7:19.0.+'
 
     compile 'com.github.codechimp-org.apprater:library:1.0.+'
+    compile 'com.github.machinarius:preferencefragment:0.1.1'
+
+    // FIXME use maven stable and delete file
+    compile 'de.psdev.licensesdialog:licensesdialog:1.4.0-SNAPSHOT@aar'
+    compile 'org.slf4j:slf4j-android:1.6.1-RC1'
 }

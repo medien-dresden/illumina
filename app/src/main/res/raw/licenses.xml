@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<notices>
+    <notice>
+        <name>AppRater</name>
+        <url>https://github.com/codechimp-org/AppRater</url>
+        <copyright>Copyright 2013 Andrew Jackson</copyright>
+        <license>Apache Software License 2.0</license>
+    </notice>
+    <notice>
+        <name>PreferenceFragment-Compat</name>
+        <url>https://github.com/Machinarius/PreferenceFragment-Compat</url>
+        <copyright>Copyright 2013 Machinarius</copyright>
+        <license>Apache Software License 2.0</license>
+    </notice>
+</notices>

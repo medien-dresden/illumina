@@ -23,6 +23,10 @@
 
         </activity>
 
+        <activity
+            android:name=".IlluminaPreferenceActivity"
+            android:label="@string/settings" />
+
         <service
             android:name=".impl.PilightServiceImpl"
             android:icon="@drawable/ic_launcher"
