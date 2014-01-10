@@ -9,4 +9,8 @@
     <string name="port">Port</string>
     <string name="connection_help">The default pilight configuration mentions 5000 for the port number. Only IP or hostname, respectively the address of your Raspberry has no default value. For further information consult http://wiki.pilight.org/doku.php/settings</string>
     <string name="colon">:</string>
+    <string name="unknown_error">Sorry, this is an unknown error</string>
+    <string name="wrong_settings_error">Connection failed! Please reconsider your host and/or port setting</string>
+    <string name="remote_closed_connection">Your Raspberry closed the connection, try reconnecting</string>
+    <string name="problem_with_pi">Connection failed! There seem to be a problem with your Raspberry</string>
 </resources>

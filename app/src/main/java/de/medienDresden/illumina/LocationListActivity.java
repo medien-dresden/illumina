@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import de.medienDresden.illumina.impl.PilightServiceConnection;
@@ -215,7 +216,26 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
 
     @Override
     public void onPilightError(PilightService.Error type) {
-        // TODO check error type
+        switch (type) {
+            case ConnectionFailed:
+                showError(R.string.wrong_settings_error);
+                break;
+
+            case RemoteClosedConnection:
+                showError(R.string.remote_closed_connection);
+                break;
+
+            case HandshakeFailed:
+                showError(R.string.problem_with_pi);
+                break;
+
+            case Unknown:
+                // break intentionally omitted
+            default:
+                showError(R.string.unknown_error);
+                break;
+        }
+
         onDisconnect();
     }
 
@@ -321,6 +341,10 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
             mEditTextHost.setEnabled(true);
             mEditTextPort.setEnabled(true);
         }
+    }
+
+    private void showError(int stringResourceId) {
+        Toast.makeText(this, getString(stringResourceId), Toast.LENGTH_LONG).show();
     }
 
 }
