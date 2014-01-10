@@ -9,7 +9,9 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -75,9 +77,15 @@ public class DeviceListFragment extends ListFragment implements DeviceAdapter.Ch
 
         if (mLocation.size() < 1) {
             Log.i(TAG, mLocation.getName() + " has no devices to show");
-            // TODO indicate
-            return;
         }
+
+        final View emptyView = LayoutInflater.from(getActivity())
+                .inflate(R.layout.empty_data, null, false);
+
+        assert getListView().getParent() != null;
+        assert emptyView != null;
+        ((ViewGroup) getListView().getParent()).addView(emptyView);
+        getListView().setEmptyView(emptyView);
 
         mAdapter = new DeviceAdapter(getActivity(),
                 R.layout.device_list_item, new ArrayList<>(mLocation.values()), this);

@@ -13,4 +13,5 @@
     <string name="wrong_settings_error">Connection failed! Please reconsider your host and/or port setting</string>
     <string name="remote_closed_connection">Your Raspberry closed the connection, try reconnecting</string>
     <string name="problem_with_pi">Connection failed! There seem to be a problem with your Raspberry</string>
+    <string name="no_data">Nothing found. You should configure some devices on your Raspberry. Take a look at http://wiki.pilight.org/doku.php/config</string>
 </resources>

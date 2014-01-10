@@ -25,11 +25,14 @@ import de.medienDresden.illumina.pilight.Setting;
 public class LocationListActivity extends ActionBarActivity implements ActionBar.TabListener,
         PilightService.ServiceHandler, PilightServiceConnection.ConnectionHandler {
 
+    @SuppressWarnings("UnusedDeclaration")
     private static final String TAG = LocationListActivity.class.getSimpleName();
 
     private static final int FLIPPER_CHILD_SETTING = 0;
 
     private static final int FLIPPER_CHILD_VIEW_PAGER = 1;
+
+    private static final int FLIPPER_CHILD_EMPTY = 2;
 
     private PilightServiceConnection mServiceConnection;
 
@@ -300,7 +303,7 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
 
         mViewPager.setAdapter(pagerAdapter);
 
-        if (pagerAdapter.getCount() > 1) {
+        if (locationCount > 1) {
             actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         }
 
@@ -311,11 +314,16 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
                             .setTabListener(this));
         }
 
-        if (mSelectedLocationIndex <= locationCount) {
+        if (mSelectedLocationIndex <= locationCount && locationCount > 1) {
             actionBar.setSelectedNavigationItem(mSelectedLocationIndex);
         }
 
-        mViewFlipper.setDisplayedChild(FLIPPER_CHILD_VIEW_PAGER);
+        if (locationCount < 1) {
+            mViewFlipper.setDisplayedChild(FLIPPER_CHILD_EMPTY);
+        } else {
+            mViewFlipper.setDisplayedChild(FLIPPER_CHILD_VIEW_PAGER);
+        }
+
         setConnectButtonVisibility(false);
         setBusy(false);
 
