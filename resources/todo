@@ -1,0 +1,11 @@
+- disconnect (onBackButton...)
+- error messages
+- scrollable "login"
+- translation
+- empty data indicator (no locations at all)
+- AppRater
+- make new icons
+
+- set checkbox with response
+- test fragment destruction
+- pilight response timeout (eg. waiting for config)

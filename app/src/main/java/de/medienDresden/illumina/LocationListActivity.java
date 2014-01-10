@@ -44,6 +44,8 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
 
     private boolean mIsConnectButtonVisible;
 
+    private boolean mIsConnected;
+
     private TextWatcher mPortListener = new TextWatcher() {
 
         @Override
@@ -192,6 +194,15 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
     }
 
     @Override
+    public void onBackPressed() {
+        if (mIsConnected) {
+            mServiceConnection.getService().disconnect();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
     public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
         mViewPager.setCurrentItem(tab.getPosition());
     }
@@ -205,17 +216,17 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
     @Override
     public void onPilightError(PilightService.Error type) {
         // TODO check error type
-        onDisconnected();
+        onDisconnect();
     }
 
     @Override
     public void onPilightConnected(Setting setting) {
-        onConnected();
+        onConnect();
     }
 
     @Override
     public void onPilightDisconnected() {
-        onDisconnected();
+        onDisconnect();
     }
 
     @Override
@@ -224,16 +235,16 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
     }
 
     private void connect() {
-        onDisconnected();
+        onDisconnect();
 
         if (!mServiceConnection.getService().isConnected(mHost, mPort)) {
             mServiceConnection.getService().connect(mHost, mPort);
         } else {
-            onConnected();
+            onConnect();
         }
     }
 
-    private void onDisconnected() {
+    private void onDisconnect() {
         final ActionBar actionBar = getSupportActionBar();
 
         if (actionBar != null) {
@@ -251,9 +262,11 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
 
         setConnectButtonVisibility(true);
         setBusy(false);
+
+        mIsConnected = false;
     }
 
-    private void onConnected() {
+    private void onConnect() {
         final ActionBar actionBar = getSupportActionBar();
         final FragmentPagerAdapter pagerAdapter =
                 new LocationPagerAdapter(getSupportFragmentManager(),
@@ -281,6 +294,8 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
         mViewFlipper.setDisplayedChild(FLIPPER_CHILD_VIEW_PAGER);
         setConnectButtonVisibility(false);
         setBusy(false);
+
+        mIsConnected = true;
     }
 
     private void setConnectButtonVisibility(boolean isVisible) {
