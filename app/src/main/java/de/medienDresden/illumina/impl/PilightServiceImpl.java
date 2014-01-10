@@ -307,6 +307,7 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
             return;
         }
 
+        mState = PilightState.Disconnecting;
         mPilight.disconnect();
     }
 
