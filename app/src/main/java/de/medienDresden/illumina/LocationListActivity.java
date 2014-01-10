@@ -85,6 +85,8 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
 
     private int mSelectedLocationIndex;
 
+    private boolean mIsPaused;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -143,6 +145,7 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
     @Override
     protected void onResume() {
         super.onResume();
+        mIsPaused = false;
 
         setBusy(true);
         loadPreferences();
@@ -153,6 +156,7 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
     @Override
     protected void onPause() {
         super.onPause();
+        mIsPaused = true;
 
         savePreferences();
         unbindService(mServiceConnection);
@@ -344,7 +348,9 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
     }
 
     private void showError(int stringResourceId) {
-        Toast.makeText(this, getString(stringResourceId), Toast.LENGTH_LONG).show();
+        if (!mIsPaused) {
+            Toast.makeText(this, getString(stringResourceId), Toast.LENGTH_LONG).show();
+        }
     }
 
 }
