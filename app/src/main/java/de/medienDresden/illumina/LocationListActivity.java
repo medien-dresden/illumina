@@ -96,7 +96,6 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
         setContentView(R.layout.activity_location_list);
 
         final ActionBar actionBar = getSupportActionBar();
-        actionBar.setIcon(R.drawable.ic_actionbar);
 
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mProgressBar = (ProgressBar) findViewById(android.R.id.progress);
