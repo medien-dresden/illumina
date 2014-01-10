@@ -24,6 +24,8 @@ class ReaderThread extends Thread {
     private Scanner mScanner;
 
     public ReaderThread(InputStream inputStream, Handler handler) {
+        super("SOCKET READER");
+
         mHandler = handler;
 
         try {

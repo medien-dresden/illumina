@@ -17,6 +17,8 @@ public interface StreamingSocket {
 
     void send(String message);
 
+    void startHeartBeat();
+
     String getHost();
 
     int getPort();

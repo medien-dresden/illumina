@@ -12,7 +12,6 @@ import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import de.medienDresden.illumina.communication.StreamingSocket;
@@ -22,18 +21,18 @@ public class StreamingSocketImpl implements StreamingSocket {
     private static final String TAG = StreamingSocketImpl.class.getSimpleName();
 
     @SuppressWarnings("PointlessArithmeticExpression")
-    public static final int HEARTBEAT_INTERVAL = 1  * 1000;
-    public static final int HEARTBEAT_TIMEOUT  = 2  * 1000;
-    public static final int READ_TIMEOUT       = 30 * 1000;
-    public static final int CONNECT_TIMEOUT    = 5  * 1000;
+    public static final int HEARTBEAT_INTERVAL = 1 * 1000;
+    public static final int HEARTBEAT_TIMEOUT  = 2 * 1000;
+    public static final int READ_TIMEOUT       = 5 * 1000;
+    public static final int CONNECT_TIMEOUT    = 5 * 1000;
 
     private Socket mSocket;
 
     private Handler mHandler;
 
-    private ReaderThread mReader;
+    private ReaderThread mReaderThread;
 
-    private WriterThread mWriter;
+    private WriterThread mWriterThread;
 
     private boolean mIsConnected = false;
 
@@ -80,21 +79,23 @@ public class StreamingSocketImpl implements StreamingSocket {
             mLastHeartBeatResponse = System.currentTimeMillis();
 
             while (!Thread.currentThread().isInterrupted()) {
-                try {
-                    Thread.sleep(HEARTBEAT_INTERVAL);
-                } catch (InterruptedException e) {
-                    // ignore
-                }
-
                 send("HEART");
 
                 if (HEARTBEAT_TIMEOUT < System.currentTimeMillis() - mLastHeartBeatResponse) {
                     dispatchError();
                     disconnect();
                 }
+
+                try {
+                    Thread.sleep(HEARTBEAT_INTERVAL);
+                } catch (InterruptedException e) {
+                    break;
+                }
             }
         }
     };
+
+    private Thread mConnectThread;
 
     private final Runnable mConnectRunnable = new Runnable() {
         @Override
@@ -104,15 +105,14 @@ public class StreamingSocketImpl implements StreamingSocket {
                 mSocket.connect(new InetSocketAddress(mHost, mPort), CONNECT_TIMEOUT);
                 mSocket.setSoTimeout(READ_TIMEOUT);
 
-                mReader = new ReaderThread(mSocket.getInputStream(), mReadHandler);
-                mWriter = new WriterThread(mWriterQueue, new PrintWriter(
+                mReaderThread = new ReaderThread(mSocket.getInputStream(), mReadHandler);
+                mWriterThread = new WriterThread(mWriterQueue, new PrintWriter(
                                 new OutputStreamWriter(mSocket.getOutputStream(), "UTF-8")));
 
-                mReader.start();
-                mWriter.start();
+                mWriterQueue.clear();
 
-                mHeartBeatThread = new Thread(mHeartBeat);
-                mHeartBeatThread.start();
+                mReaderThread.start();
+                mWriterThread.start();
 
                 mIsConnected = true;
                 mHandler.sendMessage(mHandler.obtainMessage(MSG_CONNECTED));
@@ -151,24 +151,31 @@ public class StreamingSocketImpl implements StreamingSocket {
         mPort = port;
 
         disconnect();
-        Executors.defaultThreadFactory().newThread(mConnectRunnable).start();
+
+        mConnectThread = new Thread(mConnectRunnable, "SOCKET CONNECT");
+        mConnectThread.start();
     }
 
     @Override
     public void disconnect() {
+        if (mConnectThread != null) {
+            mConnectThread.interrupt();
+            mConnectThread = null;
+        }
+
         if (mHeartBeatThread != null) {
             mHeartBeatThread.interrupt();
             mHeartBeatThread = null;
         }
 
-        if (mReader != null) {
-            mReader.interrupt();
-            mReader = null;
+        if (mReaderThread != null) {
+            mReaderThread.interrupt();
+            mReaderThread = null;
         }
 
-        if (mWriter != null) {
-            mWriter.interrupt();
-            mWriter = null;
+        if (mWriterThread != null) {
+            mWriterThread.interrupt();
+            mWriterThread = null;
         }
 
         mSocket = null;
@@ -183,6 +190,12 @@ public class StreamingSocketImpl implements StreamingSocket {
     @Override
     public void send(final String message) {
         mWriterQueue.add(message);
+    }
+
+    @Override
+    public void startHeartBeat() {
+        mHeartBeatThread = new Thread(mHeartBeat, "SOCKET HEARTBEAT");
+        mHeartBeatThread.start();
     }
 
     @Override

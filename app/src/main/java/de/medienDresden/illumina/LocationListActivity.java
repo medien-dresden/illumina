@@ -20,6 +20,10 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
 
     private static final String TAG = LocationListActivity.class.getSimpleName();
 
+    private static final int FLIPPER_CHILD_SETTING = 0;
+
+    private static final int FLIPPER_CHILD_VIEW_PAGER = 1;
+
     private PilightServiceConnection mServiceConnection;
 
     private ViewPager mViewPager;
@@ -28,12 +32,15 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
 
     private ViewFlipper mViewFlipper;
 
+    private boolean mIsConnectButtonVisible;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location_list);
 
         final ActionBar actionBar = getSupportActionBar();
+        actionBar.setIcon(R.drawable.ic_actionbar);
 
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mProgressBar = (ProgressBar) findViewById(android.R.id.progress);
@@ -47,9 +54,6 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
         });
 
         mProgressBar.setIndeterminate(true);
-
-        actionBar.setIcon(R.drawable.ic_actionbar);
-
         mServiceConnection = new PilightServiceConnection(this, this);
     }
 
@@ -75,10 +79,26 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        final MenuItem connect = menu.findItem(R.id.action_connect);
+
+        if (connect != null) {
+            connect.setVisible(mIsConnectButtonVisible);
+        }
+
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings:
                 // TODO
+                break;
+
+            case R.id.action_connect:
+                setBusy(true);
+                connect();
                 break;
 
             default:
@@ -102,34 +122,38 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
     @Override
     public void onPilightError(PilightService.Error type) {
         // TODO check error type
-        clearUi();
+        onDisconnected();
     }
 
     @Override
     public void onPilightConnected(Setting setting) {
-        refreshUi();
+        onConnected();
     }
 
     @Override
     public void onPilightDisconnected() {
-        clearUi();
+        onDisconnected();
     }
 
     @Override
     public void onServiceBound() {
+        connect();
+    }
+
+    private void connect() {
         final String host = "192.168.2.4";
         final int port = 5000;
 
-        clearUi();
+        onDisconnected();
 
         if (!mServiceConnection.getService().isConnected(host, port)) {
             mServiceConnection.getService().connect(host, port);
         } else {
-            refreshUi();
+            onConnected();
         }
     }
 
-    private void clearUi() {
+    private void onDisconnected() {
         final ActionBar actionBar = getSupportActionBar();
 
         if (actionBar != null) {
@@ -140,9 +164,16 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
         if (mViewPager != null) {
             mViewPager.setAdapter(null);
         }
+
+        if (mViewFlipper != null) {
+            mViewFlipper.setDisplayedChild(FLIPPER_CHILD_SETTING);
+        }
+
+        setConnectButtonVisibility(true);
+        setBusy(false);
     }
 
-    private void refreshUi() {
+    private void onConnected() {
         final ActionBar actionBar = getSupportActionBar();
         final FragmentPagerAdapter pagerAdapter =
                 new LocationPagerAdapter(getSupportFragmentManager(),
@@ -161,8 +192,14 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
             }
         }
 
-        mViewFlipper.setDisplayedChild(1); // TODO there's more
         setBusy(false);
+        mViewFlipper.setDisplayedChild(FLIPPER_CHILD_VIEW_PAGER);
+        setConnectButtonVisibility(false);
+    }
+
+    private void setConnectButtonVisibility(boolean isVisible) {
+        mIsConnectButtonVisible = isVisible;
+        supportInvalidateOptionsMenu();
     }
 
     private void setBusy(boolean busy) {

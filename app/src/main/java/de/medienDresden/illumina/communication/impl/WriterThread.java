@@ -14,6 +14,8 @@ class WriterThread extends Thread {
     private final PrintWriter mStream;
 
     public WriterThread(BlockingQueue<String> queue, PrintWriter stream) {
+        super("SOCKET WRITER");
+
         mQueue = queue;
         mStream = stream;
     }
@@ -25,13 +27,14 @@ class WriterThread extends Thread {
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 message = mQueue.take();
-                Log.d(TAG, "RAW write: " + message);
             } catch (InterruptedException exception) {
                 Log.i(TAG, "writing was interrupted");
                 break;
             }
 
-            mStream.write(message);
+            Log.d(TAG, "RAW write: " + message);
+
+            mStream.write(message + "\n");
             mStream.flush();
         }
     }

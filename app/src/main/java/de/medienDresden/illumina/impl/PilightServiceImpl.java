@@ -228,6 +228,7 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
 
         if (!json.isNull("config")) {
             try {
+                mPilight.startHeartBeat();
                 mSetting = Setting.create(this, json.getJSONObject("config"));
                 mServiceHandler.onPilightConnected(mSetting);
                 mState = PilightState.Connected;

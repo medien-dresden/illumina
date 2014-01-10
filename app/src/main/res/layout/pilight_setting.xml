@@ -26,10 +26,18 @@
             android:gravity="right"
             android:id="@+id/host"/>
 
+        <TextView
+            android:id="@+id/colon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/host"
+            android:layout_alignBaseline="@id/host"
+            android:text="@string/colon" />
+
         <EditText
             android:layout_width="80dp"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/host"
+            android:layout_toRightOf="@id/colon"
             android:layout_alignBottom="@id/host"
             android:hint="@string/port"
             android:id="@+id/port"/>
