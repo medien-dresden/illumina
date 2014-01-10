@@ -19,6 +19,8 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
+import org.codechimp.apprater.AppRater;
+
 import de.medienDresden.illumina.impl.PilightServiceConnection;
 import de.medienDresden.illumina.pilight.Setting;
 
@@ -117,6 +119,8 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
 
         mProgressBar.setIndeterminate(true);
         mServiceConnection = new PilightServiceConnection(this, this);
+
+        AppRater.app_launched(this);
     }
 
     private void loadPreferences() {
@@ -185,7 +189,10 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings:
-                // TODO
+                break;
+
+            case R.id.action_play_store:
+                AppRater.rateNow(this);
                 break;
 
             case R.id.action_connect:

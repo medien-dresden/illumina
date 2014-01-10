@@ -14,4 +14,5 @@
     <string name="remote_closed_connection">Dein Raspberry hat die Verbindung beendet, versuch es bitte nochmal</string>
     <string name="problem_with_pi">Verbindung fehlgeschlagen! Scheint als gäbe es ein Problem mit deinem Raspberry</string>
     <string name="no_data">Nichts gefunden. Du musst erst ein paar Geräte auf deinem Raspberry einrichten. Sieh dir http://wiki.pilight.org/doku.php/config an</string>
+    <string name="action_play_store">illumina im Play Store</string>
 </resources>
