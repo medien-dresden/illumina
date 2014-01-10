@@ -1,14 +1,20 @@
 package de.medienDresden.illumina;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.ViewFlipper;
 
@@ -32,7 +38,49 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
 
     private ViewFlipper mViewFlipper;
 
+    private EditText mEditTextHost;
+
+    private EditText mEditTextPort;
+
     private boolean mIsConnectButtonVisible;
+
+    private TextWatcher mPortListener = new TextWatcher() {
+
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {}
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {}
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            if (editable != null && !TextUtils.isEmpty(editable.toString())) {
+                mPort = Integer.parseInt(editable.toString());
+            }
+        }
+    };
+
+    private TextWatcher mHostListener = new TextWatcher() {
+
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {}
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {}
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            if (editable != null && !TextUtils.isEmpty(editable.toString())) {
+                mHost = editable.toString();
+            }
+        }
+    };
+
+    private String mHost;
+
+    private int mPort;
+
+    private int mSelectedLocationIndex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,11 +98,43 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
             @Override
             public void onPageSelected(int position) {
                 actionBar.setSelectedNavigationItem(position);
+                mSelectedLocationIndex = position;
             }
         });
 
+        mEditTextHost = (EditText) findViewById(R.id.host);
+        mEditTextPort = (EditText) findViewById(R.id.port);
+
+        mEditTextHost.addTextChangedListener(mHostListener);
+        mEditTextPort.addTextChangedListener(mPortListener);
+
         mProgressBar.setIndeterminate(true);
         mServiceConnection = new PilightServiceConnection(this, this);
+    }
+
+    private void loadPreferences() {
+        final SharedPreferences prefs = PreferenceManager
+                .getDefaultSharedPreferences(this);
+
+        mHost = prefs.getString("host", "");
+        mPort = prefs.getInt("port", 0);
+        mSelectedLocationIndex = prefs.getInt("selectedLocationIndex", 0);
+
+        mEditTextHost.setText(mHost);
+
+        if (mPort > 0) {
+            mEditTextPort.setText(Integer.toString(mPort));
+        }
+    }
+
+    private void savePreferences() {
+        PreferenceManager
+                .getDefaultSharedPreferences(this)
+                .edit()
+                .putString("host", mHost)
+                .putInt("port", mPort)
+                .putInt("selectedLocationIndex", mSelectedLocationIndex)
+                .commit();
     }
 
     @Override
@@ -62,6 +142,8 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
         super.onResume();
 
         setBusy(true);
+        loadPreferences();
+
         mServiceConnection.bind(this);
     }
 
@@ -69,6 +151,7 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
     protected void onPause() {
         super.onPause();
 
+        savePreferences();
         unbindService(mServiceConnection);
     }
 
@@ -141,13 +224,10 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
     }
 
     private void connect() {
-        final String host = "192.168.2.4";
-        final int port = 5000;
-
         onDisconnected();
 
-        if (!mServiceConnection.getService().isConnected(host, port)) {
-            mServiceConnection.getService().connect(host, port);
+        if (!mServiceConnection.getService().isConnected(mHost, mPort)) {
+            mServiceConnection.getService().connect(mHost, mPort);
         } else {
             onConnected();
         }
@@ -179,22 +259,28 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
                 new LocationPagerAdapter(getSupportFragmentManager(),
                         mServiceConnection.getService().getSetting());
 
+        final int locationCount = pagerAdapter.getCount();
+
         mViewPager.setAdapter(pagerAdapter);
 
         if (pagerAdapter.getCount() > 1) {
             actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-
-            for (int i = 0; i < pagerAdapter.getCount(); i++) {
-                actionBar.addTab(
-                        actionBar.newTab()
-                                .setText(pagerAdapter.getPageTitle(i))
-                                .setTabListener(this));
-            }
         }
 
-        setBusy(false);
+        for (int i = 0; i < locationCount; i++) {
+            actionBar.addTab(
+                    actionBar.newTab()
+                            .setText(pagerAdapter.getPageTitle(i))
+                            .setTabListener(this));
+        }
+
+        if (mSelectedLocationIndex <= locationCount) {
+            actionBar.setSelectedNavigationItem(mSelectedLocationIndex);
+        }
+
         mViewFlipper.setDisplayedChild(FLIPPER_CHILD_VIEW_PAGER);
         setConnectButtonVisibility(false);
+        setBusy(false);
     }
 
     private void setConnectButtonVisibility(boolean isVisible) {
@@ -208,10 +294,17 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
         if (busy) {
             mProgressBar.setVisibility(View.VISIBLE);
             actionBar.setBackgroundDrawable(null);
+
+            mEditTextHost.setEnabled(false);
+            mEditTextPort.setEnabled(false);
+
         } else {
             mProgressBar.setVisibility(View.GONE);
             actionBar.setBackgroundDrawable(getResources().getDrawable(
                     R.drawable.abc_ab_transparent_dark_holo));
+
+            mEditTextHost.setEnabled(true);
+            mEditTextPort.setEnabled(true);
         }
     }
 

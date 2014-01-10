@@ -39,6 +39,7 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/colon"
             android:layout_alignBottom="@id/host"
+            android:inputType="number"
             android:hint="@string/port"
             android:id="@+id/port"/>
 
