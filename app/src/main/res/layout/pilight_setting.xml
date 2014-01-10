@@ -24,6 +24,10 @@
             android:layout_height="wrap_content"
             android:hint="@string/hostname_or_ip"
             android:gravity="right"
+            android:singleLine="true"
+            android:lines="1"
+            android:scrollHorizontally="true"
+            android:ellipsize="end"
             android:id="@+id/host"/>
 
         <TextView
@@ -40,6 +44,10 @@
             android:layout_toRightOf="@id/colon"
             android:layout_alignBottom="@id/host"
             android:inputType="number"
+            android:singleLine="true"
+            android:lines="1"
+            android:scrollHorizontally="true"
+            android:ellipsize="end"
             android:hint="@string/port"
             android:id="@+id/port"/>
 
