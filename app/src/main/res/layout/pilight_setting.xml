@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/centered_layout"
+        android:layout_marginBottom="16dip"
+        android:layout_alignLeft="@id/centered_layout"
+        android:layout_alignRight="@id/centered_layout"
+        android:src="@drawable/info_en" />
+
+    <RelativeLayout
+        android:id="@id/centered_layout"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_centerInParent="true">
+
+        <EditText
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/hostname_or_ip"
+            android:gravity="right"
+            android:id="@+id/host"/>
+
+        <EditText
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/host"
+            android:layout_alignBottom="@id/host"
+            android:hint="@string/port"
+            android:id="@+id/port"/>
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/centered_layout"
+        android:layout_marginTop="16dip"
+        android:layout_alignLeft="@id/centered_layout"
+        android:layout_alignRight="@id/centered_layout"
+        android:autoLink="web"
+        android:text="@string/connection_help"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+</RelativeLayout>

@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.ViewFlipper;
 
 import de.medienDresden.illumina.impl.PilightServiceConnection;
 import de.medienDresden.illumina.pilight.Setting;
@@ -25,6 +26,8 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
 
     private ProgressBar mProgressBar;
 
+    private ViewFlipper mViewFlipper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +37,7 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
 
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mProgressBar = (ProgressBar) findViewById(android.R.id.progress);
+        mViewFlipper = (ViewFlipper) findViewById(R.id.flipper);
 
         mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
@@ -157,6 +161,7 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
             }
         }
 
+        mViewFlipper.setDisplayedChild(1); // TODO there's more
         setBusy(false);
     }
 

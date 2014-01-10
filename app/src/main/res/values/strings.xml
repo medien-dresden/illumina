@@ -4,4 +4,8 @@
     <string name="action_settings">Settings</string>
     <string name="dummy">dummy</string>
     <string name="loading">loading</string>
+    <string name="connect">connect</string>
+    <string name="hostname_or_ip">Hostname or IP</string>
+    <string name="port">Port</string>
+    <string name="connection_help">The default pilight configuration mentions 5000 for the port number. Only IP or hostname, respectively the address of your Raspberry has no default value. For further information consult http://wiki.pilight.org/doku.php/settings</string>
 </resources>
