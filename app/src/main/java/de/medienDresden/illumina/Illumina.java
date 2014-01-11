@@ -10,10 +10,12 @@ import org.acra.annotation.ReportsCrashes;
 
 import de.medienDresden.illumina.impl.PilightServiceImpl;
 
+
+
 @ReportsCrashes(
         formKey = "",
         formUriBasicAuthLogin = "mddapp",
-        formUriBasicAuthPassword = "QqPJkss6",
+        formUriBasicAuthPassword = BuildConfig.BITBUCKET_PASSWORD,
 
         // there should be a better way
         logcatArguments = {
