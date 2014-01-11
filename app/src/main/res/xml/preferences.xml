@@ -39,7 +39,7 @@
             android:key="acra.syslog.enable"
             android:title="@string/pref_acra_syslog"
             android:summary="@string/pref_acra_syslog_summary"
-            android:defaultValue="false"/>
+            android:defaultValue="true"/>
 
         <CheckBoxPreference android:key="acra.alwaysaccept"
             android:title="@string/pref_acra_alwaysaccept"
