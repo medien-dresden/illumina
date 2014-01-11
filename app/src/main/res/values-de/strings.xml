@@ -21,4 +21,18 @@
     <string name="rate_illumina_summary">In den Google Play Store gehen und diese App bewerten</string>
     <string name="licenses">Lizenzen</string>
     <string name="licenses_summary">Lizenzen verwendeter Bibliotheken</string>
+    <string name="acra">Fehlerberichte</string>
+    <string name="pref_enable_acra">aktivieren</string>
+    <string name="pref_acra_summary">Aktiviere Fehlerberichte um dem Entwickler bei der Verbesserung von illumina zu helfen.</string>
+    <string name="pref_acra_syslog">Syslog einschließen</string>
+    <string name="pref_acra_syslog_summary">Vor dem Fehler eingetretene Ereignisse werden dem Entwickler zur Verfügung gestellt.</string>
+    <string name="pref_acra_alwaysaccept">stilles Senden</string>
+    <string name="pref_acra_alwaysaccept_summary">Den Fehlerbericht ohne Nachfrage verschicken.</string>
+    <string name="pref_acra_user_email">Deine Mail-Adresse</string>
+    <string name="pref_acra_user_email_summary">Wenn du deine Mail-Adresse mitschickst, kann der Entwickler Dir Fragen stellen. Spam-frei und ohne die Weitergabe an Dritte, versteht sich.</string>
+    <string name="crash_toast_text">Entschuldige, ein Fehler ist aufgetreten. Sammle Informationen für einen Bericht.</string>
+    <string name="crash_dialog_title">illumina wird beendet</string>
+    <string name="crash_dialog_text">Ein unerwarteter Fehler ist aufgetreten und zwingt illumina zum Schließen. Bitte hilf uns dieses Problem beheben, indem Du dem Entwickler die Details bereitstellst.</string>
+    <string name="crash_dialog_comment_prompt">Wenn du möchtest, kannst Du hier die Situation schildern</string>
+    <string name="crash_dialog_ok_toast">Vielen Dank!</string>
 </resources>

@@ -1,5 +1,6 @@
 package de.medienDresden.illumina.communication.impl;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.PrintWriter;
@@ -32,7 +33,11 @@ class WriterThread extends Thread {
                 break;
             }
 
-            Log.d(TAG, "RAW write: " + message);
+            if (TextUtils.equals("HEART", message)) {
+                Log.v(TAG, "RAW write: " + message);
+            } else {
+                Log.d(TAG, "RAW write: " + message);
+            }
 
             mStream.write(message + "\n");
             mStream.flush();

@@ -77,7 +77,7 @@ public class Setting extends LinkedHashMap<String, Location> {
                         device.setLocationId(location.getId());
                         devices.put(currentLocationAttribute, device);
                     } else {
-                        Log.d(TAG, "unhandled device parameter " + currentLocationAttribute
+                        Log.v(TAG, "unhandled device parameter " + currentLocationAttribute
                                 + ":" + jsonLocation.optString(currentLocationAttribute));
                     }
 
@@ -129,7 +129,7 @@ public class Setting extends LinkedHashMap<String, Location> {
                     break;
 
                 default:
-                    Log.d(TAG, "unhandled device parameter " + currentDeviceAttribute
+                    Log.v(TAG, "unhandled device parameter " + currentDeviceAttribute
                             + ":" + jsonDevice.optString(currentDeviceAttribute));
                     break;
             }

@@ -1,6 +1,3 @@
-- app info, licensing, etc.
-- http://www.androidviews.net/2012/11/acra-application-crash-reports-for-android/
-
 - set checkbox with response
 - test fragment destruction
 - pilight response timeout (eg. waiting for config)

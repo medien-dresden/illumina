@@ -3,6 +3,7 @@
     package="de.medienDresden.illumina" >
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_LOGS" />
 
     <application
         android:name=".Illumina"
@@ -26,6 +27,13 @@
         <activity
             android:name=".IlluminaPreferenceActivity"
             android:label="@string/settings" />
+
+        <activity
+            android:name="org.acra.CrashReportDialog"
+            android:theme="@style/Theme.AppCompat.CompactMenu.Dialog"
+            android:launchMode="singleInstance"
+            android:excludeFromRecents="true"
+            android:finishOnTaskLaunch="true" />
 
         <service
             android:name=".impl.PilightServiceImpl"

@@ -3,6 +3,7 @@ package de.medienDresden.illumina.communication.impl;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.InputStream;
@@ -49,13 +50,18 @@ class ReaderThread extends Thread {
 
             try {
                 message = mScanner.next();
-                Log.d(TAG, "RAW read:  " + message);
             } catch (NoSuchElementException exception) {
                 // happens even when disconnected on purpose
                 Log.i(TAG, "reading was interrupted");
                 bundle.putBoolean(EXTRA_INTERRUPTED, true);
                 mHandler.sendMessage(msg);
                 break;
+            }
+
+            if (TextUtils.equals("BEAT", message)) {
+                Log.v(TAG, "RAW read: " + message);
+            } else {
+                Log.d(TAG, "RAW read: " + message);
             }
 
             bundle.putString(EXTRA_MESSAGE, message);

@@ -14,9 +14,25 @@
     <string name="remote_closed_connection">Your Raspberry closed the connection, try reconnecting</string>
     <string name="problem_with_pi">Connection failed! There seem to be a problem with your Raspberry</string>
     <string name="no_data">Nothing found. You should configure some devices on your Raspberry. Take a look at http://wiki.pilight.org/doku.php/config</string>
+    <string name="notices_title">Licences</string>
+    <string name="notices_close">close</string>
     <string name="about">About</string>
     <string name="rate_illumina">Rate illumina</string>
     <string name="rate_illumina_summary">Go to Google Play Store and rate this app</string>
     <string name="licenses">Licenses</string>
     <string name="licenses_summary">Licenses of included libraries</string>
+    <string name="acra">Crash Reporting</string>
+    <string name="pref_enable_acra">Enable</string>
+    <string name="pref_acra_summary">Enable chrash reports to help improve illumina.</string>
+    <string name="pref_acra_syslog">Include syslog</string>
+    <string name="pref_acra_syslog_summary">Enable the inclusion of the log entries right before a crash</string>
+    <string name="pref_acra_alwaysaccept">Auto send</string>
+    <string name="pref_acra_alwaysaccept_summary">Disable any notification and send chrash reports silently.</string>
+    <string name="pref_acra_user_email">Your mail address</string>
+    <string name="pref_acra_user_email_summary">If you set your mail address, the developer will be able to ask, if there are any questions regarding the crash. There will be neither spam nor any passing of your personal data.</string>
+    <string name="crash_toast_text">Sorry, there has been a chrash. Gathering information for a report.</string>
+    <string name="crash_dialog_title">illumina has chrashed</string>
+    <string name="crash_dialog_text">An unexpected error occurred forcing illumina to stop. Please help us fix this by sending us error data, all you have to do is click OK.</string>
+    <string name="crash_dialog_comment_prompt">You might add your comments about the problem below:</string>
+    <string name="crash_dialog_ok_toast">Thank you!</string>
 </resources>

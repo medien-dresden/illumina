@@ -12,4 +12,10 @@
         <copyright>Copyright 2013 Machinarius</copyright>
         <license>Apache Software License 2.0</license>
     </notice>
+    <notice>
+        <name>ACRA</name>
+        <url>https://github.com/ACRA/acra</url>
+        <copyright>Copyright 2013 Kevin Gaudin</copyright>
+        <license>Apache Software License 2.0</license>
+    </notice>
 </notices>

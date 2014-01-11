@@ -51,4 +51,6 @@ dependencies {
     // FIXME use maven stable and delete file
     compile 'de.psdev.licensesdialog:licensesdialog:1.4.0-SNAPSHOT@aar'
     compile 'org.slf4j:slf4j-android:1.6.1-RC1'
+
+    compile 'ch.acra:acra:4.5.0'
 }
