@@ -13,7 +13,7 @@ import de.medienDresden.illumina.impl.PilightServiceImpl;
 @ReportsCrashes(
         formKey = "",
         formUriBasicAuthLogin = "mddapp",
-        formUriBasicAuthPassword = "6686Lf11",
+        formUriBasicAuthPassword = "QqPJkss6",
 
         // there should be a better way
         logcatArguments = {
