@@ -145,9 +145,7 @@ public class BitbucketReportSender implements ReportSender {
 
         map.put("title", title.toString());
         map.put("content", content.toString());
-        map.put("priority", "major");
         map.put("kind", "task");
-        map.put("version", version);
 
         return map;
     }
