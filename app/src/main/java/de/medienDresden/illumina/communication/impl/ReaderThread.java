@@ -6,11 +6,11 @@ import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
 
 class ReaderThread extends Thread {
 
@@ -22,7 +22,7 @@ class ReaderThread extends Thread {
 
     private Handler mHandler;
 
-    private Scanner mScanner;
+    private BufferedReader mBufferedReader;
 
     public ReaderThread(InputStream inputStream, Handler handler) {
         super("SOCKET READER");
@@ -30,9 +30,7 @@ class ReaderThread extends Thread {
         mHandler = handler;
 
         try {
-            mScanner = new Scanner(new InputStreamReader(inputStream, "UTF-8"));
-            mScanner.useDelimiter("\n");
-
+            mBufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
         } catch (UnsupportedEncodingException exception) {
             Log.e(TAG, "cannot create socket reader", exception);
         }
@@ -42,15 +40,19 @@ class ReaderThread extends Thread {
     public void run() {
         String message;
 
-        while (!Thread.currentThread().isInterrupted()) {
+        while (!isInterrupted()) {
             final Message msg = mHandler.obtainMessage();
             final Bundle bundle = new Bundle();
 
             msg.setData(bundle);
 
             try {
-                message = mScanner.next();
-            } catch (NoSuchElementException exception) {
+                while (!mBufferedReader.ready()) {
+                    sleep(10);
+                }
+
+                message = mBufferedReader.readLine();
+            } catch (InterruptedException | IOException exception) {
                 // happens even when disconnected on purpose
                 Log.i(TAG, "reading was interrupted");
                 bundle.putBoolean(EXTRA_INTERRUPTED, true);

@@ -64,16 +64,9 @@ public class DeviceListFragment extends ListFragment implements DeviceAdapter.Ch
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        getArguments().setClassLoader(Location.class.getClassLoader());
-
         mLocation = getArguments().getParcelable(ARG_LOCATION);
         mBroadcastManager = LocalBroadcastManager.getInstance(
                 getActivity().getApplicationContext());
-
-        if (mLocation == null) {
-            Log.e(TAG, "location is null");
-            return;
-        }
 
         if (mLocation.size() < 1) {
             Log.i(TAG, mLocation.getName() + " has no devices to show");
