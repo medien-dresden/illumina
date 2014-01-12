@@ -194,7 +194,6 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
                 break;
 
             case R.id.action_connect:
-                setBusy(true);
                 connect();
                 break;
 
@@ -267,6 +266,7 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
 
     private void connect() {
         onDisconnect();
+        setBusy(true);
 
         if (TextUtils.isEmpty(mHost) && mPort < 1) {
             return;
@@ -322,7 +322,8 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
                             .setTabListener(this));
         }
 
-        if (mSelectedLocationIndex <= locationCount && locationCount > 1) {
+        if (mSelectedLocationIndex <= actionBar.getTabCount()
+                && actionBar.getNavigationMode() != ActionBar.NAVIGATION_MODE_STANDARD) {
             actionBar.setSelectedNavigationItem(mSelectedLocationIndex);
         }
 
@@ -344,20 +345,13 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
     }
 
     private void setBusy(boolean busy) {
-        final ActionBar actionBar = getSupportActionBar();
-
         if (busy) {
             mProgressBar.setVisibility(View.VISIBLE);
-            actionBar.setBackgroundDrawable(null);
-
             mEditTextHost.setEnabled(false);
             mEditTextPort.setEnabled(false);
 
         } else {
             mProgressBar.setVisibility(View.GONE);
-            actionBar.setBackgroundDrawable(getResources().getDrawable(
-                    R.drawable.abc_ab_transparent_dark_holo));
-
             mEditTextHost.setEnabled(true);
             mEditTextPort.setEnabled(true);
         }
