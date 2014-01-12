@@ -4,20 +4,23 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class Location extends HashMap<String, Device> implements Parcelable {
+public class Location implements Parcelable {
 
     private String mName;
 
     private int mOrder;
 
     private String mId;
+
+    private Map<String, Device> mDevices = new LinkedHashMap<>();
 
     public int getOrder() {
         return mOrder;
@@ -71,7 +74,7 @@ public class Location extends HashMap<String, Device> implements Parcelable {
         bundle.setClassLoader(getClass().getClassLoader());
 
         for (String deviceId : bundle.keySet()) {
-            put(deviceId, (Device) bundle.getParcelable(deviceId));
+            mDevices.put(deviceId, (Device) bundle.getParcelable(deviceId));
         }
     }
 
@@ -83,8 +86,8 @@ public class Location extends HashMap<String, Device> implements Parcelable {
 
         final Bundle devices = new Bundle();
 
-        for (String deviceId : keySet()) {
-            devices.putParcelable(deviceId, get(deviceId));
+        for (String deviceId : mDevices.keySet()) {
+            devices.putParcelable(deviceId, mDevices.get(deviceId));
         }
 
         parcel.writeBundle(devices);
@@ -96,12 +99,12 @@ public class Location extends HashMap<String, Device> implements Parcelable {
     }
 
     public void addSorted(Map<String, Device> devices) {
-        final List<Entry<String, Device>> entries = new LinkedList<>(devices.entrySet());
+        final List<Map.Entry<String, Device>> entries = new LinkedList<>(devices.entrySet());
 
-        Collections.sort(entries, new Comparator<Entry<String, Device>>() {
+        Collections.sort(entries, new Comparator<Map.Entry<String, Device>>() {
             @Override
-            public int compare(Entry<String, Device> e1,
-                               Entry<String, Device> e2) {
+            public int compare(Map.Entry<String, Device> e1,
+                               Map.Entry<String, Device> e2) {
 
                 final int o1 = e1.getValue().getOrder();
                 final int o2 = e2.getValue().getOrder();
@@ -117,8 +120,19 @@ public class Location extends HashMap<String, Device> implements Parcelable {
         });
 
         for (Map.Entry<String, Device> entry : entries) {
-            put(entry.getKey(), entry.getValue());
+            mDevices.put(entry.getKey(), entry.getValue());
         }
     }
 
+    public Device get(String deviceId) {
+        return mDevices.get(deviceId);
+    }
+
+    public int size() {
+        return mDevices.size();
+    }
+
+    public Collection<Device> values() {
+        return mDevices.values();
+    }
 }
