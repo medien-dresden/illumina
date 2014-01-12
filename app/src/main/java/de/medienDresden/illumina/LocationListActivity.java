@@ -120,6 +120,7 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
 
         mProgressBar.setIndeterminate(true);
         mServiceConnection = new PilightServiceConnection(this, this);
+        mIsConnectButtonVisible = true;
 
         AppRater.app_launched(this);
     }
@@ -154,9 +155,7 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
         super.onResume();
         mIsPaused = false;
 
-        setBusy(true);
         loadPreferences();
-
         mServiceConnection.bind(this);
     }
 
@@ -261,16 +260,14 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
 
     @Override
     public void onServiceBound() {
-        connect();
+        if (!TextUtils.isEmpty(mHost) && mPort > 1) {
+            connect();
+        }
     }
 
     private void connect() {
         onDisconnect();
         setBusy(true);
-
-        if (TextUtils.isEmpty(mHost) && mPort < 1) {
-            return;
-        }
 
         if (!mServiceConnection.getService().isConnected(mHost, mPort)) {
             mServiceConnection.getService().connect(mHost, mPort);
