@@ -322,7 +322,8 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
                             .setTabListener(this));
         }
 
-        if (mSelectedLocationIndex <= locationCount && locationCount > 1) {
+        if (mSelectedLocationIndex <= actionBar.getTabCount()
+                && actionBar.getNavigationMode() != ActionBar.NAVIGATION_MODE_STANDARD) {
             actionBar.setSelectedNavigationItem(mSelectedLocationIndex);
         }
 
