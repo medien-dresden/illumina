@@ -12,6 +12,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -96,6 +97,8 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i(TAG, "onCreate()");
+
         setContentView(R.layout.activity_location_list);
 
         final ActionBar actionBar = getSupportActionBar();
@@ -155,6 +158,7 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
     @Override
     protected void onResume() {
         super.onResume();
+        Log.i(TAG, "onResume()");
         mIsPaused = false;
 
         loadPreferences();
@@ -164,6 +168,7 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
     @Override
     protected void onPause() {
         super.onPause();
+        Log.i(TAG, "onPause()");
         mIsPaused = true;
 
         savePreferences();

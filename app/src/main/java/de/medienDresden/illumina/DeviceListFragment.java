@@ -61,15 +61,25 @@ public class DeviceListFragment extends ListFragment implements DeviceAdapter.Ch
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
         mLocation = getArguments().getParcelable(ARG_LOCATION);
+
+        assert mLocation != null;
+        Log.i(TAG, mLocation.getId() + ": onCreate()");
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Log.i(TAG, mLocation.getId() + ": onActivityCreated()");
+
         mBroadcastManager = LocalBroadcastManager.getInstance(
                 getActivity().getApplicationContext());
 
         if (mLocation.size() < 1) {
-            Log.i(TAG, mLocation.getName() + " has no devices to show");
+            Log.i(TAG, mLocation.getId() + " has no devices to show");
         }
 
         final View emptyView = LayoutInflater.from(getActivity())
@@ -99,8 +109,26 @@ public class DeviceListFragment extends ListFragment implements DeviceAdapter.Ch
     }
 
     @Override
+    public void setChecked(int position, boolean checked) {
+        getListView().setItemChecked(position, checked);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.i(TAG, mLocation.getId() + ": onPause()");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.i(TAG, mLocation.getId() + ": onResume()");
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
+        Log.i(TAG, mLocation.getId() + ": onStart()");
 
         mBroadcastManager.registerReceiver(mReceiver,
                 new IntentFilter(PilightService.ACTION_REMOTE_CHANGE));
@@ -109,13 +137,9 @@ public class DeviceListFragment extends ListFragment implements DeviceAdapter.Ch
     @Override
     public void onStop() {
         super.onStop();
+        Log.i(TAG, mLocation.getId() + ": onStop()");
 
         mBroadcastManager.unregisterReceiver(mReceiver);
-    }
-
-    @Override
-    public void setChecked(int position, boolean checked) {
-        getListView().setItemChecked(position, checked);
     }
 
 }

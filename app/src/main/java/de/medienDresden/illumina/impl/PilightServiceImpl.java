@@ -43,7 +43,7 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
         Disconnecting,
         HandshakePending,
         ConfigRequested,
-        Error;
+        Error
     }
     private PilightState mState = PilightState.Disconnected;
 
@@ -334,6 +334,7 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.i(TAG, "onCreate()");
 
         mBroadcastManager = LocalBroadcastManager.getInstance(getApplicationContext());
 
@@ -344,6 +345,7 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.i(TAG, "onDestroy()");
 
         mBroadcastManager.unregisterReceiver(mLocalChangeReceiver);
     }
