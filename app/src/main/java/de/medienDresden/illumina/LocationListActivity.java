@@ -107,8 +107,10 @@ public class LocationListActivity extends ActionBarActivity implements ActionBar
         mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
-                actionBar.setSelectedNavigationItem(position);
-                mSelectedLocationIndex = position;
+                if (actionBar.getNavigationMode() != ActionBar.NAVIGATION_MODE_STANDARD) {
+                    actionBar.setSelectedNavigationItem(position);
+                    mSelectedLocationIndex = position;
+                }
             }
         });
 
