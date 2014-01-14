@@ -86,6 +86,7 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
         public void onReceive(Context context, Intent intent) {
             final JSONObject json = new JSONObject();
             final JSONObject code = new JSONObject();
+            final JSONObject values = new JSONObject();
 
             final Device device = intent.getParcelableExtra(EXTRA_DEVICE);
 
@@ -98,7 +99,9 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
                 code.put("location", device.getLocationId());
                 code.put("device", device.getId());
                 code.put("state", device.getValue());
-                code.put("dimlevel", device.getDimLevel());
+                code.put("values", values);
+
+                values.put("dimlevel", device.getDimLevel());
 
                 sendSocketMessage(json);
 

@@ -21,7 +21,8 @@ import java.util.ArrayList;
 import de.medienDresden.illumina.pilight.Device;
 import de.medienDresden.illumina.pilight.Location;
 
-public class DeviceListFragment extends ListFragment implements DeviceAdapter.CheckHelper {
+public class DeviceListFragment extends ListFragment implements DeviceAdapter.CheckHelper,
+        DeviceAdapter.ChangeListener {
 
     private static final String TAG = DeviceListFragment.class.getSimpleName();
 
@@ -91,7 +92,7 @@ public class DeviceListFragment extends ListFragment implements DeviceAdapter.Ch
         getListView().setEmptyView(emptyView);
 
         mAdapter = new DeviceAdapter(getActivity(),
-                R.layout.device_list_item, new ArrayList<>(mLocation.values()), this);
+                new ArrayList<>(mLocation.values()), this, this);
 
         setListAdapter(mAdapter);
         getListView().setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
@@ -99,13 +100,9 @@ public class DeviceListFragment extends ListFragment implements DeviceAdapter.Ch
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        final Intent intent = new Intent(PilightService.ACTION_LOCAL_CHANGE);
         final Device device = (Device) getListAdapter().getItem(position);
-
         device.toggle();
-
-        intent.putExtra(PilightService.EXTRA_DEVICE, device);
-        mBroadcastManager.sendBroadcast(intent);
+        sendLocalChange(device);
     }
 
     @Override
@@ -140,6 +137,17 @@ public class DeviceListFragment extends ListFragment implements DeviceAdapter.Ch
         Log.i(TAG, mLocation.getId() + ": onStop()");
 
         mBroadcastManager.unregisterReceiver(mReceiver);
+    }
+
+    @Override
+    public void onChanged(Device device) {
+        sendLocalChange(device);
+    }
+
+    void sendLocalChange(Device device) {
+        final Intent intent = new Intent(PilightService.ACTION_LOCAL_CHANGE);
+        intent.putExtra(PilightService.EXTRA_DEVICE, device);
+        mBroadcastManager.sendBroadcast(intent);
     }
 
 }

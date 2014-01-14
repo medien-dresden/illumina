@@ -18,8 +18,9 @@ public class Device implements Parcelable {
 
     public enum Type {
         Switch,
-        Dimmer;
+        Dimmer
     }
+
     private String mId;
 
     private String mLocationId;
@@ -65,13 +66,7 @@ public class Device implements Parcelable {
     }
 
     public void setValue(String value) {
-        if (TextUtils.equals(value, VALUE_ON)) {
-            mDimLevel = DIM_LEVEL_MAX;
-            mValue = VALUE_ON;
-        } else {
-            mDimLevel = DIM_LEVEL_MIN;
-            mValue = VALUE_OFF;
-        }
+        mValue = value;
     }
 
     public ArrayList<String> getValues() {
@@ -99,6 +94,12 @@ public class Device implements Parcelable {
     }
 
     public void setDimLevel(int dimLevel) {
+        if (mDimLevel > DIM_LEVEL_MIN) {
+            mValue = VALUE_ON;
+        } else {
+            mValue = VALUE_OFF;
+        }
+
         mDimLevel = dimLevel;
     }
 
@@ -113,10 +114,8 @@ public class Device implements Parcelable {
     public void toggle() {
         if (TextUtils.equals(mValue, VALUE_ON)) {
             mValue = VALUE_OFF;
-            mDimLevel = DIM_LEVEL_MIN;
         } else {
             mValue = VALUE_ON;
-            mDimLevel = DIM_LEVEL_MAX;
         }
     }
 
