@@ -1,4 +1,4 @@
-package de.medienDresden.illumina;
+package de.medienDresden.illumina.service;
 
 public interface PilightService {
 

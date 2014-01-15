@@ -1,4 +1,4 @@
-package de.medienDresden.illumina;
+package de.medienDresden.illumina.widget;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import de.medienDresden.illumina.fragment.DeviceListFragment;
 import de.medienDresden.illumina.pilight.Location;
 
 public class LocationPagerAdapter extends FragmentPagerAdapter {

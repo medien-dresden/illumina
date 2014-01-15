@@ -1,4 +1,4 @@
-package de.medienDresden.illumina.impl;
+package de.medienDresden.illumina.service;
 
 import android.app.Service;
 import android.content.Intent;
@@ -17,10 +17,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import de.medienDresden.illumina.Illumina;
-import de.medienDresden.illumina.PilightService;
+import de.medienDresden.Illumina;
 import de.medienDresden.illumina.communication.StreamingSocket;
-import de.medienDresden.illumina.communication.impl.StreamingSocketImpl;
+import de.medienDresden.illumina.communication.StreamingSocketImpl;
 import de.medienDresden.illumina.pilight.Device;
 import de.medienDresden.illumina.pilight.Setting;
 

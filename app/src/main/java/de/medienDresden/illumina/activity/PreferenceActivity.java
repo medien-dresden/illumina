@@ -1,4 +1,4 @@
-package de.medienDresden.illumina;
+package de.medienDresden.illumina.activity;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -8,9 +8,10 @@ import com.github.machinarius.preferencefragment.PreferenceFragment;
 
 import org.codechimp.apprater.AppRater;
 
+import de.medienDresden.illumina.R;
 import de.psdev.licensesdialog.LicensesDialogFragment;
 
-public class IlluminaPreferenceActivity extends FragmentActivity {
+public class PreferenceActivity extends FragmentActivity {
 
     public static final String ACTION_RATE
             = "de.medienDresden.illumina.ACTION_RATE";

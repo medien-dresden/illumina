@@ -1,4 +1,4 @@
-package de.medienDresden.illumina.communication.impl;
+package de.medienDresden.illumina.communication;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,8 +13,6 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-
-import de.medienDresden.illumina.communication.StreamingSocket;
 
 public class StreamingSocketImpl implements StreamingSocket {
 

@@ -1,4 +1,4 @@
-package de.medienDresden.illumina;
+package de.medienDresden;
 
 import android.app.Application;
 import android.content.Intent;
@@ -9,7 +9,10 @@ import org.acra.ReportingInteractionMode;
 import org.acra.annotation.ReportsCrashes;
 import org.codechimp.apprater.AppRater;
 
-import de.medienDresden.illumina.impl.PilightServiceImpl;
+import de.medienDresden.acra.BitbucketReportSender;
+import de.medienDresden.illumina.BuildConfig;
+import de.medienDresden.illumina.R;
+import de.medienDresden.illumina.service.PilightServiceImpl;
 
 
 

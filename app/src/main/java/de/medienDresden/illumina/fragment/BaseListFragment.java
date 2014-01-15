@@ -1,4 +1,4 @@
-package de.medienDresden.illumina;
+package de.medienDresden.illumina.fragment;
 
 import android.os.Bundle;
 import android.os.Message;
@@ -6,11 +6,12 @@ import android.support.v4.app.ListFragment;
 
 import java.util.ArrayList;
 
+import de.medienDresden.illumina.service.PilightBinder;
 import de.medienDresden.illumina.pilight.Device;
 import de.medienDresden.illumina.pilight.Location;
 
 public abstract class BaseListFragment extends ListFragment implements
-    PilightBinder.ServiceListener {
+        PilightBinder.ServiceListener {
 
     private PilightBinder mBinder;
 

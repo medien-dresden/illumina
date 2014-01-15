@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-    class="de.medienDresden.illumina.IlluminaPreferenceActivity$SettingsFragment"
+    class="de.medienDresden.illumina.activity.PreferenceActivity$SettingsFragment"
     android:id="@+id/info"
     android:layout_marginRight="16dp"
     android:layout_marginLeft="16dp"

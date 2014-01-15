@@ -1,4 +1,4 @@
-package de.medienDresden.illumina;
+package de.medienDresden.illumina.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,6 +13,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+
+import de.medienDresden.Illumina;
+import de.medienDresden.illumina.service.PilightService;
+import de.medienDresden.illumina.R;
 
 public class ConnectionActivity extends BaseActivity {
 

@@ -6,14 +6,14 @@
     <uses-permission android:name="android.permission.READ_LOGS" />
 
     <application
-        android:name=".Illumina"
+        android:name="de.medienDresden.Illumina"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/Theme.Illumina" >
 
         <activity
-            android:name=".ConnectionActivity"
+            android:name=".activity.ConnectionActivity"
             android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="stateHidden"
             android:label="@string/app_name" >
@@ -26,12 +26,12 @@
         </activity>
 
         <activity
-            android:name=".LocationListActivity"
+            android:name=".activity.LocationListActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/app_name" />
 
         <activity
-            android:name=".IlluminaPreferenceActivity"
+            android:name=".activity.PreferenceActivity"
             android:label="@string/settings" />
 
         <activity
@@ -42,7 +42,7 @@
             android:finishOnTaskLaunch="true" />
 
         <service
-            android:name=".impl.PilightServiceImpl"
+            android:name=".service.PilightServiceImpl"
             android:icon="@drawable/ic_launcher"
             android:label="@string/app_name" />
 

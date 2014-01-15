@@ -1,4 +1,4 @@
-package de.medienDresden.illumina;
+package de.medienDresden.illumina.fragment;
 
 import android.os.Bundle;
 import android.os.Message;
@@ -11,6 +11,9 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
+import de.medienDresden.illumina.widget.DeviceAdapter;
+import de.medienDresden.illumina.service.PilightService;
+import de.medienDresden.illumina.R;
 import de.medienDresden.illumina.pilight.Device;
 import de.medienDresden.illumina.pilight.Location;
 

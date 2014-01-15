@@ -1,4 +1,4 @@
-package de.medienDresden.illumina;
+package de.medienDresden.illumina.activity;
 
 import android.os.Bundle;
 import android.os.Message;
@@ -11,6 +11,9 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
+import de.medienDresden.illumina.widget.LocationPagerAdapter;
+import de.medienDresden.illumina.service.PilightService;
+import de.medienDresden.illumina.R;
 import de.medienDresden.illumina.pilight.Location;
 
 public class LocationListActivity extends BaseActivity {

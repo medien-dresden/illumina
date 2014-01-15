@@ -1,4 +1,4 @@
-package de.medienDresden.illumina;
+package de.medienDresden.illumina.service;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -15,7 +15,6 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
-import de.medienDresden.illumina.impl.PilightServiceImpl;
 import de.medienDresden.illumina.pilight.Device;
 import de.medienDresden.illumina.pilight.Location;
 

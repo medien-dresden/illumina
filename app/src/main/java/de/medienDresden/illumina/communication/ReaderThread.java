@@ -1,4 +1,4 @@
-package de.medienDresden.illumina.communication.impl;
+package de.medienDresden.illumina.communication;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,7 +12,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 
-class ReaderThread extends Thread {
+public class ReaderThread extends Thread {
 
     private static final String TAG = ReaderThread.class.getSimpleName();
 

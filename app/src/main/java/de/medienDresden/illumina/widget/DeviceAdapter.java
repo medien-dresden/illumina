@@ -1,4 +1,4 @@
-package de.medienDresden.illumina;
+package de.medienDresden.illumina.widget;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -11,13 +11,14 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import de.medienDresden.illumina.R;
 import de.medienDresden.illumina.pilight.Device;
 
 public class DeviceAdapter extends ArrayAdapter<Device> {
 
     private DimLevelListener mDimLevelListener;
 
-    interface DimLevelListener {
+    public interface DimLevelListener {
         void onDimLevelChanged(Device device);
     }
 

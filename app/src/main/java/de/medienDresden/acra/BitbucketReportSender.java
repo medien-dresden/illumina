@@ -1,4 +1,4 @@
-package de.medienDresden.illumina;
+package de.medienDresden.acra;
 
 import android.text.TextUtils;
 import android.util.Log;

@@ -1,4 +1,4 @@
-package de.medienDresden.illumina;
+package de.medienDresden.illumina.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +10,9 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import de.medienDresden.illumina.service.PilightBinder;
+import de.medienDresden.illumina.service.PilightService;
+import de.medienDresden.illumina.R;
 import de.medienDresden.illumina.pilight.Device;
 import de.medienDresden.illumina.pilight.Location;
 
@@ -165,7 +168,7 @@ public abstract class BaseActivity extends ActionBarActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings:
-                startActivity(new Intent(this, IlluminaPreferenceActivity.class));
+                startActivity(new Intent(this, PreferenceActivity.class));
                 return true;
 
             default:
