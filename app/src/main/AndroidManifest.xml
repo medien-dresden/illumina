@@ -42,7 +42,6 @@
             android:finishOnTaskLaunch="true" />
 
         <service
-            android:process=":pilight"
             android:name=".service.PilightServiceImpl"
             android:icon="@drawable/ic_launcher"
             android:label="@string/app_name" />

@@ -341,16 +341,6 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
         return Service.START_STICKY;
     }
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-
-        if (!TextUtils.isEmpty(getHostFromPreferences()) && getPortFromPreferences() > 0) {
-            mCurrentlyTriesReconnecting = false;
-            connect();
-        }
-    }
-
     // ------------------------------------------------------------------------
     //
     //      Binding
