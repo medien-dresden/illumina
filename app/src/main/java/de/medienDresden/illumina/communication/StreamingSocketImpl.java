@@ -53,7 +53,7 @@ public class StreamingSocketImpl implements StreamingSocket {
             final boolean isInterrupted = data.getBoolean(ReaderThread.EXTRA_INTERRUPTED);
 
             if (isInterrupted) {
-                disconnect();
+                dispatchError();
 
             } else if (TextUtils.equals("BEAT", message)) {
                 mLastHeartBeatResponse = System.currentTimeMillis();
@@ -81,7 +81,6 @@ public class StreamingSocketImpl implements StreamingSocket {
 
                 if (HEARTBEAT_TIMEOUT < System.currentTimeMillis() - mLastHeartBeatResponse) {
                     dispatchError();
-                    disconnect();
                 }
 
                 try {
@@ -117,9 +116,7 @@ public class StreamingSocketImpl implements StreamingSocket {
 
             } catch (IOException exception) {
                 Log.w(TAG, exception.getMessage());
-                mIsConnected = false;
                 dispatchError();
-                disconnect();
             }
         }
     };
@@ -129,13 +126,9 @@ public class StreamingSocketImpl implements StreamingSocket {
     }
 
     private void dispatchError() {
-        final Message msg = mHandler.obtainMessage(MSG_DISCONNECTED);
-        final Bundle bundle = new Bundle();
-
-        bundle.putBoolean(EXTRA_ERROR, true);
-        msg.setData(bundle);
-
-        mHandler.sendMessage(msg);
+        mHandler.sendMessage(mHandler.obtainMessage(MSG_ERROR));
+        mIsConnected = false;
+        disconnect();
     }
 
     @Override

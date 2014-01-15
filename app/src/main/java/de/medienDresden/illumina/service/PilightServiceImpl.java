@@ -52,21 +52,22 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
                     onSocketConnected();
                     break;
 
-                case StreamingSocket.MSG_DISCONNECTED:
-                    assert data != null;
-                    final boolean isError = data.getBoolean(StreamingSocket.EXTRA_ERROR, false);
 
-                    if (isError) {
+                case StreamingSocket.MSG_DISCONNECTED:
+                    onSocketDisconnected();
+                    break;
+
+                case StreamingSocket.MSG_ERROR:
+                    if (mState == PilightState.Connecting) {
                         onSocketConnectionFailed();
                     } else {
-                        onSocketDisconnected();
+                        onSocketError();
                     }
-
                     break;
 
                 case StreamingSocket.MSG_MESSAGE_RECEIVED:
-                    assert msg.getData() != null;
-                    onSocketMessage(msg.getData().getString(StreamingSocket.EXTRA_MESSAGE));
+                    assert data != null;
+                    onSocketMessage(data.getString(StreamingSocket.EXTRA_MESSAGE));
                     break;
 
                 default:
@@ -93,23 +94,20 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
     }
 
     private void onSocketConnectionFailed() {
-        if (mState != PilightState.Disconnected) {
-            Log.w(TAG, "pilight connection failed");
-            sendBroadcast(News.ERROR, Error.CONNECTION_FAILED);
-            mState = PilightState.Disconnected;
-        }
+        Log.w(TAG, "pilight connection failed");
+        sendBroadcast(News.ERROR, Error.CONNECTION_FAILED);
+        mState = PilightState.Disconnected;
     }
 
     private void onSocketDisconnected() {
         Log.i(TAG, "pilight disconnected");
+        sendBroadcast(News.DISCONNECTED);
+        mState = PilightState.Disconnected;
+    }
 
-        if (mState != PilightState.Disconnecting) {
-            Log.w(TAG, "- closed by remote");
-            sendBroadcast(News.ERROR, Error.REMOTE_CLOSED);
-        } else {
-            sendBroadcast(News.DISCONNECTED);
-        }
-
+    private void onSocketError() {
+        Log.i(TAG, "pilight socket error");
+        sendBroadcast(News.ERROR, Error.REMOTE_CLOSED);
         mState = PilightState.Disconnected;
     }
 
@@ -122,6 +120,8 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
             json.put("message", "client gui");
         } catch (JSONException exception) {
             Log.e(TAG, "- error creating handshake message", exception);
+            sendBroadcast(News.ERROR, Error.CONNECTION_FAILED);
+            mState = PilightState.Disconnected;
         }
 
         sendSocketMessage(json);
