@@ -30,6 +30,8 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
 
     private Setting mSetting;
 
+    private boolean mCurrentlyTriesReconnecting;
+
     private enum PilightState {
         Connected,
         Connecting,
@@ -60,7 +62,7 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
                     break;
 
                 case StreamingSocket.MSG_ERROR:
-                    if (mState == PilightState.Connecting) {
+                    if (mState == PilightState.Connecting && !mCurrentlyTriesReconnecting) {
                         onSocketConnectionFailed();
                     } else {
                         onSocketError();
@@ -109,8 +111,20 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
 
     private void onSocketError() {
         Log.i(TAG, "pilight socket error");
-        // maybe reconnect
-        sendBroadcast(News.ERROR, Error.REMOTE_CLOSED);
+        if (!mCurrentlyTriesReconnecting && mState != PilightState.Disconnected) {
+            mCurrentlyTriesReconnecting = true;
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Log.i(TAG, "reconnecting");
+                    connect();
+                }
+            }, 100);
+
+        } else if (mState != PilightState.Disconnected) {
+            sendBroadcast(News.ERROR, Error.REMOTE_CLOSED);
+        }
+
         mState = PilightState.Disconnected;
     }
 
@@ -197,7 +211,12 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
             try {
                 mPilight.startHeartBeat();
                 mSetting = Setting.create(this, json.getJSONObject("config"));
-                sendBroadcast(News.CONNECTED);
+
+                if (!mCurrentlyTriesReconnecting) {
+                    sendBroadcast(News.CONNECTED);
+                }
+
+                mCurrentlyTriesReconnecting = false;
                 mState = PilightState.Connected;
                 return;
 
@@ -322,6 +341,16 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
         return Service.START_STICKY;
     }
 
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        if (!TextUtils.isEmpty(getHostFromPreferences()) && getPortFromPreferences() > 0) {
+            mCurrentlyTriesReconnecting = false;
+            connect();
+        }
+    }
+
     // ------------------------------------------------------------------------
     //
     //      Binding
@@ -349,9 +378,10 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
             switch (msg.what) {
                 case Request.REGISTER:
                     mClients.add(msg.replyTo);
-                    if (!isConnected()) {
-                        sendDisconnectedState(msg.replyTo);
-                    }
+                    break;
+
+                case Request.STATE:
+                    sendState(msg.replyTo);
                     break;
 
                 case Request.UNREGISTER:
@@ -360,7 +390,10 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
 
                 case Request.PILIGHT_CONNECT:
                     if (!isConnected()) {
+                        mCurrentlyTriesReconnecting = false;
                         connect();
+                    } else {
+                        sendBroadcast(News.CONNECTED);
                     }
                     break;
 
@@ -390,9 +423,13 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
         }
     }
 
-    private void sendDisconnectedState(Messenger receiver) {
+    private void sendState(Messenger receiver) {
         try {
-            receiver.send(Message.obtain(null, News.DISCONNECTED));
+            if (isConnected()) {
+                receiver.send(Message.obtain(null, News.CONNECTED));
+            } else {
+                receiver.send(Message.obtain(null, News.DISCONNECTED));
+            }
         } catch (RemoteException exception) {
             Log.e(TAG, "sending disconnected state failed", exception);
         }

@@ -10,7 +10,7 @@
             android:summary="@string/rate_illumina_summary">
             <intent
                 android:targetPackage="de.medienDresden.illumina"
-                android:targetClass="de.medienDresden.illumina.IlluminaPreferenceActivity"
+                android:targetClass="de.medienDresden.illumina.activity.PreferenceActivity"
                 android:action="de.medienDresden.illumina.ACTION_RATE" />
         </Preference>
 
@@ -19,7 +19,7 @@
             android:summary="@string/licenses_summary">
             <intent
                 android:targetPackage="de.medienDresden.illumina"
-                android:targetClass="de.medienDresden.illumina.IlluminaPreferenceActivity"
+                android:targetClass="de.medienDresden.illumina.activity.PreferenceActivity"
                 android:action="de.medienDresden.illumina.ACTION_LICENSES" />
         </Preference>
 

@@ -26,6 +26,8 @@ public interface PilightService {
 
         public static final int DEVICE_CHANGE = 100;
 
+        public static final int STATE = 140;
+
     }
 
     interface News {

@@ -40,9 +40,15 @@ public class LocationListActivity extends BaseActivity {
     }
 
     @Override
+    public void onPilightConnected() {
+        super.onPilightConnected();
+        requestLocations();
+    }
+
+    @Override
     public void onServiceConnected() {
         super.onServiceConnected();
-        requestLocations();
+        dispatch(Message.obtain(null, PilightService.Request.STATE));
     }
 
     @Override

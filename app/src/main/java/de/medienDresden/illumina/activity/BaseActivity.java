@@ -186,7 +186,7 @@ public abstract class BaseActivity extends ActionBarActivity implements
                 return true;
 
             case android.R.id.home:
-                finish();
+                onBackPressed();
                 return true;
 
             default:
