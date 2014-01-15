@@ -1,22 +1,23 @@
 package de.medienDresden.illumina.impl;
 
 import android.app.Service;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.support.v4.content.LocalBroadcastManager;
+import android.os.Messenger;
+import android.os.RemoteException;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
+import de.medienDresden.illumina.Illumina;
 import de.medienDresden.illumina.PilightService;
 import de.medienDresden.illumina.communication.StreamingSocket;
 import de.medienDresden.illumina.communication.impl.StreamingSocketImpl;
@@ -27,14 +28,7 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
 
     public static final String TAG = PilightServiceImpl.class.getSimpleName();
 
-    private final IBinder mBinder = new LocalBinderImpl();
-
     private Setting mSetting;
-
-    private ServiceHandler mServiceHandler;
-
-    private LocalBroadcastManager mBroadcastManager;
-
 
     private enum PilightState {
         Connected,
@@ -45,6 +39,7 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
         ConfigRequested,
         Error
     }
+
     private PilightState mState = PilightState.Disconnected;
 
     private final Handler mPilightHandler = new Handler() {
@@ -81,41 +76,7 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
         }
     };
 
-    private BroadcastReceiver mLocalChangeReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            final JSONObject json = new JSONObject();
-            final JSONObject code = new JSONObject();
-            final JSONObject values = new JSONObject();
-
-            final Device device = intent.getParcelableExtra(EXTRA_DEVICE);
-
-            assert device != null;
-
-            try {
-                json.put("message", "send");
-                json.put("code", code);
-
-                code.put("location", device.getLocationId());
-                code.put("device", device.getId());
-                code.put("state", device.getValue());
-                code.put("values", values);
-
-                values.put("dimlevel", device.getDimLevel());
-
-                sendSocketMessage(json);
-
-            } catch (JSONException exception) {
-                Log.e(TAG, "sending change failed with " + exception.getMessage());
-            }
-        }
-    };
-
     private final StreamingSocket mPilight = new StreamingSocketImpl(mPilightHandler);
-
-    private void setServiceHandler(ServiceHandler handler) {
-        mServiceHandler = handler;
-    }
 
     private void sendSocketMessage(JSONObject json) {
         final String jsonString = json.toString();
@@ -126,14 +87,14 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
 
     @Override
     public void onRemoteChange(Device device) {
-        final Intent intent = new Intent(ACTION_REMOTE_CHANGE);
-        intent.putExtra(EXTRA_DEVICE, device);
-        mBroadcastManager.sendBroadcast(intent);
+        final Bundle bundle = new Bundle();
+        bundle.putParcelable(Extra.DEVICE, device);
+        sendBroadcast(News.DEVICE_CHANGE, bundle);
     }
 
     private void onSocketConnectionFailed() {
         Log.w(TAG, "pilight connection failed");
-        mServiceHandler.onPilightError(Error.ConnectionFailed);
+        sendBroadcast(News.ERROR, Error.CONNECTION_FAILED);
         mState = PilightState.Disconnected;
     }
 
@@ -142,9 +103,9 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
 
         if (mState != PilightState.Disconnecting) {
             Log.w(TAG, "- closed by remote");
-            mServiceHandler.onPilightError(Error.RemoteClosedConnection);
+            sendBroadcast(News.ERROR, Error.REMOTE_CLOSED);
         } else {
-            mServiceHandler.onPilightDisconnected();
+            sendBroadcast(News.DISCONNECTED);
         }
 
         mState = PilightState.Disconnected;
@@ -233,7 +194,7 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
             try {
                 mPilight.startHeartBeat();
                 mSetting = Setting.create(this, json.getJSONObject("config"));
-                mServiceHandler.onPilightConnected(mSetting);
+                sendBroadcast(News.CONNECTED);
                 mState = PilightState.Connected;
                 return;
 
@@ -242,7 +203,7 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
             }
         }
 
-        mServiceHandler.onPilightError(Error.HandshakeFailed);
+        sendBroadcast(News.ERROR, Error.HANDSHAKE_FAILED);
         mState = PilightState.Error;
     }
 
@@ -276,32 +237,25 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
             }
         }
 
-        mServiceHandler.onPilightError(Error.HandshakeFailed);
+        sendBroadcast(News.ERROR, Error.HANDSHAKE_FAILED);
         mState = PilightState.Error;
     }
 
-    @Override
-    public boolean isConnected(String host, int port) {
-        final boolean isEndpointUnchanged = port == mPilight.getPort()
-                && TextUtils.equals(host, mPilight.getHost());
+    public boolean isConnected() {
+        final boolean isEndpointUnchanged =
+                   getPortFromPreferences() == mPilight.getPort()
+                && TextUtils.equals(getHostFromPreferences(), mPilight.getHost());
 
         return isEndpointUnchanged && mPilight.isConnected();
     }
 
-    @Override
-    public Setting getSetting() {
-        return mSetting;
-    }
-
-    @Override
-    public void connect(String host, int port) {
+    public void connect() {
         Log.i(TAG, "connect request");
 
-        mPilight.connect(host, port);
+        mPilight.connect(getHostFromPreferences(), getPortFromPreferences());
         mState = PilightState.Connecting;
     }
 
-    @Override
     public void disconnect() {
         Log.i(TAG, "disconnect request");
 
@@ -314,43 +268,189 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
         mPilight.disconnect();
     }
 
+    private String getHostFromPreferences() {
+        return PreferenceManager
+                .getDefaultSharedPreferences(this).getString(Illumina.PREF_HOST, "");
+    }
+
+    private int getPortFromPreferences() {
+        return PreferenceManager
+                .getDefaultSharedPreferences(this).getInt(Illumina.PREF_PORT, 0);
+    }
+
+    public void sendDeviceChange(Device device, int changedProperty) {
+        try {
+            final JSONObject json = new JSONObject();
+            final JSONObject code = new JSONObject();
+            final JSONObject values = new JSONObject();
+
+            json.put("message", "send");
+            json.put("code", code);
+
+            code.put("location", device.getLocationId());
+            code.put("device", device.getId());
+
+            if (changedProperty == Device.PROPERTY_DIM_LEVEL) {
+                code.put("values", values);
+                values.put("dimlevel", device.getDimLevel());
+            }
+
+            if (changedProperty == Device.PROPERTY_VALUE) {
+                code.put("state", device.getValue());
+            }
+
+            sendSocketMessage(json);
+
+        } catch (JSONException exception) {
+            Log.e(TAG, "sending change failed with " + exception.getMessage());
+        }
+    }
+
+    // ------------------------------------------------------------------------
+    //
+    //      Lifecycle
+    //
+    // ------------------------------------------------------------------------
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        // We want this service to continue running until it is explicitly
+        // stopped, so return sticky.
         return Service.START_STICKY;
+    }
+
+    // ------------------------------------------------------------------------
+    //
+    //      Binding
+    //
+    // ------------------------------------------------------------------------
+
+    /** Target we publish for clients to send messages to IncomingHandler. */
+    private final Messenger mMessenger = new Messenger(new IncomingHandler());
+
+    /** Keeps track of all current registered clients. */
+    private final ArrayList<Messenger> mClients = new ArrayList<>();
+
+    /**
+     * Handler of incoming messages from clients.
+     */
+    class IncomingHandler extends Handler {
+        @Override
+        public void handleMessage(final Message msg) {
+            final Bundle data = msg.getData();
+
+            switch (msg.what) {
+                case Request.REGISTER:
+                    mClients.add(msg.replyTo);
+                    break;
+
+                case Request.UNREGISTER:
+                    mClients.remove(msg.replyTo);
+                    break;
+
+                case Request.PILIGHT_CONNECT:
+                    if (!isConnected()) {
+                        connect();
+                    }
+                    break;
+
+                case Request.PILIGHT_DISCONNECT:
+                    disconnect();
+                    break;
+
+                case Request.LOCATION_LIST:
+                    sendLocationList(mClients.get(mClients.indexOf(msg.replyTo)));
+                    break;
+
+                case Request.LOCATION:
+                    assert data != null;
+                    sendLocation(data.getString(Extra.LOCATION_ID),
+                            mClients.get(mClients.indexOf(msg.replyTo)));
+                    break;
+
+                case Request.DEVICE_CHANGE:
+                    assert data != null;
+                    sendDeviceChange((Device) data.getParcelable(Extra.DEVICE),
+                            data.getInt(Extra.CHANGED_PROPERTY));
+                    break;
+
+                default:
+                    super.handleMessage(msg);
+            }
+        }
+    }
+
+    private void sendLocation(String locationId, Messenger receiver) {
+        final Message message = Message.obtain(null, News.LOCATION);
+        final Bundle data = new Bundle();
+
+        data.putParcelable(Extra.LOCATION, mSetting.get(locationId));
+
+        assert message != null;
+        message.setData(data);
+
+        try {
+            receiver.send(message);
+        } catch (RemoteException exception) {
+            Log.e(TAG, "sending location failed", exception);
+        }
+    }
+
+    private void sendLocationList(Messenger receiver) {
+        final Message message = Message.obtain(null, News.LOCATION_LIST);
+        final Bundle data = new Bundle();
+
+        data.putParcelableArrayList(Extra.LOCATION_LIST,
+                new ArrayList<>(mSetting.values()));
+
+        assert message != null;
+        message.setData(data);
+
+        try {
+            receiver.send(message);
+        } catch (RemoteException exception) {
+            Log.e(TAG, "sending location list failed", exception);
+        }
+    }
+
+    private void sendBroadcast(final int what) {
+        sendBroadcast(what, null, 0);
+    }
+
+    private void sendBroadcast(final int what, int arg1) {
+        sendBroadcast(what, null, arg1);
+    }
+
+    private void sendBroadcast(final int what, Bundle data) {
+        sendBroadcast(what, data, 0);
+    }
+
+    private void sendBroadcast(final int what, Bundle data, int arg1) {
+        final ArrayList<Messenger> deadClients = new ArrayList<>();
+
+        for (Messenger client : mClients) {
+            final Message message = Message.obtain(null, what, arg1, 0);
+
+            if (data != null && message != null) {
+                message.setData(data);
+            }
+
+            try {
+                client.send(message);
+            } catch (RemoteException e) {
+                // The client is dead.  Remove it from the list;
+                // we are going through the list from back to front
+                // so this is safe to do inside the loop.
+                deadClients.add(client);
+            }
+        }
+
+        mClients.removeAll(deadClients);
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        return mBinder;
-    }
-
-    class LocalBinderImpl extends Binder implements PilightServiceConnection.LocalBinder {
-
-        @Override
-        public PilightService getService(ServiceHandler handler) {
-            setServiceHandler(handler);
-            return PilightServiceImpl.this;
-        }
-
-    }
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        Log.i(TAG, "onCreate()");
-
-        mBroadcastManager = LocalBroadcastManager.getInstance(getApplicationContext());
-
-        mBroadcastManager.registerReceiver(
-                mLocalChangeReceiver, new IntentFilter(ACTION_LOCAL_CHANGE));
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.i(TAG, "onDestroy()");
-
-        mBroadcastManager.unregisterReceiver(mLocalChangeReceiver);
+        return mMessenger.getBinder();
     }
 
 }

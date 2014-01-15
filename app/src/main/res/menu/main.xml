@@ -1,13 +1,5 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context="de.medienDresden.illumina.LocationListActivity" >
-
-    <item
-        android:id="@+id/action_connect"
-        android:title="@string/connect"
-        android:orderInCategory="200"
-        app:showAsAction="always" />
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/action_settings"

@@ -1,38 +1,70 @@
 package de.medienDresden.illumina;
 
-import de.medienDresden.illumina.pilight.Setting;
-
 public interface PilightService {
 
-    static final String ACTION_REMOTE_CHANGE = "action_remote_change";
+    interface Request {
 
-    static final String ACTION_LOCAL_CHANGE = "action_local_change";
+        /** Command to the service to register a client, receiving callbacks
+         * from the service. The Message's replyTo field must be a Messenger of
+         * the client where callbacks should be sent. */
+        public static final int REGISTER = 10;
 
-    static final String EXTRA_DEVICE = "device";
+        /** Command to the service to unregister a client, ot stop receiving callbacks
+         * from the service. The Message's replyTo field must be a Messenger of
+         * the client as previously given with MSG_REGISTER. */
+        public static final int UNREGISTER = 20;
 
-    enum Error {
-        Unknown,
-        ConnectionFailed,
-        RemoteClosedConnection,
-        HandshakeFailed;
+        /** Connection demand message */
+        public static final int PILIGHT_CONNECT = 30;
+
+        /** Disconnect request message */
+        public static final int PILIGHT_DISCONNECT = 40;
+
+        public static final int LOCATION_LIST = 50;
+
+        public static final int LOCATION = 130;
+
+        public static final int DEVICE_CHANGE = 100;
+
     }
 
-    interface ServiceHandler {
+    interface News {
 
-        void onPilightError(Error type);
+        /** Established connection indication message */
+        public static final int CONNECTED = 60;
 
-        void onPilightConnected(Setting setting);
+        /** Closed connection indication message */
+        public static final int DISCONNECTED = 70;
 
-        void onPilightDisconnected();
+        /** Error message */
+        public static final int ERROR = 80;
+
+        public static final int LOCATION_LIST = 90;
+
+        public static final int DEVICE_CHANGE = 110;
+
+        public static final int LOCATION = 120;
+    }
+
+    interface Extra {
+
+        public static final String LOCATION_LIST = "location_list";
+
+        public static final String DEVICE = "device";
+
+        public static final String LOCATION = "location";
+
+        public static final String LOCATION_ID = "location_id";
+
+        public static final String CHANGED_PROPERTY = "changed_property";
 
     }
 
-    boolean isConnected(String host, int port);
-
-    Setting getSetting();
-
-    void connect(String host, int port);
-
-    void disconnect();
+    interface Error {
+        public static final int UNKNOWN = 1;
+        public static final int CONNECTION_FAILED = 2;
+        public static final int REMOTE_CLOSED = 3;
+        public static final int HANDSHAKE_FAILED = 4;
+    }
 
 }

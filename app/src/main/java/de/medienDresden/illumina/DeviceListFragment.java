@@ -1,19 +1,12 @@
 package de.medienDresden.illumina;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
-import android.support.v4.content.LocalBroadcastManager;
+import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -21,42 +14,19 @@ import java.util.ArrayList;
 import de.medienDresden.illumina.pilight.Device;
 import de.medienDresden.illumina.pilight.Location;
 
-public class DeviceListFragment extends ListFragment implements DeviceAdapter.CheckHelper,
-        DeviceAdapter.ChangeListener {
+public class DeviceListFragment extends BaseListFragment implements DeviceAdapter.DimLevelListener {
 
     private static final String TAG = DeviceListFragment.class.getSimpleName();
 
-    private static final String ARG_LOCATION = "location";
+    public static final String ARG_LOCATION_ID = "locationId";
 
-    private Location mLocation;
+    private String mLocationId;
 
-    private LocalBroadcastManager mBroadcastManager;
-
-    private ArrayAdapter<Device> mAdapter;
-
-    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            final Device remoteDevice = intent.getParcelableExtra(PilightService.EXTRA_DEVICE);
-
-            assert remoteDevice != null;
-
-            if (TextUtils.equals(remoteDevice.getLocationId(), mLocation.getId())) {
-                final Device localDevice = mLocation.get(remoteDevice.getId());
-
-                localDevice.setValue(remoteDevice.getValue());
-                localDevice.setDimLevel(remoteDevice.getDimLevel());
-
-                mAdapter.notifyDataSetChanged();
-            }
-        }
-    };
-
-    public static DeviceListFragment newInstance(Location location) {
+    public static DeviceListFragment newInstance(String locationId) {
         final DeviceListFragment fragment = new DeviceListFragment();
         final Bundle args = new Bundle();
 
-        args.putParcelable(ARG_LOCATION, location);
+        args.putString(ARG_LOCATION_ID, locationId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -65,89 +35,92 @@ public class DeviceListFragment extends ListFragment implements DeviceAdapter.Ch
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mLocation = getArguments().getParcelable(ARG_LOCATION);
+        mLocationId = getArguments().getString(ARG_LOCATION_ID);
 
-        assert mLocation != null;
-        Log.i(TAG, mLocation.getId() + ": onCreate()");
+        assert mLocationId != null;
+        Log.i(TAG, mLocationId + ": onCreate()");
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        Log.i(TAG, mLocation.getId() + ": onActivityCreated()");
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        setEmptyView(R.layout.empty_data);
+    }
 
-        mBroadcastManager = LocalBroadcastManager.getInstance(
-                getActivity().getApplicationContext());
+    @Override
+    public void onServiceConnected() {
+        super.onServiceConnected();
+        requestLocation();
+    }
 
-        if (mLocation.size() < 1) {
-            Log.i(TAG, mLocation.getId() + " has no devices to show");
+    @Override
+    public void onLocationResponse(Location location) {
+        if (location.size() < 1) {
+            Log.i(TAG, mLocationId + " has no devices to show");
         }
 
-        final View emptyView = LayoutInflater.from(getActivity())
-                .inflate(R.layout.empty_data, null, false);
+        setListAdapter(new DeviceAdapter(getActivity(), new ArrayList<>(location.values()), this));
+    }
+
+    @Override
+    public void onPilightDeviceChange(Device remoteDevice) {
+        if (TextUtils.equals(remoteDevice.getLocationId(), mLocationId)) {
+            requestLocation();
+        }
+    }
+
+    @Override
+    public void onDimLevelChanged(Device device) {
+        sendDeviceChange(device, Device.PROPERTY_DIM_LEVEL);
+    }
+
+    @Override
+    public void onListItemClick(ListView listView, View view, int position, long id) {
+        final Device device = (Device) getListAdapter().getItem(position);
+
+        if (device.isOn()) {
+            device.setValue(Device.VALUE_OFF);
+        } else {
+            device.setValue(Device.VALUE_ON);
+        }
+
+        sendDeviceChange(device, Device.PROPERTY_VALUE);
+    }
+
+    private void requestLocation() {
+        final Message msg = Message.obtain(null, PilightService.Request.LOCATION);
+        final Bundle bundle = new Bundle();
+
+        assert msg != null;
+        bundle.putString(PilightService.Extra.LOCATION_ID, mLocationId);
+        msg.setData(bundle);
+
+        dispatch(msg);
+    }
+
+    private void sendDeviceChange(Device device, int property) {
+        final Message msg = Message.obtain(null, PilightService.Request.DEVICE_CHANGE);
+        final Bundle bundle = new Bundle();
+
+        assert msg != null;
+        bundle.putInt(PilightService.Extra.CHANGED_PROPERTY, property);
+        bundle.putParcelable(PilightService.Extra.DEVICE, device);
+        msg.setData(bundle);
+
+        dispatch(msg);
+    }
+
+    /* FIXME parent inflation hack
+     * fragment should have its own
+     * layout with empty view */
+    private void setEmptyView(int layoutRes) {
+        final View emptyView = LayoutInflater.from(getActivity()).inflate(layoutRes, null, false);
 
         assert getListView().getParent() != null;
         assert emptyView != null;
+
         ((ViewGroup) getListView().getParent()).addView(emptyView);
         getListView().setEmptyView(emptyView);
-
-        mAdapter = new DeviceAdapter(getActivity(),
-                new ArrayList<>(mLocation.values()), this, this);
-
-        setListAdapter(mAdapter);
-        getListView().setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
-    }
-
-    @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        final Device device = (Device) getListAdapter().getItem(position);
-        device.toggle();
-        sendLocalChange(device);
-    }
-
-    @Override
-    public void setChecked(int position, boolean checked) {
-        getListView().setItemChecked(position, checked);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.i(TAG, mLocation.getId() + ": onPause()");
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.i(TAG, mLocation.getId() + ": onResume()");
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        Log.i(TAG, mLocation.getId() + ": onStart()");
-
-        mBroadcastManager.registerReceiver(mReceiver,
-                new IntentFilter(PilightService.ACTION_REMOTE_CHANGE));
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Log.i(TAG, mLocation.getId() + ": onStop()");
-
-        mBroadcastManager.unregisterReceiver(mReceiver);
-    }
-
-    @Override
-    public void onChanged(Device device) {
-        sendLocalChange(device);
-    }
-
-    void sendLocalChange(Device device) {
-        final Intent intent = new Intent(PilightService.ACTION_LOCAL_CHANGE);
-        intent.putExtra(PilightService.EXTRA_DEVICE, device);
-        mBroadcastManager.sendBroadcast(intent);
     }
 
 }

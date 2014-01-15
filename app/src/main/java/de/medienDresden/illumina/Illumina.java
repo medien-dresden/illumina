@@ -7,6 +7,7 @@ import android.util.Log;
 import org.acra.ACRA;
 import org.acra.ReportingInteractionMode;
 import org.acra.annotation.ReportsCrashes;
+import org.codechimp.apprater.AppRater;
 
 import de.medienDresden.illumina.impl.PilightServiceImpl;
 
@@ -43,6 +44,10 @@ public class Illumina extends Application {
 
     private static final String TAG = Illumina.class.getSimpleName();
 
+    public static final String PREF_HOST = "illumina.host";
+
+    public static final String PREF_PORT = "illumina.port";
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -59,6 +64,8 @@ public class Illumina extends Application {
         /* If this service isn't started explicitly, it would be
          * destroyed if no more clients are bound */
         startService(new Intent(this, PilightServiceImpl.class));
+
+        AppRater.app_launched(this);
     }
 
 }

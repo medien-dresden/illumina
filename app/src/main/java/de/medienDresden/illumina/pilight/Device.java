@@ -4,8 +4,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 
-import java.util.ArrayList;
-
 public class Device implements Parcelable {
 
     public static final String VALUE_ON = "on";
@@ -16,10 +14,15 @@ public class Device implements Parcelable {
 
     public static final int DIM_LEVEL_MIN = 0;
 
-    public enum Type {
-        Switch,
-        Dimmer
-    }
+    public static final int TYPE_SWITCH = 0;
+
+    public static final int TYPE_DIMMER = 1;
+
+    public static final int TYPE_WEATHER = 2;
+
+    public static final int PROPERTY_DIM_LEVEL = 1;
+
+    public static final int PROPERTY_VALUE = 2;
 
     private String mId;
 
@@ -31,11 +34,11 @@ public class Device implements Parcelable {
 
     private String mValue;
 
-    private ArrayList<String> mValues;
-
-    private Type mType = Type.Switch;
+    private int mType = TYPE_SWITCH;
 
     private int mDimLevel;
+
+    public Device() {}
 
     public String getLocationId() {
         return mLocationId;
@@ -69,19 +72,11 @@ public class Device implements Parcelable {
         mValue = value;
     }
 
-    public ArrayList<String> getValues() {
-        return mValues;
-    }
-
-    public void setValues(ArrayList<String> values) {
-        mValues = values;
-    }
-
-    public Type getType() {
+    public int getType() {
         return mType;
     }
 
-    public void setType(Type type) {
+    public void setType(int type) {
         mType = type;
     }
 
@@ -94,12 +89,6 @@ public class Device implements Parcelable {
     }
 
     public void setDimLevel(int dimLevel) {
-        if (mDimLevel > DIM_LEVEL_MIN) {
-            mValue = VALUE_ON;
-        } else {
-            mValue = VALUE_OFF;
-        }
-
         mDimLevel = dimLevel;
     }
 
@@ -107,16 +96,8 @@ public class Device implements Parcelable {
         return mDimLevel;
     }
 
-    public Device() {
-        mValues = new ArrayList<>();
-    }
-
-    public void toggle() {
-        if (TextUtils.equals(mValue, VALUE_ON)) {
-            mValue = VALUE_OFF;
-        } else {
-            mValue = VALUE_ON;
-        }
+    public boolean isOn() {
+        return TextUtils.equals(mValue, VALUE_ON);
     }
 
     public static final Parcelable.Creator<Device> CREATOR
@@ -135,15 +116,12 @@ public class Device implements Parcelable {
     };
 
     public Device(Parcel parcel) {
-        this();
-
         mId = parcel.readString();
         mLocationId = parcel.readString();
         mName = parcel.readString();
         mOrder = parcel.readInt();
         mValue = parcel.readString();
-        parcel.readStringList(mValues);
-        mType = (Type) parcel.readSerializable();
+        mType = parcel.readInt();
         mDimLevel = parcel.readInt();
     }
 
@@ -154,8 +132,7 @@ public class Device implements Parcelable {
         parcel.writeString(mName);
         parcel.writeInt(mOrder);
         parcel.writeString(mValue);
-        parcel.writeStringList(mValues);
-        parcel.writeSerializable(mType);
+        parcel.writeInt(mType);
         parcel.writeInt(mDimLevel);
     }
 
@@ -168,4 +145,5 @@ public class Device implements Parcelable {
     public String toString() {
         return mName;
     }
+
 }

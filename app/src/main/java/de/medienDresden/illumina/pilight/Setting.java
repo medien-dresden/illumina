@@ -6,7 +6,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -110,22 +109,8 @@ public class Setting extends LinkedHashMap<String, Location> {
                     break;
 
                 case "dimlevel":
-                    device.setType(Device.Type.Dimmer); // assuming dimmer device
+                    device.setType(Device.TYPE_DIMMER); // assuming dimmer device
                     device.setDimLevel(jsonDevice.optInt(currentDeviceAttribute));
-                    break;
-
-                case "values":
-                    final ArrayList<String> list = new ArrayList<>();
-                    final JSONArray jsonArray = jsonDevice.optJSONArray(currentDeviceAttribute);
-
-                    if (jsonArray != null) {
-                        final int len = jsonArray.length();
-                        for (int i = 0; i < len; i++) {
-                            list.add(jsonArray.get(i).toString());
-                        }
-                    }
-
-                    device.setValues(list);
                     break;
 
                 default:

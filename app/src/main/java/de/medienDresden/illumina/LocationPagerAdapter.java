@@ -4,34 +4,35 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
-import de.medienDresden.illumina.pilight.Setting;
+import de.medienDresden.illumina.pilight.Location;
 
 public class LocationPagerAdapter extends FragmentPagerAdapter {
 
-    private final Setting mSetting;
+    private final ArrayList<Location> mLocations;
 
-    public LocationPagerAdapter(FragmentManager fragmentManager, Setting setting) {
+    public LocationPagerAdapter(FragmentManager fragmentManager, ArrayList<Location> locations) {
         super(fragmentManager);
 
-        mSetting = setting;
+        mLocations = locations;
     }
 
     @Override
     public Fragment getItem(int position) {
-        return DeviceListFragment.newInstance(mSetting.getByIndex(position));
+        return DeviceListFragment.newInstance(mLocations.get(position).getId());
     }
 
     @Override
     public int getCount() {
-        return mSetting.size();
+        return mLocations.size();
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
         final Locale locale = Locale.getDefault();
-        return mSetting.getByIndex(position).getName().toUpperCase(locale);
+        return mLocations.get(position).getName().toUpperCase(locale);
     }
 
 }

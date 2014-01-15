@@ -1,11 +1,11 @@
 package de.medienDresden.illumina;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -15,51 +15,34 @@ import de.medienDresden.illumina.pilight.Device;
 
 public class DeviceAdapter extends ArrayAdapter<Device> {
 
-    public interface CheckHelper {
+    private DimLevelListener mDimLevelListener;
 
-        void setChecked(int position, boolean checked);
-
+    interface DimLevelListener {
+        void onDimLevelChanged(Device device);
     }
 
-    interface ChangeListener {
-
-        void onChanged(Device device);
-
-    }
-
-    private final ChangeListener mChangeListener;
-
-    private final CheckHelper mCheckHelper;
-
-    public DeviceAdapter(Context context, List<Device> objects,
-                         CheckHelper helper, ChangeListener listener) {
-
+    public DeviceAdapter(Context context, List<Device> objects, DimLevelListener dimLevelListener) {
         super(context, 0, objects);
-
-        mCheckHelper = helper;
-        mChangeListener = listener;
+        mDimLevelListener = dimLevelListener;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         final LayoutInflater inflater = LayoutInflater.from(getContext());
         final Device device = getItem(position);
-        final Device.Type type = device.getType();
+        final int type = device.getType();
 
         View view = convertView;
         DeviceViewHolder viewHolder = null;
 
         if (view == null) {
             switch (type) {
-                case Switch:
-                    mCheckHelper.setChecked(position,
-                            TextUtils.equals(device.getValue(), Device.VALUE_ON));
-
+                case Device.TYPE_SWITCH:
                     view = inflater.inflate(R.layout.device_list_item_switch, parent, false);
                     viewHolder = new SwitchViewHolder(view);
                     break;
 
-                case Dimmer:
+                case Device.TYPE_DIMMER:
                     view = inflater.inflate(R.layout.device_list_item_dimmer, parent, false);
                     viewHolder = new DimmerViewHolder(view);
                     break;
@@ -74,15 +57,15 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
 
         assert viewHolder != null;
 
-        viewHolder.update(device);
-        viewHolder.setChangeListener(mChangeListener);
+        viewHolder.setDevice(device);
+        viewHolder.setDimLevelListener(mDimLevelListener);
 
         return view;
     }
 
     @Override
     public int getItemViewType(int position) {
-        return getItem(position).getType().ordinal();
+        return getItem(position).getType();
     }
 
     @Override
@@ -90,41 +73,59 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
         return 2;
     }
 
-    private static abstract class DeviceViewHolder {
+    @Override
+    public long getItemId(int position) {
+        return getItem(position).getId().hashCode();
+    }
 
-        private ChangeListener mListener;
+    @Override
+    public boolean hasStableIds() {
+        return true;
+    }
+
+    private static abstract class DeviceViewHolder {
 
         private Device mDevice;
 
-        void update(Device device) {
-            mDevice = device;
+        private TextView mName;
+
+        private DimLevelListener mDimLevelListener;
+
+        DeviceViewHolder(View view) {
+            mName = (TextView) view.findViewById(android.R.id.text1);
         }
 
-        void setChangeListener(ChangeListener listener) {
-            mListener = listener;
+        void setDevice(Device device) {
+            mDevice = device;
+            mName.setText(device.getName());
         }
 
         Device getDevice() {
             return mDevice;
         }
 
-        ChangeListener getListener() {
-            return mListener;
+        void setDimLevelListener(DimLevelListener dimLevelListener) {
+            mDimLevelListener = dimLevelListener;
+        }
+
+        DimLevelListener getDimLevelListener() {
+            return mDimLevelListener;
         }
 
     }
 
     private static class SwitchViewHolder extends DeviceViewHolder {
 
-        private TextView mName;
+        private CheckBox mCheckBox;
 
         SwitchViewHolder(View view) {
-            mName = (TextView) view.findViewById(android.R.id.text1);
+            super(view);
+            mCheckBox = (CheckBox) view.findViewById(android.R.id.checkbox);
         }
 
-        void update(Device device) {
-            super.update(device);
-            mName.setText(device.getName());
+        void setDevice(Device device) {
+            super.setDevice(device);
+            mCheckBox.setChecked(device.isOn());
         }
 
     }
@@ -135,10 +136,8 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
 
         DimmerViewHolder(View view) {
             super(view);
-
             mSeekBar = (SeekBar) view.findViewById(R.id.seekbar);
             mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int i, boolean b) {}
 
@@ -148,13 +147,13 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
                 @Override
                 public void onStopTrackingTouch(SeekBar seekBar) {
                     getDevice().setDimLevel(seekBar.getProgress());
-                    getListener().onChanged(getDevice());
+                    getDimLevelListener().onDimLevelChanged(getDevice());
                 }
             });
         }
 
-        void update(Device device) {
-            super.update(device);
+        void setDevice(Device device) {
+            super.setDevice(device);
             mSeekBar.setProgress(device.getDimLevel());
         }
 
