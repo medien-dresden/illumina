@@ -38,6 +38,16 @@ public class Device implements Parcelable {
 
     private int mDimLevel;
 
+    private int mTemperature;
+
+    private boolean mShowTemperatur;
+
+    private int mHumidity;
+
+    private boolean mShowHumidity;
+
+    private int mDecimals;
+
     public Device() {}
 
     public String getLocationId() {
@@ -96,6 +106,46 @@ public class Device implements Parcelable {
         return mDimLevel;
     }
 
+    public int getTemperature() {
+        return mTemperature;
+    }
+
+    public void setTemperature(int temperature) {
+        mTemperature = temperature;
+    }
+
+    public boolean isShowTemperatur() {
+        return mShowTemperatur;
+    }
+
+    public void setShowTemperatur(boolean showTemperatur) {
+        mShowTemperatur = showTemperatur;
+    }
+
+    public int getHumidity() {
+        return mHumidity;
+    }
+
+    public void setHumidity(int humidity) {
+        mHumidity = humidity;
+    }
+
+    public boolean showHumidity() {
+        return mShowHumidity;
+    }
+
+    public void setShowHumidity(boolean showHumidity) {
+        mShowHumidity = showHumidity;
+    }
+
+    public int getDecimals() {
+        return mDecimals;
+    }
+
+    public void setDecimals(int decimals) {
+        mDecimals = decimals;
+    }
+
     public boolean isOn() {
         return TextUtils.equals(mValue, VALUE_ON);
     }
@@ -123,6 +173,11 @@ public class Device implements Parcelable {
         mValue = parcel.readString();
         mType = parcel.readInt();
         mDimLevel = parcel.readInt();
+        mTemperature = parcel.readInt();
+        mHumidity = parcel.readInt();
+        mDecimals = parcel.readInt();
+        mShowTemperatur = Boolean.parseBoolean(parcel.readString());
+        mShowHumidity = Boolean.parseBoolean(parcel.readString());
     }
 
     @Override
@@ -134,6 +189,11 @@ public class Device implements Parcelable {
         parcel.writeString(mValue);
         parcel.writeInt(mType);
         parcel.writeInt(mDimLevel);
+        parcel.writeInt(mTemperature);
+        parcel.writeInt(mHumidity);
+        parcel.writeInt(mDecimals);
+        parcel.writeString(mShowTemperatur ? "true" : "false");
+        parcel.writeString(mShowHumidity ? "true" : "false");
     }
 
     @Override
