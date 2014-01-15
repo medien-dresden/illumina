@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -18,7 +19,7 @@ import de.medienDresden.illumina.pilight.Location;
 
 public class LocationListActivity extends BaseActivity {
 
-    private static final String TAG = LocationListActivity.class.getSimpleName();
+    public static final String TAG = LocationListActivity.class.getSimpleName();
 
     // ------------------------------------------------------------------------
     //
@@ -46,6 +47,8 @@ public class LocationListActivity extends BaseActivity {
 
     @Override
     public void onLocationListResponse(ArrayList<Location> locations) {
+        super.onLocationListResponse(locations);
+
         final ActionBar actionBar = getSupportActionBar();
         final FragmentPagerAdapter pagerAdapter = new LocationPagerAdapter(
                 getSupportFragmentManager(), locations);
@@ -74,6 +77,7 @@ public class LocationListActivity extends BaseActivity {
     }
 
     private void requestLocations() {
+        Log.i(TAG, "requestLocations");
         dispatch(Message.obtain(null, PilightService.Request.LOCATION_LIST));
     }
 
@@ -110,6 +114,7 @@ public class LocationListActivity extends BaseActivity {
         public void onPageSelected(int position) {
             if (getSupportActionBar().getNavigationMode() != ActionBar.NAVIGATION_MODE_STANDARD) {
                 getSupportActionBar().setSelectedNavigationItem(position);
+                mSelectedLocationIndex = position;
             }
         }
     };
@@ -137,6 +142,7 @@ public class LocationListActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
+        Log.i(TAG, "onBackPressed");
         dispatch(Message.obtain(null, PilightService.Request.PILIGHT_DISCONNECT));
         super.onBackPressed();
     }
@@ -149,6 +155,8 @@ public class LocationListActivity extends BaseActivity {
 
     @Override
     protected void reset() {
+        super.reset();
+
         final ActionBar actionBar = getSupportActionBar();
 
         if (actionBar != null) {
@@ -163,6 +171,11 @@ public class LocationListActivity extends BaseActivity {
         if (mEmptyView != null) {
             mEmptyView.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    protected String getTag() {
+        return TAG;
     }
 
 }

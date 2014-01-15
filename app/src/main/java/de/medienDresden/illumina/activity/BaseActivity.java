@@ -4,17 +4,18 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import de.medienDresden.illumina.service.PilightBinder;
-import de.medienDresden.illumina.service.PilightService;
 import de.medienDresden.illumina.R;
 import de.medienDresden.illumina.pilight.Device;
 import de.medienDresden.illumina.pilight.Location;
+import de.medienDresden.illumina.service.PilightBinder;
+import de.medienDresden.illumina.service.PilightService;
 
 public abstract class BaseActivity extends ActionBarActivity implements
         PilightBinder.ServiceListener {
@@ -31,6 +32,7 @@ public abstract class BaseActivity extends ActionBarActivity implements
 
     @Override
     public void onPilightError(int cause) {
+        Log.i(getTag(), "onPilightError(" + cause + ")");
         mIsPilightDisconnected = true;
 
         switch (cause) {
@@ -58,41 +60,45 @@ public abstract class BaseActivity extends ActionBarActivity implements
 
     @Override
     public void onPilightConnected() {
+        Log.i(getTag(), "onPilightConnected");
         mIsPilightDisconnected = false;
         reset();
     }
 
     @Override
     public void onPilightDisconnected() {
+        Log.i(getTag(), "onPilightDisconnected");
         mIsPilightDisconnected = true;
         reset();
     }
 
     @Override
     public void onPilightDeviceChange(Device device) {
-        // nothing by default
+        Log.i(getTag(), "onPilightDeviceChange(" + device.getId() + ")");
     }
 
     @Override
     public void onServiceConnected() {
+        Log.i(getTag(), "onServiceConnected");
         mIsPilightDisconnected = true;
         reset();
     }
 
     @Override
     public void onServiceDisconnected() {
+        Log.i(getTag(), "onServiceDisconnected");
         mIsPilightDisconnected = true;
         reset();
     }
 
     @Override
     public void onLocationListResponse(ArrayList<Location> locations) {
-        // nothing by default
+        Log.i(getTag(), "onLocationListResponse, #locations = " + locations.size());
     }
 
     @Override
     public void onLocationResponse(Location location) {
-        // nothing by default
+        Log.i(getTag(), "onLocationResponse(" + location.getId() + ")");
     }
 
     // ------------------------------------------------------------------------
@@ -102,6 +108,7 @@ public abstract class BaseActivity extends ActionBarActivity implements
     // ------------------------------------------------------------------------
 
     protected void dispatch(Message message) {
+        Log.i(getTag(), "dispatch(" + message.what + ")");
         mBinder.send(message);
     }
 
@@ -110,7 +117,7 @@ public abstract class BaseActivity extends ActionBarActivity implements
     }
 
     protected void reset() {
-        // nothing by default
+        Log.i(getTag(), "reset");
     }
 
     // ------------------------------------------------------------------------
@@ -121,9 +128,15 @@ public abstract class BaseActivity extends ActionBarActivity implements
 
     private boolean mIsPaused;
 
+    abstract protected String getTag();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (!isTaskRoot()) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         mBinder = new PilightBinder(this);
     }
@@ -168,7 +181,12 @@ public abstract class BaseActivity extends ActionBarActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings:
+                Log.i(getTag(), "user clicked settings");
                 startActivity(new Intent(this, PreferenceActivity.class));
+                return true;
+
+            case android.R.id.home:
+                finish();
                 return true;
 
             default:
@@ -177,8 +195,11 @@ public abstract class BaseActivity extends ActionBarActivity implements
     }
 
     protected void showError(int stringResourceId) {
+        final String errorString = getString(stringResourceId);
+        Log.i(getTag(), "showError(" + errorString + ")");
+
         if (!mIsPaused) {
-            Toast.makeText(this, getString(stringResourceId), Toast.LENGTH_LONG).show();
+            Toast.makeText(this, errorString, Toast.LENGTH_LONG).show();
         }
     }
 

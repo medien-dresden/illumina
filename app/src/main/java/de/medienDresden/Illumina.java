@@ -23,16 +23,22 @@ import de.medienDresden.illumina.service.PilightServiceImpl;
 
         // there should be a better way
         logcatArguments = {
-                "-t", "800",
+                "-t", "1000",
                 "-v", "tag",
-                "DeviceListFragment:D",
-                "Illumina:D",
+                "BaseActivity:D",
+                "ConnectionActivity:D",
                 "LocationListActivity:D",
+                "PreferenceActivity:D",
                 "ReaderThread:D",
-                "WriterThread:D",
                 "StreamingSocketImpl:D",
-                "PilightServiceImpl:D",
+                "WriterThread:D",
+                "BaseListFragment:D",
+                "DeviceListFragment:D",
                 "Setting:D",
+                "PilightBinder:D",
+                "PilightServiceImpl:D",
+                "DeviceAdapter:D",
+                "LocationPagerAdapter:D",
                 "*:E"
         },
 

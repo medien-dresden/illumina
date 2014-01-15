@@ -3,6 +3,7 @@ package de.medienDresden.illumina.fragment;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -16,28 +17,44 @@ public abstract class BaseListFragment extends ListFragment implements
     private PilightBinder mBinder;
 
     @Override
-    public void onPilightError(int cause) {}
+    public void onPilightError(int cause) {
+        Log.i(getLogTag(), "onPilightError(" + cause + ")");
+    }
 
     @Override
-    public void onPilightConnected() {}
+    public void onPilightConnected() {
+        Log.i(getLogTag(), "onPilightConnected");
+    }
 
     @Override
-    public void onPilightDisconnected() {}
+    public void onPilightDisconnected() {
+        Log.i(getLogTag(), "onPilightDisconnected");
+    }
 
     @Override
-    public void onPilightDeviceChange(Device device) {}
+    public void onPilightDeviceChange(Device device) {
+        Log.i(getLogTag(), "onPilightDeviceChange(" + device.getId() + ")");
+    }
 
     @Override
-    public void onServiceConnected() {}
+    public void onServiceConnected() {
+        Log.i(getLogTag(), "onServiceConnected");
+    }
 
     @Override
-    public void onServiceDisconnected() {}
+    public void onServiceDisconnected() {
+        Log.i(getLogTag(), "onServiceDisconnected");
+    }
 
     @Override
-    public void onLocationListResponse(ArrayList<Location> locations) {}
+    public void onLocationListResponse(ArrayList<Location> locations) {
+        Log.i(getLogTag(), "onLocationListResponse, #locations = " + locations.size());
+    }
 
     @Override
-    public void onLocationResponse(Location location) {}
+    public void onLocationResponse(Location location) {
+        Log.i(getLogTag(), "onLocationResponse(" + location.getId() + ")");
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,7 +76,10 @@ public abstract class BaseListFragment extends ListFragment implements
     }
 
     protected void dispatch(Message message) {
+        Log.i(getLogTag(), "dispatch(" + message.what + ")");
         mBinder.send(message);
     }
+
+    abstract protected String getLogTag();
 
 }

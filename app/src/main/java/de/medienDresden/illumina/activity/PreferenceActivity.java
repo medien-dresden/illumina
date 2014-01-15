@@ -3,6 +3,7 @@ package de.medienDresden.illumina.activity;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 
 import com.github.machinarius.preferencefragment.PreferenceFragment;
 
@@ -13,6 +14,8 @@ import de.psdev.licensesdialog.LicensesDialogFragment;
 
 public class PreferenceActivity extends FragmentActivity {
 
+    private static final String TAG = PreferenceActivity.class.getSimpleName();
+
     public static final String ACTION_RATE
             = "de.medienDresden.illumina.ACTION_RATE";
 
@@ -22,6 +25,8 @@ public class PreferenceActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i(TAG, "onCreate");
+
         setContentView(R.layout.preference_fragment);
 
         final String action = getIntent().getAction();
@@ -40,11 +45,15 @@ public class PreferenceActivity extends FragmentActivity {
     }
 
     private void onActionRate() {
+        Log.i(TAG, "onActionRate");
+
         AppRater.rateNow(this);
         finish();
     }
 
     private void onActionLicenses() {
+        Log.i(TAG, "onActionLicense");
+
         final LicensesDialogFragment fragment
                 = LicensesDialogFragment.newInstance(R.raw.licenses, true);
 

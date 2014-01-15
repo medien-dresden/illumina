@@ -8,6 +8,7 @@ import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,10 +16,12 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 
 import de.medienDresden.Illumina;
-import de.medienDresden.illumina.service.PilightService;
 import de.medienDresden.illumina.R;
+import de.medienDresden.illumina.service.PilightService;
 
 public class ConnectionActivity extends BaseActivity {
+
+    public static final String TAG = ConnectionActivity.class.getSimpleName();
 
     // ------------------------------------------------------------------------
     //
@@ -77,6 +80,7 @@ public class ConnectionActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_connect:
+                Log.i(TAG, "click on connect");
                 savePreferences();
                 setBusy(true);
                 dispatch(Message.obtain(null, PilightService.Request.PILIGHT_CONNECT));
@@ -148,9 +152,17 @@ public class ConnectionActivity extends BaseActivity {
         prefs.commit();
     }
 
+    @Override
     protected void reset() {
+        super.reset();
+
         supportInvalidateOptionsMenu();
         setBusy(false);
+    }
+
+    @Override
+    protected String getTag() {
+        return TAG;
     }
 
     // ------------------------------------------------------------------------

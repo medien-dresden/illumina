@@ -129,7 +129,6 @@ public class Setting extends LinkedHashMap<String, Location> {
         for (int i = 0; i < deviceCount; i++) {
             try {
                 final String deviceId = deviceIds.getString(i);
-                Log.i(TAG, "- updating device " + deviceId);
                 updateDevice(get(locationId).get(deviceId), jsonValues);
             } catch (JSONException exception) {
                 Log.w(TAG, "- updating values failed", exception);
@@ -140,32 +139,16 @@ public class Setting extends LinkedHashMap<String, Location> {
     private void updateDevice(Device device, JSONObject jsonValues) throws JSONException {
         final Iterator jsonValuesIterator = jsonValues.keys();
 
-        boolean isRealChange = false;
-
         while (jsonValuesIterator.hasNext()) {
             final String valueKey = (String) jsonValuesIterator.next();
 
             switch (valueKey) {
                 case "state":
-                    final String state = jsonValues.getString(valueKey);
-                    Log.i(TAG, "- set state to " + state);
-
-                    if (device.getValue() != state) {
-                        isRealChange = true;
-                    }
-
-                    device.setValue(state);
+                    device.setValue(jsonValues.getString(valueKey));
                     break;
 
                 case "dimlevel":
-                    final int dimLevel = jsonValues.getInt(valueKey);
-                    Log.i(TAG, "- set dim level to " + dimLevel);
-
-                    if (device.getDimLevel() != dimLevel) {
-                        isRealChange = true;
-                    }
-
-                    device.setDimLevel(dimLevel);
+                    device.setDimLevel(jsonValues.getInt(valueKey));
                     break;
 
                 default:
@@ -174,9 +157,7 @@ public class Setting extends LinkedHashMap<String, Location> {
             }
         }
 
-        if (isRealChange) {
-            mRemoteChangeHandler.onRemoteChange(device);
-        }
+        mRemoteChangeHandler.onRemoteChange(device);
     }
 
     private void addSorted(Map<String, Location> locations) {
@@ -220,26 +201,8 @@ public class Setting extends LinkedHashMap<String, Location> {
             final String locationId = (String) locationIterator.next();
             final JSONArray deviceIds = jsonDevices.optJSONArray(locationId);
 
-            Log.i(TAG, "- updating location " + locationId);
             updateDevices(locationId, deviceIds, jsonValues);
         }
-    }
-
-    public Location getByIndex(int index) {
-        final Iterator<Entry<String, Location>> iterator = entrySet().iterator();
-        Location location = null;
-        int position = 0;
-
-        while (iterator.hasNext()) {
-            final Entry<String, Location> entry = iterator.next();
-
-            if (index == position++) {
-                location = entry.getValue();
-                break;
-            }
-        }
-
-        return location;
     }
 
 }

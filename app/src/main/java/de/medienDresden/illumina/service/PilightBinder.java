@@ -62,6 +62,10 @@ public class PilightBinder {
         public void handleMessage(Message msg) {
             final Bundle data = msg.getData();
 
+            if (data != null) {
+                data.setClassLoader(Location.class.getClassLoader());
+            }
+
             switch (msg.what) {
                 case PilightService.News.CONNECTED:
                     mListener.onPilightConnected();

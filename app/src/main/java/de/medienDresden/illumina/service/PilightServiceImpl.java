@@ -21,6 +21,7 @@ import de.medienDresden.Illumina;
 import de.medienDresden.illumina.communication.StreamingSocket;
 import de.medienDresden.illumina.communication.StreamingSocketImpl;
 import de.medienDresden.illumina.pilight.Device;
+import de.medienDresden.illumina.pilight.Location;
 import de.medienDresden.illumina.pilight.Setting;
 
 public class PilightServiceImpl extends Service implements PilightService, Setting.RemoteChangeHandler {
@@ -92,9 +93,11 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
     }
 
     private void onSocketConnectionFailed() {
-        Log.w(TAG, "pilight connection failed");
-        sendBroadcast(News.ERROR, Error.CONNECTION_FAILED);
-        mState = PilightState.Disconnected;
+        if (mState != PilightState.Disconnected) {
+            Log.w(TAG, "pilight connection failed");
+            sendBroadcast(News.ERROR, Error.CONNECTION_FAILED);
+            mState = PilightState.Disconnected;
+        }
     }
 
     private void onSocketDisconnected() {
@@ -127,18 +130,16 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
     }
 
     private void onSocketMessage(String message) {
-        Log.i(TAG, "message received: " + message);
-
         JSONObject json = new JSONObject();
 
         if (TextUtils.isEmpty(message)) {
-            Log.i(TAG, "- message is empty");
+            Log.i(TAG, "received message is empty");
 
         } else {
             try {
                 json = new JSONObject(message);
             } catch (JSONException exception) {
-                Log.i(TAG, "- decoding json failed with: " + exception.getMessage());
+                Log.i(TAG, "decoding json failed with: " + exception.getMessage());
             }
         }
 
@@ -157,15 +158,15 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
                 break;
 
             case Connecting:
-                Log.w(TAG, "- impossible state 'Connecting'");
+                Log.w(TAG, "impossible state 'Connecting'");
                 break;
 
             case Disconnected:
-                Log.w(TAG, "- impossible state 'Disconnected'");
+                Log.w(TAG, "impossible state 'Disconnected'");
                 break;
 
             case Disconnecting:
-                Log.w(TAG, "- impossible state 'Disconnecting'");
+                Log.w(TAG, "impossible state 'Disconnecting'");
                 break;
 
             default:
@@ -337,6 +338,10 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
         @Override
         public void handleMessage(final Message msg) {
             final Bundle data = msg.getData();
+
+            if (data != null) {
+                data.setClassLoader(Location.class.getClassLoader());
+            }
 
             switch (msg.what) {
                 case Request.REGISTER:

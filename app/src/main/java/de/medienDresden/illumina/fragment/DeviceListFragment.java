@@ -45,6 +45,11 @@ public class DeviceListFragment extends BaseListFragment implements DeviceAdapte
     }
 
     @Override
+    protected String getLogTag() {
+        return TAG;
+    }
+
+    @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setEmptyView(R.layout.empty_data);
@@ -58,6 +63,8 @@ public class DeviceListFragment extends BaseListFragment implements DeviceAdapte
 
     @Override
     public void onLocationResponse(Location location) {
+        super.onLocationResponse(location);
+
         if (location.size() < 1) {
             Log.i(TAG, mLocationId + " has no devices to show");
         }
@@ -67,6 +74,8 @@ public class DeviceListFragment extends BaseListFragment implements DeviceAdapte
 
     @Override
     public void onPilightDeviceChange(Device remoteDevice) {
+        super.onPilightDeviceChange(remoteDevice);
+
         if (TextUtils.equals(remoteDevice.getLocationId(), mLocationId)) {
             requestLocation();
         }
@@ -91,6 +100,8 @@ public class DeviceListFragment extends BaseListFragment implements DeviceAdapte
     }
 
     private void requestLocation() {
+        Log.i(TAG, "requestLocation: " + mLocationId);
+
         final Message msg = Message.obtain(null, PilightService.Request.LOCATION);
         final Bundle bundle = new Bundle();
 
@@ -102,6 +113,8 @@ public class DeviceListFragment extends BaseListFragment implements DeviceAdapte
     }
 
     private void sendDeviceChange(Device device, int property) {
+        Log.i(TAG, "sendDeviceChange: " + device.getId());
+
         final Message msg = Message.obtain(null, PilightService.Request.DEVICE_CHANGE);
         final Bundle bundle = new Bundle();
 
