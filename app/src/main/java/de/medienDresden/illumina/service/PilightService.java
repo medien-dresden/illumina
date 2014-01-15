@@ -44,6 +44,7 @@ public interface PilightService {
         public static final int DEVICE_CHANGE = 110;
 
         public static final int LOCATION = 120;
+
     }
 
     interface Extra {

@@ -121,14 +121,20 @@ public class StreamingSocketImpl implements StreamingSocket {
         }
     };
 
+    private boolean mHasDispatchedError;
+
     public StreamingSocketImpl(Handler handler) {
         mHandler = handler;
     }
 
     private void dispatchError() {
-        mHandler.sendMessage(mHandler.obtainMessage(MSG_ERROR));
-        mIsConnected = false;
-        disconnect();
+        if (!mHasDispatchedError) {
+            mHandler.sendMessage(mHandler.obtainMessage(MSG_ERROR));
+            disconnect();
+
+            mHasDispatchedError = true;
+            mIsConnected = false;
+        }
     }
 
     @Override
@@ -143,6 +149,7 @@ public class StreamingSocketImpl implements StreamingSocket {
 
         disconnect();
 
+        mHasDispatchedError = false;
         mConnectThread = new Thread(mConnectRunnable, "SOCKET CONNECT");
         mConnectThread.start();
     }

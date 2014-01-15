@@ -54,7 +54,9 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
 
 
                 case StreamingSocket.MSG_DISCONNECTED:
-                    onSocketDisconnected();
+                    if (mState != PilightState.Disconnected) {
+                        onSocketDisconnected();
+                    }
                     break;
 
                 case StreamingSocket.MSG_ERROR:
@@ -107,6 +109,7 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
 
     private void onSocketError() {
         Log.i(TAG, "pilight socket error");
+        // maybe reconnect
         sendBroadcast(News.ERROR, Error.REMOTE_CLOSED);
         mState = PilightState.Disconnected;
     }
@@ -120,8 +123,6 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
             json.put("message", "client gui");
         } catch (JSONException exception) {
             Log.e(TAG, "- error creating handshake message", exception);
-            sendBroadcast(News.ERROR, Error.CONNECTION_FAILED);
-            mState = PilightState.Disconnected;
         }
 
         sendSocketMessage(json);
@@ -140,6 +141,8 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
                 json = new JSONObject(message);
             } catch (JSONException exception) {
                 Log.i(TAG, "decoding json failed with: " + exception.getMessage());
+                sendBroadcast(News.ERROR, Error.UNKNOWN);
+                mState = PilightState.Disconnected;
             }
         }
 
@@ -346,6 +349,9 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
             switch (msg.what) {
                 case Request.REGISTER:
                     mClients.add(msg.replyTo);
+                    if (!isConnected()) {
+                        sendDisconnectedState(msg.replyTo);
+                    }
                     break;
 
                 case Request.UNREGISTER:
@@ -381,6 +387,14 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
                 default:
                     super.handleMessage(msg);
             }
+        }
+    }
+
+    private void sendDisconnectedState(Messenger receiver) {
+        try {
+            receiver.send(Message.obtain(null, News.DISCONNECTED));
+        } catch (RemoteException exception) {
+            Log.e(TAG, "sending disconnected state failed", exception);
         }
     }
 

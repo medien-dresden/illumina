@@ -15,6 +15,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 
+import org.codechimp.apprater.AppRater;
+
 import de.medienDresden.Illumina;
 import de.medienDresden.illumina.R;
 import de.medienDresden.illumina.service.PilightService;
@@ -68,6 +70,8 @@ public class ConnectionActivity extends BaseActivity {
         mEditTextPort.addTextChangedListener(mTextWatcher);
 
         mProgressBar.setIndeterminate(true);
+
+        AppRater.app_launched(this);
     }
 
     @Override
