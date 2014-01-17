@@ -1,5 +1,6 @@
 package de.medienDresden.illumina.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -127,8 +128,11 @@ public class ConnectionActivity extends BaseActivity {
     // ------------------------------------------------------------------------
 
     private void loadPreferences() {
+        final Context context = getApplicationContext();
+        assert context != null;
+
         final SharedPreferences prefs = PreferenceManager
-                .getDefaultSharedPreferences(this);
+                .getDefaultSharedPreferences(context);
 
         String host = prefs.getString(Illumina.PREF_HOST, "");
         int port = prefs.getInt(Illumina.PREF_PORT, 0);
@@ -141,8 +145,11 @@ public class ConnectionActivity extends BaseActivity {
     }
 
     private void savePreferences() {
+        final Context context = getApplicationContext();
+        assert context != null;
+
         final SharedPreferences.Editor prefs = PreferenceManager
-                .getDefaultSharedPreferences(this)
+                .getDefaultSharedPreferences(context)
                 .edit();
 
         if (mEditTextHost.getText() != null) {

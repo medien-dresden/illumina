@@ -1,6 +1,7 @@
 package de.medienDresden.illumina.service;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -291,13 +292,25 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
     }
 
     private String getHostFromPreferences() {
-        return PreferenceManager
-                .getDefaultSharedPreferences(this).getString(Illumina.PREF_HOST, "");
+        final Context context = getApplicationContext();
+
+        if (context != null) {
+            return PreferenceManager
+                    .getDefaultSharedPreferences(context).getString(Illumina.PREF_HOST, "");
+        } else {
+            return null;
+        }
     }
 
     private int getPortFromPreferences() {
-        return PreferenceManager
-                .getDefaultSharedPreferences(this).getInt(Illumina.PREF_PORT, 0);
+        final Context context = getApplicationContext();
+
+        if (context != null) {
+            return PreferenceManager
+                    .getDefaultSharedPreferences(context).getInt(Illumina.PREF_PORT, 0);
+        } else {
+            return 0;
+        }
     }
 
     public void sendDeviceChange(Device device, int changedProperty) {
