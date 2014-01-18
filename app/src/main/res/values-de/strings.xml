@@ -18,9 +18,9 @@
     <string name="notices_close">schließen</string>
     <string name="about">Über illumina</string>
     <string name="rate_illumina">illumina bewerten</string>
-    <string name="rate_illumina_summary">In den Google Play Store gehen und diese App bewerten</string>
+    <string name="rate_illumina_summary">In den Google Play Store gehen und diese App bewerten.</string>
     <string name="licenses">Lizenzen</string>
-    <string name="licenses_summary">Lizenzen verwendeter Bibliotheken</string>
+    <string name="licenses_summary">Lizenzen verwendeter Bibliotheken.</string>
     <string name="acra">Fehlerberichte</string>
     <string name="pref_enable_acra">aktivieren</string>
     <string name="pref_acra_summary">Aktiviere Fehlerberichte um dem Entwickler bei der Verbesserung von illumina zu helfen.</string>

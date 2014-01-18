@@ -7,7 +7,7 @@ the brightness of your dimmable lights.
 Highlights:
 * native Android App
 * easy configuration
-* elegant dark Holo design
+* multiple designs
 * high performance pilight connection
 * distinguishes between places
 * controls your radio outlets
@@ -18,5 +18,5 @@ If you have questions regarding pilight or the list of compatible devices,
 consult the wiki behind http://wiki.pilight.org
 
 Important!
-illumina only works in conjunction with a pilight-daemon with a version number
+illumina only works in conjunction with a pilight-daemon and a version
 greater or equal 2.0 running within your network.

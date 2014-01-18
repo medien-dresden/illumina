@@ -7,11 +7,11 @@ die Helligkeit deiner Dimmer.
 Highlights:
 * native Android App
 * einfachste Konfiguration
-* elegantes dunkles Holo Design
+* verschiedene Designs
 * performante Verbindung zu pilight
 * Unterscheidung der festgelegten Orte
 * volle Kontrolle deiner Funksteckdosen
-* Steuerung von kompatiblen Dimmern
+* Steuerung kompatibler Dimmern
 * Reaktion auf Änderungen anderer Quellen
 
 Bei Fragen zu pilight oder kompatiblen Geräten, konsultiere das
