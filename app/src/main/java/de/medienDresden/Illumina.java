@@ -1,7 +1,10 @@
 package de.medienDresden;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Build;
 import android.util.Log;
 
 import org.acra.ACRA;
@@ -56,10 +59,22 @@ public class Illumina extends Application {
 
     public static final String PREF_PORT = "illumina.port";
 
+    public static final String PREF_THEME = "illumina.theme";
+
+    public static final String PREFERENCES_NAME = BuildConfig.PACKAGE_NAME + "_preferences";
+
     @Override
     public void onCreate() {
         super.onCreate();
 
+        initErrorReporting();
+
+        /* If this service isn't started explicitly, it would be
+         * destroyed if no more clients are bound */
+        startService(new Intent(this, PilightServiceImpl.class));
+    }
+
+    private void initErrorReporting() {
         if (!BuildConfig.DEBUG) {
             ACRA.init(this);
 
@@ -71,10 +86,16 @@ public class Illumina extends Application {
                 Log.e(TAG, "illumina won't be able to send error reports", exception);
             }
         }
+    }
 
-        /* If this service isn't started explicitly, it would be
-         * destroyed if no more clients are bound */
-        startService(new Intent(this, PilightServiceImpl.class));
+    public SharedPreferences getSharedPreferences() {
+        int flags = Context.MODE_PRIVATE;
+
+        if (Build.VERSION.SDK_INT >= 11) {
+            flags |= Context.MODE_MULTI_PROCESS;
+        }
+
+        return getSharedPreferences(Illumina.PREFERENCES_NAME, flags);
     }
 
 }

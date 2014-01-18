@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,6 +12,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import de.medienDresden.Illumina;
 import de.medienDresden.illumina.R;
 import de.medienDresden.illumina.pilight.Device;
 import de.medienDresden.illumina.pilight.Location;
@@ -128,11 +130,18 @@ public abstract class BaseActivity extends ActionBarActivity implements
 
     private boolean mIsPaused;
 
+    private String mCurrentTheme;
+
     abstract protected String getTag();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mCurrentTheme = ((Illumina) getApplication()).getSharedPreferences()
+                .getString(Illumina.PREF_THEME, getString(R.string.theme_default));
+
+        setTheme(getResources().getIdentifier(mCurrentTheme, "style", getPackageName()));
 
         if (!isTaskRoot()) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -144,12 +153,14 @@ public abstract class BaseActivity extends ActionBarActivity implements
     @Override
     protected void onStart() {
         super.onStart();
+
         mBinder.bindService(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+
         mBinder.unbindService(this);
     }
 
@@ -157,6 +168,14 @@ public abstract class BaseActivity extends ActionBarActivity implements
     protected void onResume() {
         super.onResume();
         mIsPaused = false;
+
+        final String possiblyUpdatedTheme = ((Illumina) getApplication()).getSharedPreferences()
+                .getString(Illumina.PREF_THEME, getString(R.string.theme_default));
+
+        if (!TextUtils.equals(mCurrentTheme, possiblyUpdatedTheme)) {
+            finish();
+            startActivity(new Intent(this, getClass()));
+        }
     }
 
     @Override

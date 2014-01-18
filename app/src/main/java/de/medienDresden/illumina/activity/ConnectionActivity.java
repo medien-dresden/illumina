@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Message;
-import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -131,11 +130,9 @@ public class ConnectionActivity extends BaseActivity {
         final Context context = getApplicationContext();
         assert context != null;
 
-        final SharedPreferences prefs = PreferenceManager
-                .getDefaultSharedPreferences(context);
-
-        String host = prefs.getString(Illumina.PREF_HOST, "");
-        int port = prefs.getInt(Illumina.PREF_PORT, 0);
+        final SharedPreferences prefs = ((Illumina) getApplication()).getSharedPreferences();
+        final String host = prefs.getString(Illumina.PREF_HOST, "");
+        final int port = prefs.getInt(Illumina.PREF_PORT, 0);
 
         mEditTextHost.setText(host);
 
@@ -148,9 +145,8 @@ public class ConnectionActivity extends BaseActivity {
         final Context context = getApplicationContext();
         assert context != null;
 
-        final SharedPreferences.Editor prefs = PreferenceManager
-                .getDefaultSharedPreferences(context)
-                .edit();
+        final SharedPreferences.Editor prefs =
+                ((Illumina) getApplication()).getSharedPreferences().edit();
 
         if (mEditTextHost.getText() != null) {
             prefs.putString(Illumina.PREF_HOST, mEditTextHost.getText().toString());
