@@ -64,14 +64,14 @@ public abstract class BaseListFragment extends ListFragment implements
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onResume() {
+        super.onResume();
         mBinder.bindService(getActivity());
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
+    public void onPause() {
+        super.onPause();
         mBinder.unbindService(getActivity());
     }
 

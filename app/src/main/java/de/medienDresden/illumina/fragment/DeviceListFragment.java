@@ -11,11 +11,11 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
-import de.medienDresden.illumina.widget.DeviceAdapter;
-import de.medienDresden.illumina.service.PilightService;
 import de.medienDresden.illumina.R;
 import de.medienDresden.illumina.pilight.Device;
 import de.medienDresden.illumina.pilight.Location;
+import de.medienDresden.illumina.service.PilightService;
+import de.medienDresden.illumina.widget.DeviceAdapter;
 
 public class DeviceListFragment extends BaseListFragment implements DeviceAdapter.DimLevelListener {
 
@@ -58,6 +58,12 @@ public class DeviceListFragment extends BaseListFragment implements DeviceAdapte
     @Override
     public void onServiceConnected() {
         super.onServiceConnected();
+        dispatch(Message.obtain(null, PilightService.Request.STATE));
+    }
+
+    @Override
+    public void onPilightConnected() {
+        super.onPilightConnected();
         requestLocation();
     }
 

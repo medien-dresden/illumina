@@ -59,14 +59,17 @@ public class Illumina extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.i(TAG, "Illumina started");
 
-        ACRA.init(this);
+        if (!BuildConfig.DEBUG) {
+            ACRA.init(this);
 
-        try {
-            ACRA.getErrorReporter().setReportSender(new BitbucketReportSender("phdd", "illumina"));
-        } catch (Exception exception) {
-            Log.e(TAG, "illumina won't be able to send error reports", exception);
+            try {
+                ACRA.getErrorReporter().setReportSender(
+                        new BitbucketReportSender("phdd", "illumina"));
+
+            } catch (Exception exception) {
+                Log.e(TAG, "illumina won't be able to send error reports", exception);
+            }
         }
 
         /* If this service isn't started explicitly, it would be

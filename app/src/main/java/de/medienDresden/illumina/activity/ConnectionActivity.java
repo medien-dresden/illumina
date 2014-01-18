@@ -108,7 +108,7 @@ public class ConnectionActivity extends BaseActivity {
             final boolean hasPort = port != null && !TextUtils.isEmpty(port.toString())
                     && Integer.parseInt(port.toString()) > 0;
 
-            connect.setVisible(isDisconnected() && hasHost && hasPort);
+            connect.setVisible(isDisconnected() && hasHost && hasPort && !mIsBusy);
         }
 
         return super.onPrepareOptionsMenu(menu);
@@ -167,7 +167,6 @@ public class ConnectionActivity extends BaseActivity {
     protected void reset() {
         super.reset();
 
-        supportInvalidateOptionsMenu();
         setBusy(false);
     }
 
@@ -188,6 +187,8 @@ public class ConnectionActivity extends BaseActivity {
 
     private EditText mEditTextPort;
 
+    private boolean mIsBusy;
+
     private void setBusy(boolean busy) {
         if (busy) {
             mProgressBar.setVisibility(View.VISIBLE);
@@ -199,6 +200,9 @@ public class ConnectionActivity extends BaseActivity {
             mEditTextHost.setEnabled(true);
             mEditTextPort.setEnabled(true);
         }
+
+        mIsBusy = busy;
+        supportInvalidateOptionsMenu();
     }
 
 }
