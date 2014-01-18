@@ -1,6 +1,5 @@
 package de.medienDresden.illumina.activity;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -10,23 +9,17 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 
-import com.github.machinarius.preferencefragment.PreferenceFragment;
-
 import org.codechimp.apprater.AppRater;
 
 import de.medienDresden.Illumina;
 import de.medienDresden.illumina.R;
+import de.medienDresden.illumina.fragment.SettingsFragment;
 import de.psdev.licensesdialog.LicensesDialogFragment;
 
-public class PreferenceActivity extends FragmentActivity {
+public class PreferenceActivity extends FragmentActivity implements
+        SettingsFragment.SettingsListener {
 
     private static final String TAG = PreferenceActivity.class.getSimpleName();
-
-    public static final String ACTION_RATE
-            = "de.medienDresden.illumina.ACTION_RATE";
-
-    public static final String ACTION_LICENSES
-            = "de.medienDresden.illumina.ACTION_LICENSES";
 
     private String mCurrentTheme;
 
@@ -49,20 +42,6 @@ public class PreferenceActivity extends FragmentActivity {
             assert getActionBar() != null;
             getActionBar().setDisplayHomeAsUpEnabled(true);
         }
-
-        final String action = getIntent().getAction();
-
-        if (action != null) {
-            switch (action) {
-                case ACTION_RATE:
-                    onActionRate();
-                    break;
-
-                case ACTION_LICENSES:
-                    onActionLicenses();
-                    break;
-            }
-        }
     }
 
     @Override
@@ -77,29 +56,7 @@ public class PreferenceActivity extends FragmentActivity {
         }
     }
 
-    private void onActionRate() {
-        Log.i(TAG, "onActionRate");
-
-        AppRater.rateNow(this);
-        finish();
-    }
-
-    private void onActionLicenses() {
-        Log.i(TAG, "onActionLicense");
-
-        final LicensesDialogFragment fragment
-                = LicensesDialogFragment.newInstance(R.raw.licenses, true);
-
-        fragment.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialogInterface) {
-                finish();
-            }
-        });
-
-        fragment.show(getSupportFragmentManager(), null);
-    }
-
+    @Override
     public void refreshTheme() {
         final String possiblyUpdatedTheme = getPreferences().getString(
                 Illumina.PREF_THEME, getString(R.string.theme_default));
@@ -110,43 +67,17 @@ public class PreferenceActivity extends FragmentActivity {
         }
     }
 
-    public static class SettingsFragment extends PreferenceFragment {
+    @Override
+    public void rateThisApp() {
+        Log.i(TAG, "rateThisApp");
+        AppRater.rateNow(this);
+    }
 
-        private SharedPreferences.OnSharedPreferenceChangeListener mListener
-                = new SharedPreferences.OnSharedPreferenceChangeListener() {
-            @Override
-            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                if (TextUtils.equals(key, Illumina.PREF_THEME) && getActivity() != null) {
-                    ((PreferenceActivity) getActivity()).refreshTheme();
-                }
-            }
-        };
-
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-
-            addPreferencesFromResource(R.xml.preferences);
-        }
-
-        @Override
-        public void onResume() {
-            super.onResume();
-
-            assert getPreferenceManager().getSharedPreferences() != null;
-            getPreferenceManager().getSharedPreferences()
-                    .registerOnSharedPreferenceChangeListener(mListener);
-        }
-
-        @Override
-        public void onPause() {
-            super.onPause();
-
-            assert getPreferenceManager().getSharedPreferences() != null;
-            getPreferenceManager().getSharedPreferences()
-                    .unregisterOnSharedPreferenceChangeListener(mListener);
-        }
-
+    @Override
+    public void showLicenses() {
+        Log.i(TAG, "showLicenses");
+        LicensesDialogFragment.newInstance(R.raw.licenses, true)
+                .show(getSupportFragmentManager(), null);
     }
 
 }

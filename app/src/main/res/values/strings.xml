@@ -29,7 +29,7 @@
     <string name="no_data">Nothing found. You should configure some devices on your Raspberry. Take a look at http://wiki.pilight.org/doku.php/config</string>
     <string name="notices_title">Licences</string>
     <string name="notices_close">close</string>
-    <string name="about">About</string>
+    <string name="about">About illumina</string>
     <string name="rate_illumina">Rate illumina</string>
     <string name="rate_illumina_summary">Go to Google Play Store and rate this app</string>
     <string name="licenses">Licenses</string>
@@ -51,4 +51,7 @@
     <string name="theme">Theme</string>
     <string name="theme_summary">illumina supports both, Holo light and dark theme. You can choose with style to use</string>
     <string name="theme_and_behaviour">Theme &amp; Behaviour</string>
+    <string name="contact_developer">Contact Developer</string>
+    <string name="contact_developer_summary">Here you can send greetings and criticism to the developer.</string>
+    <string name="developer_url">http://google.com/+PeterHeisig</string>
 </resources>
