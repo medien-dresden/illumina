@@ -136,12 +136,12 @@ public abstract class BaseActivity extends ActionBarActivity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
         mCurrentTheme = ((Illumina) getApplication()).getSharedPreferences()
                 .getString(Illumina.PREF_THEME, getString(R.string.theme_default));
 
         setTheme(getResources().getIdentifier(mCurrentTheme, "style", getPackageName()));
+
+        super.onCreate(savedInstanceState);
 
         if (!isTaskRoot()) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);

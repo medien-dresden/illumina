@@ -103,7 +103,8 @@ public class BitbucketReportSender implements ReportSender {
                 .append(report.getProperty(ReportField.ANDROID_VERSION)).append(")");
 
         final String preferences = report.getProperty(ReportField.SHARED_PREFERENCES);
-        final String[] preferencesArray = TextUtils.split(preferences, "\n");
+        final String[] preferencesArray = TextUtils.split(
+                preferences != null ? preferences : "", "\n");
 
         StringBuilder preferencesBuilder = new StringBuilder("\n");
         for (String preference : preferencesArray) {

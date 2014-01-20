@@ -29,13 +29,14 @@ public class PreferenceActivity extends FragmentActivity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         Log.i(TAG, "onCreate");
 
         mCurrentTheme = getPreferences().getString(
                 Illumina.PREF_THEME, getString(R.string.theme_default));
 
         setTheme(getResources().getIdentifier(mCurrentTheme, "style", getPackageName()));
+        super.onCreate(savedInstanceState);
+
         setContentView(R.layout.preference_fragment);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {

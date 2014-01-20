@@ -36,6 +36,7 @@ import de.medienDresden.illumina.service.PilightServiceImpl;
                 "WriterThread:D",
                 "BaseListFragment:D",
                 "DeviceListFragment:D",
+                "SettingsFragment:D",
                 "Setting:D",
                 "PilightBinder:D",
                 "PilightServiceImpl:D",
