@@ -75,16 +75,14 @@ public class Illumina extends Application {
     }
 
     private void initErrorReporting() {
-        if (!BuildConfig.DEBUG) {
-            ACRA.init(this);
+        ACRA.init(this);
 
-            try {
-                ACRA.getErrorReporter().setReportSender(
-                        new BitbucketReportSender("phdd", "illumina"));
+        try {
+            ACRA.getErrorReporter().setReportSender(
+                    new BitbucketReportSender("phdd", "illumina"));
 
-            } catch (Exception exception) {
-                Log.e(TAG, "illumina won't be able to send error reports", exception);
-            }
+        } catch (Exception exception) {
+            Log.e(TAG, "illumina won't be able to send error reports", exception);
         }
     }
 
