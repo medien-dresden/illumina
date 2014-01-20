@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <ProgressBar android:id="@android:id/progress"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        style="@style/ActionBarHorizontalProgressStyle" />
 
     <ImageView
         android:layout_width="wrap_content"
@@ -11,7 +19,7 @@
         android:layout_marginBottom="16dip"
         android:layout_alignLeft="@id/centered_layout"
         android:layout_alignRight="@id/centered_layout"
-        android:src="?attr/question_drawable" />
+        android:src="@drawable/question" />
 
     <RelativeLayout
         android:id="@id/centered_layout"

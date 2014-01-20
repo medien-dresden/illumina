@@ -1,4 +1,4 @@
-package de.medienDresden.illumina.communication.impl;
+package de.medienDresden.illumina.communication;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,8 +13,6 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-
-import de.medienDresden.illumina.communication.StreamingSocket;
 
 public class StreamingSocketImpl implements StreamingSocket {
 
@@ -55,7 +53,7 @@ public class StreamingSocketImpl implements StreamingSocket {
             final boolean isInterrupted = data.getBoolean(ReaderThread.EXTRA_INTERRUPTED);
 
             if (isInterrupted) {
-                disconnect();
+                dispatchError();
 
             } else if (TextUtils.equals("BEAT", message)) {
                 mLastHeartBeatResponse = System.currentTimeMillis();
@@ -83,7 +81,6 @@ public class StreamingSocketImpl implements StreamingSocket {
 
                 if (HEARTBEAT_TIMEOUT < System.currentTimeMillis() - mLastHeartBeatResponse) {
                     dispatchError();
-                    disconnect();
                 }
 
                 try {
@@ -119,25 +116,25 @@ public class StreamingSocketImpl implements StreamingSocket {
 
             } catch (IOException exception) {
                 Log.w(TAG, exception.getMessage());
-                mIsConnected = false;
                 dispatchError();
-                disconnect();
             }
         }
     };
+
+    private boolean mHasDispatchedError;
 
     public StreamingSocketImpl(Handler handler) {
         mHandler = handler;
     }
 
     private void dispatchError() {
-        final Message msg = mHandler.obtainMessage(MSG_DISCONNECTED);
-        final Bundle bundle = new Bundle();
+        if (!mHasDispatchedError) {
+            mHandler.sendMessage(mHandler.obtainMessage(MSG_ERROR));
+            disconnect();
 
-        bundle.putBoolean(EXTRA_ERROR, true);
-        msg.setData(bundle);
-
-        mHandler.sendMessage(msg);
+            mHasDispatchedError = true;
+            mIsConnected = false;
+        }
     }
 
     @Override
@@ -152,6 +149,7 @@ public class StreamingSocketImpl implements StreamingSocket {
 
         disconnect();
 
+        mHasDispatchedError = false;
         mConnectThread = new Thread(mConnectRunnable, "SOCKET CONNECT");
         mConnectThread.start();
     }

@@ -1,4 +1,4 @@
-package de.medienDresden.illumina.communication.impl;
+package de.medienDresden.illumina.communication;
 
 import android.text.TextUtils;
 import android.util.Log;
@@ -6,7 +6,7 @@ import android.util.Log;
 import java.io.PrintWriter;
 import java.util.concurrent.BlockingQueue;
 
-class WriterThread extends Thread {
+public class WriterThread extends Thread {
 
     private static final String TAG = WriterThread.class.getSimpleName();
 

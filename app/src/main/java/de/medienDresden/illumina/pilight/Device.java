@@ -4,8 +4,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 
-import java.util.ArrayList;
-
 public class Device implements Parcelable {
 
     public static final String VALUE_ON = "on";
@@ -16,10 +14,16 @@ public class Device implements Parcelable {
 
     public static final int DIM_LEVEL_MIN = 0;
 
-    public enum Type {
-        Switch,
-        Dimmer;
-    }
+    public static final int TYPE_SWITCH = 0;
+
+    public static final int TYPE_DIMMER = 1;
+
+    public static final int TYPE_WEATHER = 2;
+
+    public static final int PROPERTY_DIM_LEVEL = 1;
+
+    public static final int PROPERTY_VALUE = 2;
+
     private String mId;
 
     private String mLocationId;
@@ -30,11 +34,21 @@ public class Device implements Parcelable {
 
     private String mValue;
 
-    private ArrayList<String> mValues;
-
-    private Type mType = Type.Switch;
+    private int mType = TYPE_SWITCH;
 
     private int mDimLevel;
+
+    private int mTemperature;
+
+    private boolean mShowTemperatur;
+
+    private int mHumidity;
+
+    private boolean mShowHumidity;
+
+    private int mDecimals;
+
+    public Device() {}
 
     public String getLocationId() {
         return mLocationId;
@@ -65,28 +79,14 @@ public class Device implements Parcelable {
     }
 
     public void setValue(String value) {
-        if (TextUtils.equals(value, VALUE_ON)) {
-            mDimLevel = DIM_LEVEL_MAX;
-            mValue = VALUE_ON;
-        } else {
-            mDimLevel = DIM_LEVEL_MIN;
-            mValue = VALUE_OFF;
-        }
+        mValue = value;
     }
 
-    public ArrayList<String> getValues() {
-        return mValues;
-    }
-
-    public void setValues(ArrayList<String> values) {
-        mValues = values;
-    }
-
-    public Type getType() {
+    public int getType() {
         return mType;
     }
 
-    public void setType(Type type) {
+    public void setType(int type) {
         mType = type;
     }
 
@@ -106,18 +106,48 @@ public class Device implements Parcelable {
         return mDimLevel;
     }
 
-    public Device() {
-        mValues = new ArrayList<>();
+    public int getTemperature() {
+        return mTemperature;
     }
 
-    public void toggle() {
-        if (TextUtils.equals(mValue, VALUE_ON)) {
-            mValue = VALUE_OFF;
-            mDimLevel = DIM_LEVEL_MIN;
-        } else {
-            mValue = VALUE_ON;
-            mDimLevel = DIM_LEVEL_MAX;
-        }
+    public void setTemperature(int temperature) {
+        mTemperature = temperature;
+    }
+
+    public boolean isShowTemperatur() {
+        return mShowTemperatur;
+    }
+
+    public void setShowTemperatur(boolean showTemperatur) {
+        mShowTemperatur = showTemperatur;
+    }
+
+    public int getHumidity() {
+        return mHumidity;
+    }
+
+    public void setHumidity(int humidity) {
+        mHumidity = humidity;
+    }
+
+    public boolean showHumidity() {
+        return mShowHumidity;
+    }
+
+    public void setShowHumidity(boolean showHumidity) {
+        mShowHumidity = showHumidity;
+    }
+
+    public int getDecimals() {
+        return mDecimals;
+    }
+
+    public void setDecimals(int decimals) {
+        mDecimals = decimals;
+    }
+
+    public boolean isOn() {
+        return TextUtils.equals(mValue, VALUE_ON);
     }
 
     public static final Parcelable.Creator<Device> CREATOR
@@ -136,16 +166,18 @@ public class Device implements Parcelable {
     };
 
     public Device(Parcel parcel) {
-        this();
-
         mId = parcel.readString();
         mLocationId = parcel.readString();
         mName = parcel.readString();
         mOrder = parcel.readInt();
         mValue = parcel.readString();
-        parcel.readStringList(mValues);
-        mType = (Type) parcel.readSerializable();
+        mType = parcel.readInt();
         mDimLevel = parcel.readInt();
+        mTemperature = parcel.readInt();
+        mHumidity = parcel.readInt();
+        mDecimals = parcel.readInt();
+        mShowTemperatur = Boolean.parseBoolean(parcel.readString());
+        mShowHumidity = Boolean.parseBoolean(parcel.readString());
     }
 
     @Override
@@ -155,9 +187,13 @@ public class Device implements Parcelable {
         parcel.writeString(mName);
         parcel.writeInt(mOrder);
         parcel.writeString(mValue);
-        parcel.writeStringList(mValues);
-        parcel.writeSerializable(mType);
+        parcel.writeInt(mType);
         parcel.writeInt(mDimLevel);
+        parcel.writeInt(mTemperature);
+        parcel.writeInt(mHumidity);
+        parcel.writeInt(mDecimals);
+        parcel.writeString(mShowTemperatur ? "true" : "false");
+        parcel.writeString(mShowHumidity ? "true" : "false");
     }
 
     @Override
@@ -169,4 +205,5 @@ public class Device implements Parcelable {
     public String toString() {
         return mName;
     }
+
 }
