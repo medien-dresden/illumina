@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <string-array name="theme_labels">
+        <item>Dunkel</item>
+        <item>Hell</item>
+    </string-array>
+
     <string name="app_name">illumina</string>
     <string name="settings">Einstellungen</string>
     <string name="dummy">dummy</string>
@@ -18,7 +24,7 @@
     <string name="notices_close">schließen</string>
     <string name="about">Über illumina</string>
     <string name="rate_illumina">illumina bewerten</string>
-    <string name="rate_illumina_summary">In den Google Play Store gehen und diese App bewerten.</string>
+    <string name="rate_illumina_summary">In den App Store gehen und illumina bewerten.</string>
     <string name="licenses">Lizenzen</string>
     <string name="licenses_summary">Lizenzen verwendeter Bibliotheken.</string>
     <string name="acra">Fehlerberichte</string>
@@ -36,7 +42,7 @@
     <string name="crash_dialog_comment_prompt">Wenn du möchtest, kannst Du hier die Situation schildern</string>
     <string name="crash_dialog_ok_toast">Vielen Dank!</string>
     <string name="theme">Thema</string>
-    <string name="theme_summary">illumina unterstützt die Themen Holo Dark und Holo Light. Du kannst Dir aussuchen, welches Du möchtest.</string>
+    <string name="theme_summary">illumina unterstützt ein helles und ein dunkles Thema. Du kannst Dir aussuchen, welches Du möchtest.</string>
     <string name="theme_and_behaviour">Aussehen &amp; Verhalten</string>
     <string name="contact_developer">Entwickler kontaktieren</string>
     <string name="contact_developer_summary">Hier kannst du dem Entwickler Grüße und Kritik entgegenbringen.</string>

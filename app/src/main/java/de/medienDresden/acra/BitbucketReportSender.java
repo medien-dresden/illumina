@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import de.medienDresden.illumina.BuildConfig;
+
 import static org.acra.ACRA.LOG_TAG;
 
 public class BitbucketReportSender implements ReportSender {
@@ -81,7 +83,6 @@ public class BitbucketReportSender implements ReportSender {
 
         StringBuilder title = new StringBuilder();
         StringBuilder content = new StringBuilder();
-        String version = report.getProperty(ReportField.APP_VERSION_NAME);
 
         String exception = "unknown exception";
         final String[] trace = TextUtils.split(report.getProperty(ReportField.STACK_TRACE), "\n");
@@ -113,13 +114,20 @@ public class BitbucketReportSender implements ReportSender {
             }
         }
 
+        content.append(format(TPL_H1, "App Details"));
+        content.append(format(TPL_KEY_VALUE, "version", BuildConfig.VERSION_NAME));
+        content.append(format(TPL_KEY_VALUE, "flavor", BuildConfig.FLAVOR));
+
         content.append(format(TPL_H1, "User Data"));
         content.append(format(TPL_KEY_VALUE, "comment",
                 report.getProperty(ReportField.USER_COMMENT)));
-        content.append(format(TPL_KEY_VALUE, "mail",
-                report.getProperty(ReportField.USER_EMAIL)));
         content.append(format(TPL_KEY_VALUE, "installation",
                 report.getProperty(ReportField.INSTALLATION_ID)));
+
+        if (!TextUtils.isEmpty(report.getProperty(ReportField.USER_EMAIL))) {
+            content.append(format(TPL_KEY_VALUE, "mail",
+                    report.getProperty(ReportField.USER_EMAIL)));
+        }
 
         content.append(format(TPL_H2, "Preferences"));
         content.append(preferencesBuilder.toString());

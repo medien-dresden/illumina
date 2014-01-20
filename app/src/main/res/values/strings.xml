@@ -2,8 +2,8 @@
 <resources>
 
     <string-array name="theme_labels">
-        <item>Holo Dark</item>
-        <item>Holo Light</item>
+        <item>Dark</item>
+        <item>Light</item>
     </string-array>
 
     <string-array name="theme_values">
@@ -31,7 +31,7 @@
     <string name="notices_close">close</string>
     <string name="about">About illumina</string>
     <string name="rate_illumina">Rate illumina</string>
-    <string name="rate_illumina_summary">Go to Google Play Store and rate this app.</string>
+    <string name="rate_illumina_summary">Go to the App Store and rate illumina.</string>
     <string name="licenses">Licenses</string>
     <string name="licenses_summary">Licenses of included libraries.</string>
     <string name="acra">Crash Reporting</string>
@@ -49,7 +49,7 @@
     <string name="crash_dialog_comment_prompt">You might add your comments about the problem below:</string>
     <string name="crash_dialog_ok_toast">Thank you!</string>
     <string name="theme">Theme</string>
-    <string name="theme_summary">illumina supports both, Holo light and dark theme. You can choose which style to use.</string>
+    <string name="theme_summary">illumina supports a light and a dark theme. You can choose which style to use.</string>
     <string name="theme_and_behaviour">Theme &amp; Behaviour</string>
     <string name="contact_developer">Contact Developer</string>
     <string name="contact_developer_summary">Here you can send greetings and criticism to the developer.</string>

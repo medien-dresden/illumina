@@ -27,6 +27,20 @@ android {
     compileSdkVersion 19
     buildToolsVersion "19.0.1"
 
+    flavorGroups "market"
+
+    productFlavors {
+        amazon {
+            flavorGroup "market"
+            props.market = "org.codechimp.apprater.AmazonMarket"
+        }
+
+        google {
+            flavorGroup "market"
+            props.market = "org.codechimp.apprater.GoogleMarket"
+        }
+    }
+
     defaultConfig {
         minSdkVersion 8
         targetSdkVersion 19
@@ -34,7 +48,10 @@ android {
         versionName "1.0.0"
 
         buildConfigField "String", "BITBUCKET_PASSWORD", \
-             "\"" + props.bitbucket_password + "\""
+            "\"" + props.bitbucket_password + "\""
+
+        buildConfigField "org.codechimp.apprater.Market", \
+            "MARKET", "new " + props.market + "()"
     }
 
     signingConfigs {
