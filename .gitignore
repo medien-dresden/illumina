@@ -1,7 +1,7 @@
 local.properties
 build
 *.iml
-
+*.keystore
 .gradle
 .idea
 gradle.properties

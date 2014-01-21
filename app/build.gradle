@@ -1,43 +1,42 @@
+apply plugin: 'android'
+
 buildscript {
     repositories {
         mavenCentral()
     }
-    //noinspection GroovyAssignabilityCheck
+
     dependencies {
         classpath 'com.android.tools.build:gradle:0.7.+'
     }
 }
 
-apply plugin: 'android'
-
-Properties props = new Properties()
-
-//noinspection GroovyAssignabilityCheck
-props.load(new FileInputStream(
-        file(project.property("private.properties"))))
-
 repositories {
     mavenCentral()
-
-    // FIXME remove with fix for licenses dialog
-    flatDir { dirs 'libs' }
+    maven { url "http://maven.medien-dresden.de/" }
 }
+
+assert project.hasProperty("keystoreFile")
+assert project.hasProperty("keystoreAlias")
+assert project.hasProperty("keystorePassword")
+
+assert project.hasProperty("bitbucketRepositoryUser")
+assert project.hasProperty("bitbucketRepositoryName")
+assert project.hasProperty("bitbucketReporterUser")
+assert project.hasProperty("bitbucketReporterPassword")
 
 android {
     compileSdkVersion 19
     buildToolsVersion "19.0.1"
 
-    flavorGroups "market"
-
     productFlavors {
         amazon {
-            flavorGroup "market"
-            props.market = "org.codechimp.apprater.AmazonMarket"
+            buildConfigField "org.codechimp.apprater.Market", "MARKET", \
+                "new org.codechimp.apprater.AmazonMarket()"
         }
 
         google {
-            flavorGroup "market"
-            props.market = "org.codechimp.apprater.GoogleMarket"
+            buildConfigField "org.codechimp.apprater.Market", "MARKET", \
+                "new org.codechimp.apprater.GoogleMarket()"
         }
     }
 
@@ -47,19 +46,25 @@ android {
         versionCode 2
         versionName "1.1.0-SNAPSHOT"
 
-        buildConfigField "String", "BITBUCKET_PASSWORD", \
-            "\"" + props.bitbucket_password + "\""
+        buildConfigField "String", "BITBUCKET_REPOSITORY_NAME", \
+            "\"" + bitbucketRepositoryName + "\""
 
-        buildConfigField "org.codechimp.apprater.Market", \
-            "MARKET", "new " + props.market + "()"
+        buildConfigField "String", "BITBUCKET_REPOSITORY_USER", \
+            "\"" + bitbucketRepositoryUser + "\""
+
+        buildConfigField "String", "BITBUCKET_REPORTER_USER", \
+            "\"" + bitbucketReporterUser + "\""
+
+        buildConfigField "String", "BITBUCKET_REPORTER_PASSWORD", \
+            "\"" + bitbucketReporterPassword + "\""
     }
 
     signingConfigs {
         release {
-            storeFile file(props.keystore)
-            storePassword props.keystore_password
-            keyAlias props.keystore_alias
-            keyPassword props.keystore_password
+            storeFile file(keystoreFile)
+            storePassword keystorePassword
+            keyAlias keystoreAlias
+            keyPassword keystorePassword
         }
     }
 
@@ -70,24 +75,20 @@ android {
 
     buildTypes {
         release {
-            runProguard false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
             signingConfig signingConfigs.release
+
+            runProguard false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), \
+                'proguard-rules.txt'
         }
     }
 }
 
-//noinspection GroovyAssignabilityCheck
 dependencies {
     compile 'com.android.support:support-v4:19.0.+'
     compile 'com.android.support:appcompat-v7:19.0.+'
-
     compile 'com.github.codechimp-org.apprater:library:1.0.+'
     compile 'com.github.machinarius:preferencefragment:0.1.1'
-
-    // FIXME use maven stable and delete file
-    compile 'de.psdev.licensesdialog:licensesdialog:1.4.0-SNAPSHOT@aar'
-    compile 'org.slf4j:slf4j-android:1.6.1-RC1'
-
+    compile 'de.psdev.licensesdialog:licensesdialog:1.4.+'
     compile 'ch.acra:acra:4.5.0'
 }
