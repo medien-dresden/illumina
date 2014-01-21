@@ -6,7 +6,6 @@ import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 
-import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
@@ -114,7 +113,7 @@ public class StreamingSocketImpl implements StreamingSocket {
                 mIsConnected = true;
                 mHandler.sendMessage(mHandler.obtainMessage(MSG_CONNECTED));
 
-            } catch (IOException exception) {
+            } catch (Exception exception) {
                 Log.w(TAG, exception.getMessage());
                 dispatchError();
             }

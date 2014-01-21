@@ -16,12 +16,10 @@ import de.medienDresden.illumina.BuildConfig;
 import de.medienDresden.illumina.R;
 import de.medienDresden.illumina.service.PilightServiceImpl;
 
-
-
 @ReportsCrashes(
         formKey = "",
-        formUriBasicAuthLogin = "mddapp",
-        formUriBasicAuthPassword = BuildConfig.BITBUCKET_PASSWORD,
+        formUriBasicAuthLogin = BuildConfig.BITBUCKET_REPORTER_USER,
+        formUriBasicAuthPassword = BuildConfig.BITBUCKET_REPORTER_PASSWORD,
 
         // there should be a better way
         logcatArguments = {
@@ -80,7 +78,9 @@ public class Illumina extends Application {
 
         try {
             ACRA.getErrorReporter().setReportSender(
-                    new BitbucketReportSender("phdd", "illumina"));
+                    new BitbucketReportSender(
+                            BuildConfig.BITBUCKET_REPOSITORY_USER,
+                            BuildConfig.BITBUCKET_REPOSITORY_NAME));
 
         } catch (Exception exception) {
             Log.e(TAG, "illumina won't be able to send error reports", exception);

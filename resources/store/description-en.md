@@ -20,3 +20,5 @@ consult the wiki behind http://wiki.pilight.org
 Important!
 illumina only works in conjunction with a pilight-daemon and a version
 greater or equal 2.0 running within your network.
+
+Keywords: Dimmer, Lights, Pi, Pilight, Raspberry, Remote, Switch
