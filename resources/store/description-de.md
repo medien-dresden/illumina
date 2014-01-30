@@ -5,15 +5,15 @@ illumina ermöglicht Dir volle Kontrolle über Deine Funksteckdosen und
 die Helligkeit Deiner Dimmer.
 
 Highlights:
-* native Android App
-* einfachste Konfiguration
-* verschiedene Designs
-* performante Verbindung zu pilight
-* Unterscheidung der festgelegten Orte
-* volle Kontrolle deiner Funksteckdosen
-* Steuerung kompatibler Dimmer
-* Reaktion auf Änderungen anderer Quellen
-* vollständig übersetzt
+• native Android App
+• einfachste Konfiguration
+• verschiedene Designs
+• performante Verbindung zu pilight
+• Unterscheidung der festgelegten Orte
+• volle Kontrolle deiner Funksteckdosen
+• Steuerung kompatibler Dimmer
+• Reaktion auf Änderungen anderer Quellen
+• vollständig übersetzt
 
 Bei Fragen zu pilight oder kompatiblen Geräten, konsultiere das
 Wiki unter http://wiki.pilight.org
