@@ -11,7 +11,7 @@ Highlights:
 * performante Verbindung zu pilight
 * Unterscheidung der festgelegten Orte
 * volle Kontrolle deiner Funksteckdosen
-* Steuerung kompatibler Dimmern
+* Steuerung kompatibler Dimmer
 * Reaktion auf Änderungen anderer Quellen
 * vollständig übersetzt
 
