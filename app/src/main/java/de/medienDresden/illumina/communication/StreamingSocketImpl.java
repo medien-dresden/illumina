@@ -114,7 +114,12 @@ public class StreamingSocketImpl implements StreamingSocket {
                 mHandler.sendMessage(mHandler.obtainMessage(MSG_CONNECTED));
 
             } catch (Exception exception) {
-                Log.w(TAG, exception.getMessage());
+                if (!TextUtils.isEmpty(exception.getMessage())) {
+                    Log.w(TAG, exception.getMessage(), exception);
+                } else {
+                    Log.w(TAG, "connection failed", exception);
+                }
+
                 dispatchError();
             }
         }
