@@ -8,6 +8,7 @@ import android.os.Build;
 import android.util.Log;
 
 import org.acra.ACRA;
+import org.acra.ACRAConfiguration;
 import org.acra.ReportingInteractionMode;
 import org.acra.annotation.ReportsCrashes;
 
@@ -74,6 +75,10 @@ public class Illumina extends Application {
     }
 
     private void initErrorReporting() {
+        final ACRAConfiguration config = ACRA.getNewDefaultConfig(this);
+
+        config.setSendReportsInDevMode(false);
+        ACRA.setConfig(config);
         ACRA.init(this);
 
         try {
