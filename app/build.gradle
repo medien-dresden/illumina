@@ -12,7 +12,6 @@ buildscript {
 
 repositories {
     mavenCentral()
-    maven { url "http://maven.medien-dresden.de/" }
 }
 
 assert project.hasProperty("keystoreFile")
@@ -89,7 +88,9 @@ dependencies {
     compile 'com.android.support:appcompat-v7:19.0.+'
     compile 'com.github.codechimp-org.apprater:library:1.0.+'
     compile 'com.github.machinarius:preferencefragment:0.1.1'
-    compile 'de.psdev.licensesdialog:licensesdialog:1.4.+'
-    compile 'org.slf4j:slf4j-android:1.6.1-RC1' // FIXME shouldn't be necessary
     compile 'ch.acra:acra:4.5.0'
+
+    compile('de.psdev.licensesdialog:licensesdialog:1.4.0') {
+        exclude module: 'support-v4'
+    }
 }

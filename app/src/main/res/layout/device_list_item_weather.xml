@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/list_item_height"
+    android:paddingLeft="@dimen/list_item_padding"
+    android:paddingRight="@dimen/list_item_padding">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true">
+
+        <LinearLayout
+            android:id="@+id/temperature"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/list_item_padding">
+
+            <ImageView
+                android:id="@+id/temperature_image"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:layout_marginTop="@dimen/list_item_padding"
+                android:layout_marginBottom="@dimen/list_item_padding"
+                android:alpha="0.7"
+                android:src="?attr/thermometer" />
+
+            <TextView
+                android:id="@+id/temperature_text"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/icon_text_gap"
+                style="@android:style/TextAppearance.Large"
+                android:gravity="center_vertical"
+                android:text="@string/temperature_placeholder" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/humidity"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/list_item_padding">
+
+            <ImageView
+                android:id="@+id/humidity_image"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:paddingTop="@dimen/list_item_padding"
+                android:paddingBottom="@dimen/list_item_padding"
+                android:alpha="0.7"
+                android:src="?attr/humidity" />
+
+            <TextView
+                android:id="@+id/humidity_text"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/icon_text_gap"
+                style="@android:style/TextAppearance.Large"
+                android:gravity="center_vertical"
+                android:text="@string/humidity_placeholder" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/battery"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/list_item_padding"
+            android:layout_marginTop="@dimen/list_item_padding"
+            android:layout_marginBottom="@dimen/list_item_padding"
+            android:alpha="0.8"
+            android:src="?attr/battery_empty" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@android:id/text1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/dummy" />
+
+</RelativeLayout>

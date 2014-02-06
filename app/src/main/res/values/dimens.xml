@@ -4,4 +4,5 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="centered_message_margin">64dp</dimen>
     <dimen name="settings_margin">0dp</dimen>
+    <dimen name="icon_text_gap">8dp</dimen>
 </resources>
