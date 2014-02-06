@@ -47,12 +47,9 @@
             android:summary="@string/rate_illumina_summary" />
 
         <Preference
+            android:key="illumina.contact"
             android:title="@string/contact_developer"
-            android:summary="@string/contact_developer_summary">
-            <intent
-                android:action="android.intent.action.VIEW"
-                android:data="@string/developer_url" />
-        </Preference>
+            android:summary="@string/contact_developer_summary" />
 
         <Preference
             android:key="illumina.licenses"
