@@ -90,6 +90,7 @@ dependencies {
     compile 'com.github.machinarius:preferencefragment:0.1.1'
     compile 'ch.acra:acra:4.5.0'
 
-    compile 'de.psdev.licensesdialog:licensesdialog:1.4.0@aar'
-    compile 'org.slf4j:slf4j-android:1.6.1-RC1' // shouldn't be necessary
+    compile('de.psdev.licensesdialog:licensesdialog:1.4.0') {
+        exclude module: 'support-v4'
+    }
 }
