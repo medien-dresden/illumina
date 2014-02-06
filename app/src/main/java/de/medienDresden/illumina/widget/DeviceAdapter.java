@@ -2,6 +2,7 @@ package de.medienDresden.illumina.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -110,6 +111,17 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
         return true;
     }
 
+    @Override
+    public boolean areAllItemsEnabled() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled(int position) {
+        final Device device = getItem(position);
+        return device != null && device.isWritable();
+    }
+
     private static abstract class DeviceViewHolder {
 
         private Device mDevice;
@@ -125,6 +137,8 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
         void setDevice(Device device) {
             mDevice = device;
             mName.setText(device.getName());
+            mName.setTypeface(mName.getTypeface(), device.isWritable()
+                    ? Typeface.NORMAL : Typeface.ITALIC);
         }
 
         Device getDevice() {
@@ -153,6 +167,7 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
         void setDevice(Device device) {
             super.setDevice(device);
             mCheckBox.setChecked(device.isOn());
+            mCheckBox.setEnabled(device.isWritable());
         }
 
     }
@@ -182,6 +197,7 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
         void setDevice(Device device) {
             super.setDevice(device);
             mSeekBar.setProgress(device.getDimLevel());
+            mSeekBar.setEnabled(device.isWritable());
         }
 
     }

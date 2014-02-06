@@ -175,6 +175,10 @@ public class Setting extends LinkedHashMap<String, Location> {
                     device.setDecimals(jsonSetting.optInt(valueKey));
                     break;
 
+                case "readonly":
+                    device.setReadOnly(jsonSetting.optInt(valueKey) == 1);
+                    break;
+
                 default:
                     Log.v(TAG, "unhandled setting " + valueKey
                             + ":" + jsonSetting.optString(valueKey));

@@ -64,6 +64,8 @@ public class Device implements Parcelable {
 
     private boolean mHasHumidityValue = false;
 
+    private boolean mIsReadOnly = false;
+
     public Device() {}
 
     public String getLocationId() {
@@ -124,6 +126,10 @@ public class Device implements Parcelable {
 
     public int getTemperature() {
         return mTemperature;
+    }
+
+    public void setReadOnly(boolean readOnly) {
+        mIsReadOnly = readOnly;
     }
 
     public void setTemperature(int temperature) {
@@ -234,6 +240,7 @@ public class Device implements Parcelable {
         mHasBatteryValue = Boolean.parseBoolean(parcel.readString());
         mHasHumidityValue = Boolean.parseBoolean(parcel.readString());
         mHasTemperatureValue = Boolean.parseBoolean(parcel.readString());
+        mIsReadOnly = Boolean.parseBoolean(parcel.readString());
     }
 
     @Override
@@ -255,6 +262,7 @@ public class Device implements Parcelable {
         parcel.writeString(mHasBatteryValue ? "true" : "false");
         parcel.writeString(mHasHumidityValue ? "true" : "false");
         parcel.writeString(mHasTemperatureValue ? "true" : "false");
+        parcel.writeString(mIsReadOnly ? "true" : "false");
     }
 
     @Override
@@ -265,6 +273,18 @@ public class Device implements Parcelable {
     @Override
     public String toString() {
         return mName;
+    }
+
+    public boolean isWritable() {
+        switch (mType) {
+            case TYPE_DIMMER:
+            case TYPE_SCREEN:
+            case TYPE_SWITCH:
+                return !mIsReadOnly;
+
+            default:
+                return false;
+        }
     }
 
 }
