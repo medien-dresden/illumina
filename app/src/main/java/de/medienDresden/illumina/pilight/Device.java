@@ -287,4 +287,27 @@ public class Device implements Parcelable {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        final Device device = (Device) o;
+        return TextUtils.equals(mId, device.mId)
+                && TextUtils.equals(mLocationId, device.mLocationId);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = mId.hashCode();
+        result = 31 * result + mLocationId.hashCode();
+        return result;
+    }
+
 }
