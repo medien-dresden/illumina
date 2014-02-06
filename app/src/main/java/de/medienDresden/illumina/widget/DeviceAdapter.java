@@ -98,7 +98,7 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
 
     @Override
     public int getViewTypeCount() {
-        return 2;
+        return 4;
     }
 
     @Override
