@@ -3,5 +3,5 @@
     <attr name="battery_empty" format="reference" />
     <attr name="battery_full" format="reference" />
     <attr name="thermometer" format="reference" />
-    <attr name="raincloud" format="reference" />
+    <attr name="humidity" format="reference" />
 </resources>

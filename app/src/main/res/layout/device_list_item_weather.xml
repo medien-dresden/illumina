@@ -51,7 +51,7 @@
                 android:paddingTop="@dimen/list_item_padding"
                 android:paddingBottom="@dimen/list_item_padding"
                 android:alpha="0.8"
-                android:src="?attr/raincloud" />
+                android:src="?attr/humidity" />
 
             <TextView
                 android:id="@+id/humidity_text"
