@@ -6,6 +6,7 @@
         <item name="battery_empty">@drawable/battery_empty_dark</item>
         <item name="humidity">@drawable/humidity_dark</item>
         <item name="thermometer">@drawable/thermometer_dark</item>
+        <item name="screen_button_style">@style/ScreenButtonDarkStyle</item>
     </style>
 
     <style name="Theme.Illumina.Light" parent="@style/Theme.AppCompat.Light">
@@ -13,6 +14,7 @@
         <item name="battery_empty">@drawable/battery_empty_light</item>
         <item name="humidity">@drawable/humidity_light</item>
         <item name="thermometer">@drawable/thermometer_light</item>
+        <item name="screen_button_style">@style/ScreenButtonLightStyle</item>
     </style>
 
 </resources>

@@ -96,10 +96,18 @@ public class DeviceListFragment extends BaseListFragment implements DeviceAdapte
     public void onListItemClick(ListView listView, View view, int position, long id) {
         final Device device = (Device) getListAdapter().getItem(position);
 
-        if (device.isOn()) {
-            device.setValue(Device.VALUE_OFF);
-        } else {
-            device.setValue(Device.VALUE_ON);
+        switch (device.getType()) {
+            case Device.TYPE_SCREEN:
+                device.setValue(device.isUp() ? Device.VALUE_DOWN : Device.VALUE_UP);
+                break;
+
+            case Device.TYPE_SWITCH:
+            case Device.TYPE_DIMMER:
+                device.setValue(device.isOn() ? Device.VALUE_OFF : Device.VALUE_ON);
+                break;
+
+            case Device.TYPE_WEATHER:
+                return;
         }
 
         sendDeviceChange(device, Device.PROPERTY_VALUE);

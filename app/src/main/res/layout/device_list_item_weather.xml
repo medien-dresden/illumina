@@ -23,7 +23,7 @@
                 android:adjustViewBounds="true"
                 android:layout_marginTop="@dimen/list_item_padding"
                 android:layout_marginBottom="@dimen/list_item_padding"
-                android:alpha="0.8"
+                android:alpha="0.7"
                 android:src="?attr/thermometer" />
 
             <TextView
@@ -50,7 +50,7 @@
                 android:adjustViewBounds="true"
                 android:paddingTop="@dimen/list_item_padding"
                 android:paddingBottom="@dimen/list_item_padding"
-                android:alpha="0.8"
+                android:alpha="0.7"
                 android:src="?attr/humidity" />
 
             <TextView

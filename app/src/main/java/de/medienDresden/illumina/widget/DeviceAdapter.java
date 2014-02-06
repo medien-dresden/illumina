@@ -65,9 +65,8 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
                     break;
 
                 case Device.TYPE_SCREEN:
-                    // TODO layout
-                    view = inflater.inflate(R.layout.device_list_item_switch, parent, false);
-                    viewHolder = new SwitchViewHolder(view);
+                    view = inflater.inflate(R.layout.device_list_item_screen, parent, false);
+                    viewHolder = new ScreenViewHolder(view);
                     break;
 
                 case Device.TYPE_WEATHER:
@@ -166,7 +165,26 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
 
         void setDevice(Device device) {
             super.setDevice(device);
+
             mCheckBox.setChecked(device.isOn());
+            mCheckBox.setEnabled(device.isWritable());
+        }
+
+    }
+
+    private static class ScreenViewHolder extends DeviceViewHolder {
+
+        private CheckBox mCheckBox;
+
+        ScreenViewHolder(View view) {
+            super(view);
+            mCheckBox = (CheckBox) view.findViewById(android.R.id.checkbox);
+        }
+
+        void setDevice(Device device) {
+            super.setDevice(device);
+
+            mCheckBox.setChecked(device.isUp());
             mCheckBox.setEnabled(device.isWritable());
         }
 
