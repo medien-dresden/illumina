@@ -10,6 +10,10 @@ public class Device implements Parcelable {
 
     public static final String VALUE_OFF = "off";
 
+    public static final String VALUE_UP = "up";
+
+    public static final String VALUE_DOWN = "down";
+
     public static final int DIM_LEVEL_MAX = 15;
 
     public static final int DIM_LEVEL_MIN = 0;
@@ -18,7 +22,9 @@ public class Device implements Parcelable {
 
     public static final int TYPE_DIMMER = 1;
 
-    public static final int TYPE_WEATHER = 2;
+    public static final int TYPE_SCREEN = 2;
+
+    public static final int TYPE_WEATHER = 3;
 
     public static final int PROPERTY_DIM_LEVEL = 1;
 
@@ -40,13 +46,23 @@ public class Device implements Parcelable {
 
     private int mTemperature;
 
-    private boolean mShowTemperatur;
+    private boolean mShowTemperature;
 
     private int mHumidity;
 
     private boolean mShowHumidity;
 
+    private boolean mShowBattery;
+
     private int mDecimals;
+
+    private boolean mHasHealthyBattery;
+
+    private boolean mHasBatteryValue = false;
+
+    private boolean mHasTemperatureValue = false;
+
+    private boolean mHasHumidityValue = false;
 
     public Device() {}
 
@@ -111,15 +127,41 @@ public class Device implements Parcelable {
     }
 
     public void setTemperature(int temperature) {
+        mHasTemperatureValue = true;
         mTemperature = temperature;
     }
 
-    public boolean isShowTemperatur() {
-        return mShowTemperatur;
+    public boolean isShowTemperature() {
+        return mShowTemperature;
     }
 
-    public void setShowTemperatur(boolean showTemperatur) {
-        mShowTemperatur = showTemperatur;
+    public boolean isShowBattery() {
+        return mShowBattery;
+    }
+
+    public boolean hasHealthyBattery() {
+        return mHasHealthyBattery;
+    }
+
+    public boolean hasTemperatureValue() {
+        return mHasTemperatureValue;
+    }
+
+    public boolean hasHumidityValue() {
+        return mHasHumidityValue;
+    }
+
+    public boolean hasBatteryValue() {
+        return mHasBatteryValue;
+    }
+
+    public void setHealthyBattery(boolean hasHealthyBattery) {
+        mHasBatteryValue = true;
+        mHasHealthyBattery = hasHealthyBattery;
+    }
+
+    public void setShowTemperature(boolean showTemperature) {
+        mShowTemperature = showTemperature;
     }
 
     public int getHumidity() {
@@ -127,15 +169,20 @@ public class Device implements Parcelable {
     }
 
     public void setHumidity(int humidity) {
+        mHasHumidityValue = true;
         mHumidity = humidity;
     }
 
-    public boolean showHumidity() {
+    public boolean isShowHumidity() {
         return mShowHumidity;
     }
 
     public void setShowHumidity(boolean showHumidity) {
         mShowHumidity = showHumidity;
+    }
+
+    public void setShowBattery(boolean showBattery) {
+        mShowBattery = showBattery;
     }
 
     public int getDecimals() {
@@ -148,6 +195,10 @@ public class Device implements Parcelable {
 
     public boolean isOn() {
         return TextUtils.equals(mValue, VALUE_ON);
+    }
+
+    public boolean isUp() {
+        return TextUtils.equals(mValue, VALUE_UP);
     }
 
     public static final Parcelable.Creator<Device> CREATOR
@@ -176,8 +227,13 @@ public class Device implements Parcelable {
         mTemperature = parcel.readInt();
         mHumidity = parcel.readInt();
         mDecimals = parcel.readInt();
-        mShowTemperatur = Boolean.parseBoolean(parcel.readString());
+        mHasHealthyBattery = Boolean.parseBoolean(parcel.readString());
+        mShowTemperature = Boolean.parseBoolean(parcel.readString());
         mShowHumidity = Boolean.parseBoolean(parcel.readString());
+        mShowBattery = Boolean.parseBoolean(parcel.readString());
+        mHasBatteryValue = Boolean.parseBoolean(parcel.readString());
+        mHasHumidityValue = Boolean.parseBoolean(parcel.readString());
+        mHasTemperatureValue = Boolean.parseBoolean(parcel.readString());
     }
 
     @Override
@@ -192,8 +248,13 @@ public class Device implements Parcelable {
         parcel.writeInt(mTemperature);
         parcel.writeInt(mHumidity);
         parcel.writeInt(mDecimals);
-        parcel.writeString(mShowTemperatur ? "true" : "false");
+        parcel.writeString(mHasHealthyBattery ? "true" : "false");
+        parcel.writeString(mShowTemperature ? "true" : "false");
         parcel.writeString(mShowHumidity ? "true" : "false");
+        parcel.writeString(mShowBattery ? "true" : "false");
+        parcel.writeString(mHasBatteryValue ? "true" : "false");
+        parcel.writeString(mHasHumidityValue ? "true" : "false");
+        parcel.writeString(mHasTemperatureValue ? "true" : "false");
     }
 
     @Override

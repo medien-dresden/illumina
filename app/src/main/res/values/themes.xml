@@ -1,7 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.Illumina" parent="@style/Theme.AppCompat" />
-    <style name="Theme.Illumina.Light" parent="@style/Theme.AppCompat.Light" />
+    <style name="Theme.Illumina" parent="@style/Theme.AppCompat">
+        <item name="battery_full">@drawable/battery_full_dark</item>
+        <item name="battery_empty">@drawable/battery_empty_dark</item>
+        <item name="raincloud">@drawable/raincloud_dark</item>
+        <item name="thermometer">@drawable/thermometer_dark</item>
+    </style>
+
+    <style name="Theme.Illumina.Light" parent="@style/Theme.AppCompat.Light">
+        <item name="battery_full">@drawable/battery_full_light</item>
+        <item name="battery_empty">@drawable/battery_empty_light</item>
+        <item name="raincloud">@drawable/raincloud_light</item>
+        <item name="thermometer">@drawable/thermometer_light</item>
+    </style>
 
 </resources>

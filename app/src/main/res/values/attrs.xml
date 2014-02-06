@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    
+    <attr name="battery_empty" format="reference" />
+    <attr name="battery_full" format="reference" />
+    <attr name="thermometer" format="reference" />
+    <attr name="raincloud" format="reference" />
 </resources>
