@@ -53,7 +53,7 @@
     <string name="theme_and_behaviour">Theme &amp; Behaviour</string>
     <string name="contact_developer">Contact Developer</string>
     <string name="contact_developer_summary">Here you can send greetings and criticism to the developer.</string>
-    <string name="developer_url">http://medien-dresden.de/+</string>
+    <string name="developer_url">https://plus.google.com/102758503227173766807</string>
     <string name="temperature_placeholder">24°</string>
     <string name="humidity_placeholder">63%</string>
 </resources>
