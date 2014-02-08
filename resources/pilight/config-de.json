@@ -1,0 +1,101 @@
+{
+	"light": {
+		"name": "Wohnzimmer",
+		"weather": {
+			"name": "Raumklima",
+			"protocol": [ "generic_weather" ],
+			"id": [{
+				"id": 100
+			}],
+			"temperature": 2100,
+			"humidity": 5700,
+			"battery": 1
+		},
+		"kitchen": {
+			"name": "Stehlampe",
+			"protocol": [ "kaku_dimmer" ],
+			"id": [{
+				"id": 10,
+				"unit": 9
+			}],
+			"state": "on",
+			"dimlevel": 10,
+			"settings": {
+				"readonly": 0,
+				"states": "on,off",
+				"max": 15,
+				"min": 0
+			}
+		},
+		"bed": {
+			"name": "Fernseher",
+			"protocol": [ "elro" ],
+			"id": [{
+				"unitcode": 1,
+				"systemcode": 23
+			}],
+			"state": "off",
+			"settings": {
+				"readonly": 0,
+				"states": "on,off"
+			}
+		},
+		"couch": {
+			"name": "Sofa",
+			"protocol": [ "elro" ],
+			"id": [{
+				"unitcode": 2,
+				"systemcode": 23
+			}],
+			"state": "on",
+			"settings": {
+				"readonly": 0,
+				"states": "on,off"
+			}
+		},
+		"somwhere1": {
+			"name": "Oberlicht",
+			"protocol": [ "elro" ],
+			"id": [{
+				"unitcode": 4,
+				"systemcode": 25
+			}],
+			"state": "off",
+			"settings": {
+				"readonly": 0,
+				"states": "on,off"
+			}
+		},
+		"kitchen1": {
+			"name": "Sessel",
+			"protocol": [ "kaku_dimmer" ],
+			"id": [{
+				"id": 10,
+				"unit": 12
+			}],
+			"state": "on",
+			"dimlevel": 6,
+			"settings": {
+				"readonly": 1,
+				"states": "on,off",
+				"max": 15,
+				"min": 0
+			}
+		},
+		"screen1": {
+			"name": "Jalousie",
+			"protocol": [ "kaku_screen" ],
+			"id": [{
+				"id": 100,
+				"unit": 1
+			}],
+			"state": "down"
+		}
+	},
+	"devices": {
+		"name": "Küche"
+	},
+	"testing": {
+		"name": "Schlafzimmer"
+	}
+}
