@@ -10,6 +10,7 @@ import android.util.Log;
 import org.acra.ACRA;
 import org.acra.ReportingInteractionMode;
 import org.acra.annotation.ReportsCrashes;
+import org.codechimp.apprater.AppRater;
 
 import de.medienDresden.acra.BitbucketReportSender;
 import de.medienDresden.illumina.BuildConfig;
@@ -73,10 +74,15 @@ public class Illumina extends Application {
         }
 
         initLicenses();
+        initAppRater();
 
         /* If this service isn't started explicitly, it would be
          * destroyed if no more clients are bound */
         startService(new Intent(this, PilightServiceImpl.class));
+    }
+
+    private void initAppRater() {
+        AppRater.setMarket(BuildConfig.MARKET);
     }
 
     private void initErrorReporting() {
