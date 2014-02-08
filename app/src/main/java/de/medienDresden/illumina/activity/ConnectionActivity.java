@@ -18,7 +18,6 @@ import android.widget.ProgressBar;
 import org.codechimp.apprater.AppRater;
 
 import de.medienDresden.Illumina;
-import de.medienDresden.illumina.BuildConfig;
 import de.medienDresden.illumina.R;
 import de.medienDresden.illumina.service.PilightService;
 
@@ -72,7 +71,6 @@ public class ConnectionActivity extends BaseActivity {
 
         mProgressBar.setIndeterminate(true);
 
-        AppRater.setMarket(BuildConfig.MARKET);
         AppRater.app_launched(this);
     }
 
