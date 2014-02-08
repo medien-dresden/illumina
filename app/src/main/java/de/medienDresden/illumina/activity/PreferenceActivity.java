@@ -72,7 +72,15 @@ public class PreferenceActivity extends FragmentActivity implements
     @Override
     public void rateThisApp() {
         Log.i(TAG, "rateThisApp");
-        AppRater.rateNow(this);
+
+        // AppRater.rateNow(this);
+        // opens the market with the same task ...
+
+        // ... so we make our own intent
+        final Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(AppRater.getMarket().getMarketURI(this));
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     @Override
