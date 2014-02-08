@@ -1,5 +1,6 @@
 package de.medienDresden.illumina.activity;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -8,11 +9,15 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 
 import org.codechimp.apprater.AppRater;
 
+import java.util.Locale;
+
 import de.medienDresden.Illumina;
+import de.medienDresden.illumina.BuildConfig;
 import de.medienDresden.illumina.R;
 import de.medienDresden.illumina.fragment.SettingsFragment;
 import de.psdev.licensesdialog.LicensesDialogFragment;
@@ -98,6 +103,23 @@ public class PreferenceActivity extends FragmentActivity implements
         intent.setData(Uri.parse(getResources().getString(R.string.developer_url)));
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+    }
+
+    @Override
+    public boolean onKeyLongPress(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            new AlertDialog.Builder(this)
+                    .setMessage(String.format(Locale.getDefault(),
+                            "Version: %s\nVariant: %s\nBuild: %s",
+                            BuildConfig.VERSION_NAME,
+                            BuildConfig.FLAVOR,
+                            BuildConfig.BUILD_TYPE))
+                    .setCancelable(true)
+                    .create()
+                    .show();
+        }
+
+        return super.onKeyLongPress(keyCode, event);
     }
 
 }
