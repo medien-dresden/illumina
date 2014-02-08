@@ -42,8 +42,7 @@ import de.psdev.licensesdialog.licenses.CreativeCommonsAttributionNoDerivs30Unpo
                 "PilightBinder:D",
                 "PilightServiceImpl:D",
                 "DeviceAdapter:D",
-                "LocationPagerAdapter:D",
-                "*:E"
+                "LocationPagerAdapter:D"
         },
 
         mode = ReportingInteractionMode.DIALOG,
