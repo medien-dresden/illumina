@@ -2,6 +2,7 @@ package de.medienDresden.illumina.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -79,6 +80,16 @@ public class PreferenceActivity extends FragmentActivity implements
         Log.i(TAG, "showLicenses");
         LicensesDialogFragment.newInstance(R.raw.licenses, true)
                 .show(getSupportFragmentManager(), null);
+    }
+
+    @Override
+    public void contactDeveloper() {
+        Log.i(TAG, "contactDeveloper");
+
+        final Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(getResources().getString(R.string.developer_url)));
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
 }

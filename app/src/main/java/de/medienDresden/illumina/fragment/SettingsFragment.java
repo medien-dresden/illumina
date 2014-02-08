@@ -23,6 +23,8 @@ public class SettingsFragment extends PreferenceFragment {
 
     public static final String LICENSES = "illumina.licenses";
 
+    public static final String CONTACT = "illumina.contact";
+
     public interface SettingsListener {
 
         void refreshTheme();
@@ -30,6 +32,8 @@ public class SettingsFragment extends PreferenceFragment {
         void rateThisApp();
 
         void showLicenses();
+
+        void contactDeveloper();
 
     }
 
@@ -44,6 +48,10 @@ public class SettingsFragment extends PreferenceFragment {
 
                 case LICENSES:
                     mSettingsListener.showLicenses();
+                    return true;
+
+                case CONTACT:
+                    mSettingsListener.contactDeveloper();
                     return true;
 
                 default:
@@ -72,12 +80,15 @@ public class SettingsFragment extends PreferenceFragment {
 
         final Preference ratePref = getPreferenceScreen().findPreference(RATE);
         final Preference licensesPref = getPreferenceScreen().findPreference(LICENSES);
+        final Preference contactPref = getPreferenceScreen().findPreference(CONTACT);
 
         assert ratePref != null;
         assert licensesPref != null;
+        assert contactPref != null;
 
         ratePref.setOnPreferenceClickListener(mPreferenceClickedListener);
         licensesPref.setOnPreferenceClickListener(mPreferenceClickedListener);
+        contactPref.setOnPreferenceClickListener(mPreferenceClickedListener);
     }
 
     @Override

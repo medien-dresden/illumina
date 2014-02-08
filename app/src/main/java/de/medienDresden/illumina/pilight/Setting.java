@@ -1,5 +1,6 @@
 package de.medienDresden.illumina.pilight;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -106,12 +107,40 @@ public class Setting extends LinkedHashMap<String, Location> {
 
                 case "state":
                     device.setValue(jsonDevice.optString(currentDeviceAttribute));
+
+                    if (TextUtils.equals(device.getValue(), Device.VALUE_UP)
+                            || TextUtils.equals(device.getValue(), Device.VALUE_DOWN)) {
+                        device.setType(Device.TYPE_SCREEN);
+                    }
+
                     break;
 
                 case "dimlevel":
                     device.setType(Device.TYPE_DIMMER); // assuming dimmer device
                     device.setDimLevel(jsonDevice.optInt(currentDeviceAttribute));
                     break;
+
+                case "temperature":
+                    device.setType(Device.TYPE_WEATHER); // assuming weather device
+                    device.setTemperature(jsonDevice.optInt(currentDeviceAttribute));
+                    break;
+
+                case "humidity":
+                    device.setType(Device.TYPE_WEATHER); // assuming weather device
+                    device.setHumidity(jsonDevice.optInt(currentDeviceAttribute));
+                    break;
+
+                case "battery":
+                    device.setHealthyBattery(jsonDevice.optInt(currentDeviceAttribute) == 1);
+                    break;
+
+                case "settings":
+                    final JSONObject jsonSetting = jsonDevice.optJSONObject(currentDeviceAttribute);
+
+                    if (jsonSetting != null) {
+                        injectSettings(device, jsonSetting);
+                        break;
+                    }
 
                 default:
                     Log.v(TAG, "unhandled device parameter " + currentDeviceAttribute
@@ -121,6 +150,41 @@ public class Setting extends LinkedHashMap<String, Location> {
         }
 
         return device;
+    }
+
+    private void injectSettings(Device device, JSONObject jsonSetting) {
+        final Iterator jsonValuesIterator = jsonSetting.keys();
+
+        while (jsonValuesIterator.hasNext()) {
+            final String valueKey = (String) jsonValuesIterator.next();
+
+            switch (valueKey) {
+                case "battery":
+                    device.setShowBattery(jsonSetting.optInt(valueKey) == 1);
+                    break;
+
+                case "temperature":
+                    device.setShowTemperature(jsonSetting.optInt(valueKey) == 1);
+                    break;
+
+                case "humidity":
+                    device.setShowHumidity(jsonSetting.optInt(valueKey) == 1);
+                    break;
+
+                case "decimals":
+                    device.setDecimals(jsonSetting.optInt(valueKey));
+                    break;
+
+                case "readonly":
+                    device.setReadOnly(jsonSetting.optInt(valueKey) == 1);
+                    break;
+
+                default:
+                    Log.v(TAG, "unhandled setting " + valueKey
+                            + ":" + jsonSetting.optString(valueKey));
+                    break;
+            }
+        }
     }
 
     private void updateDevices(String locationId, JSONArray deviceIds, JSONObject jsonValues) {
@@ -149,6 +213,18 @@ public class Setting extends LinkedHashMap<String, Location> {
 
                 case "dimlevel":
                     device.setDimLevel(jsonValues.getInt(valueKey));
+                    break;
+
+                case "temperature":
+                    device.setTemperature(jsonValues.optInt(valueKey));
+                    break;
+
+                case "humidity":
+                    device.setHumidity(jsonValues.optInt(valueKey));
+                    break;
+
+                case "battery":
+                    device.setHealthyBattery(jsonValues.optInt(valueKey) == 1);
                     break;
 
                 default:

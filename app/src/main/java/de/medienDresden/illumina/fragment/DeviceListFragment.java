@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 import de.medienDresden.illumina.R;
 import de.medienDresden.illumina.pilight.Device;
@@ -24,6 +25,22 @@ public class DeviceListFragment extends BaseListFragment implements DeviceAdapte
     public static final String ARG_LOCATION_ID = "locationId";
 
     private String mLocationId;
+
+    private Comparator<? super Device> mDeviceOrderComparator = new Comparator<Device>() {
+        @Override
+        public int compare(Device device, Device device2) {
+            final int o1 = device.getOrder();
+            final int o2 = device2.getOrder();
+
+            if (o1 > o2) {
+                return 1;
+            } else if (o1 < o2) {
+                return -1;
+            } else {
+                return 0;
+            }
+        }
+    };
 
     public static DeviceListFragment newInstance(String locationId) {
         final DeviceListFragment fragment = new DeviceListFragment();
@@ -76,6 +93,7 @@ public class DeviceListFragment extends BaseListFragment implements DeviceAdapte
         }
 
         setListAdapter(new DeviceAdapter(getActivity(), new ArrayList<>(location.values()), this));
+        ((DeviceAdapter) getListAdapter()).sort(mDeviceOrderComparator);
     }
 
     @Override
@@ -83,7 +101,10 @@ public class DeviceListFragment extends BaseListFragment implements DeviceAdapte
         super.onPilightDeviceChange(remoteDevice);
 
         if (TextUtils.equals(remoteDevice.getLocationId(), mLocationId)) {
-            requestLocation();
+            final DeviceAdapter adapter = (DeviceAdapter) getListAdapter();
+            adapter.remove(remoteDevice);
+            adapter.add(remoteDevice);
+            ((DeviceAdapter) getListAdapter()).sort(mDeviceOrderComparator);
         }
     }
 
@@ -96,10 +117,18 @@ public class DeviceListFragment extends BaseListFragment implements DeviceAdapte
     public void onListItemClick(ListView listView, View view, int position, long id) {
         final Device device = (Device) getListAdapter().getItem(position);
 
-        if (device.isOn()) {
-            device.setValue(Device.VALUE_OFF);
-        } else {
-            device.setValue(Device.VALUE_ON);
+        switch (device.getType()) {
+            case Device.TYPE_SCREEN:
+                device.setValue(device.isUp() ? Device.VALUE_DOWN : Device.VALUE_UP);
+                break;
+
+            case Device.TYPE_SWITCH:
+            case Device.TYPE_DIMMER:
+                device.setValue(device.isOn() ? Device.VALUE_OFF : Device.VALUE_ON);
+                break;
+
+            case Device.TYPE_WEATHER:
+                return;
         }
 
         sendDeviceChange(device, Device.PROPERTY_VALUE);

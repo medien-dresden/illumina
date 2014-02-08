@@ -15,6 +15,8 @@ import de.medienDresden.acra.BitbucketReportSender;
 import de.medienDresden.illumina.BuildConfig;
 import de.medienDresden.illumina.R;
 import de.medienDresden.illumina.service.PilightServiceImpl;
+import de.psdev.licensesdialog.LicenseResolver;
+import de.psdev.licensesdialog.licenses.CreativeCommonsAttributionNoDerivs30Unported;
 
 @ReportsCrashes(
         formKey = "",
@@ -66,7 +68,11 @@ public class Illumina extends Application {
     public void onCreate() {
         super.onCreate();
 
-        initErrorReporting();
+        if (!BuildConfig.DEBUG) {
+            initErrorReporting();
+        }
+
+        initLicenses();
 
         /* If this service isn't started explicitly, it would be
          * destroyed if no more clients are bound */
@@ -85,6 +91,11 @@ public class Illumina extends Application {
         } catch (Exception exception) {
             Log.e(TAG, "illumina won't be able to send error reports", exception);
         }
+    }
+
+    private void initLicenses() {
+        LicenseResolver.registerLicense(
+                new CreativeCommonsAttributionNoDerivs30Unported());
     }
 
     public SharedPreferences getSharedPreferences() {
