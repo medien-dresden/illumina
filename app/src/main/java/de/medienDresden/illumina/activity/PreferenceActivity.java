@@ -1,5 +1,6 @@
 package de.medienDresden.illumina.activity;
 
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,6 +12,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
+import android.view.Window;
 
 import org.codechimp.apprater.AppRater;
 
@@ -34,6 +36,7 @@ public class PreferenceActivity extends FragmentActivity implements
     }
 
     @Override
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     protected void onCreate(Bundle savedInstanceState) {
         Log.i(TAG, "onCreate");
 
@@ -41,13 +44,18 @@ public class PreferenceActivity extends FragmentActivity implements
                 Illumina.PREF_THEME, getString(R.string.theme_default));
 
         setTheme(getResources().getIdentifier(mCurrentTheme, "style", getPackageName()));
-        super.onCreate(savedInstanceState);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            requestWindowFeature(Window.FEATURE_ACTION_BAR);
+        }
+
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.preference_fragment);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            assert getActionBar() != null;
-            getActionBar().setDisplayHomeAsUpEnabled(true);
+            if (getActionBar() != null) {
+                getActionBar().setDisplayHomeAsUpEnabled(true);
+            }
         }
     }
 
