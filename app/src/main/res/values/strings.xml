@@ -56,4 +56,6 @@
     <string name="developer_url">https://plus.google.com/102758503227173766807</string>
     <string name="temperature_placeholder">24°</string>
     <string name="humidity_placeholder">63%</string>
+    <string name="search">find Raspberry</string>
+    <string name="service_not_found">No service found</string>
 </resources>
