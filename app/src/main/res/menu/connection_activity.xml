@@ -4,13 +4,15 @@
     <item
         android:id="@+id/action_connect"
         android:title="@string/connect"
-        android:orderInCategory="100"
+        android:icon="?attr/connect_action_icon"
+        android:orderInCategory="110"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/action_search"
         android:title="@string/search"
+        android:icon="?attr/search_action_icon"
         android:orderInCategory="100"
-        app:showAsAction="never" />
+        app:showAsAction="ifRoom" />
 
 </menu>

@@ -5,4 +5,6 @@
     <attr name="thermometer" format="reference" />
     <attr name="humidity" format="reference" />
     <attr name="screen_button_style" format="reference" />
+    <attr name="search_action_icon" format="reference" />
+    <attr name="connect_action_icon" format="reference" />
 </resources>

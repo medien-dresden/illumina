@@ -7,6 +7,8 @@
         <item name="humidity">@drawable/humidity_dark</item>
         <item name="thermometer">@drawable/thermometer_dark</item>
         <item name="screen_button_style">@style/ScreenButtonDarkStyle</item>
+        <item name="search_action_icon">@drawable/ic_action_search_dark</item>
+        <item name="connect_action_icon">@drawable/ic_action_connect_dark</item>
     </style>
 
     <style name="Theme.Illumina.Light" parent="@style/Theme.AppCompat.Light">
@@ -15,6 +17,8 @@
         <item name="humidity">@drawable/humidity_light</item>
         <item name="thermometer">@drawable/thermometer_light</item>
         <item name="screen_button_style">@style/ScreenButtonLightStyle</item>
+        <item name="search_action_icon">@drawable/ic_action_search_light</item>
+        <item name="connect_action_icon">@drawable/ic_action_connect_light</item>
     </style>
 
 </resources>
