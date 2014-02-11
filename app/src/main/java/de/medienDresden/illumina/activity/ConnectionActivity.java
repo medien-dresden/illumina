@@ -29,8 +29,6 @@ public class ConnectionActivity extends BaseActivity implements SsdpLocator.Cons
 
     private SsdpLocator pilightLocator = new PilightSsdpLocator(this);
 
-    private boolean mIsManualDiscovery;
-
     // ------------------------------------------------------------------------
     //
     //      Service
@@ -78,10 +76,6 @@ public class ConnectionActivity extends BaseActivity implements SsdpLocator.Cons
         mProgressBar.setIndeterminate(true);
 
         AppRater.app_launched(this);
-
-        setBusy(true);
-        mIsManualDiscovery = false;
-        pilightLocator.discover();
     }
 
     @Override
@@ -95,15 +89,13 @@ public class ConnectionActivity extends BaseActivity implements SsdpLocator.Cons
         switch (item.getItemId()) {
             case R.id.action_connect:
                 Log.i(TAG, "click on connect");
-                savePreferences();
                 setBusy(true);
-                dispatch(Message.obtain(null, PilightService.Request.PILIGHT_CONNECT));
+                connect();
                 return true;
 
             case R.id.action_search:
                 Log.i(TAG, "click on search");
                 setBusy(true);
-                mIsManualDiscovery = true;
                 pilightLocator.discover();
                 return true;
 
@@ -184,7 +176,6 @@ public class ConnectionActivity extends BaseActivity implements SsdpLocator.Cons
     @Override
     protected void reset() {
         super.reset();
-
         setBusy(false);
     }
 
@@ -223,21 +214,22 @@ public class ConnectionActivity extends BaseActivity implements SsdpLocator.Cons
         supportInvalidateOptionsMenu();
     }
 
-    @Override
-    public void onSsdpServiceFound(String address, int port) {
-        mEditTextHost.setText(address);
-        mEditTextPort.setText(String.valueOf(port));
-
+    private void connect() {
         savePreferences();
         dispatch(Message.obtain(null, PilightService.Request.PILIGHT_CONNECT));
     }
 
     @Override
-    public void onNoSsdpServiceFound() {
-        if (mIsManualDiscovery) {
-            showError(R.string.service_not_found);
-        }
+    public void onSsdpServiceFound(String address, int port) {
+        mEditTextHost.setText(address);
+        mEditTextPort.setText(String.valueOf(port));
+        savePreferences();
+        setBusy(false);
+    }
 
+    @Override
+    public void onNoSsdpServiceFound() {
+        showError(R.string.service_not_found);
         setBusy(false);
     }
 
