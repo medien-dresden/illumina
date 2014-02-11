@@ -9,7 +9,6 @@
         <item name="screen_button_style">@style/ScreenButtonDarkStyle</item>
         <item name="search_action_icon">@drawable/ic_action_search_dark</item>
         <item name="connect_action_icon">@drawable/ic_action_connect_dark</item>
-        <item name="android:windowBackground">@android:color/black</item>
     </style>
 
     <style name="Theme.Illumina.Light" parent="@style/Theme.AppCompat.Light">
