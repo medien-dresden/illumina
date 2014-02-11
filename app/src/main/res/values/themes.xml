@@ -7,6 +7,7 @@
         <item name="humidity">@drawable/humidity_dark</item>
         <item name="thermometer">@drawable/thermometer_dark</item>
         <item name="screen_button_style">@style/ScreenButtonDarkStyle</item>
+        <item name="android:windowBackground">@android:color/black</item>
     </style>
 
     <style name="Theme.Illumina.Light" parent="@style/Theme.AppCompat.Light">
