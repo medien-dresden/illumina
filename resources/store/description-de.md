@@ -6,7 +6,7 @@ Highlights:
 • native Android App
 • einfachste Konfiguration
 • verschiedene Designs
-• performante Verbindung zu pilight
+• automatisches Verbinden via SSDP
 • Unterscheidung der festgelegten Orte
 • volle Kontrolle deiner Funksteckdosen
 • Steuerung kompatibler Dimmer
@@ -20,3 +20,16 @@ Bei Fragen zu pilight oder kompatiblen Geräten, konsultiere das Wiki unter http
 
 Wichtig!
 illumina funktioniert nur im Zusammenhang mit einem laufenden pilight-Daemon der Version 2.0 oder höher innerhalb deines Netzwerkes.
+
+Neue Funktionen
+=============
+
+Version 1.2
+• Unterstützung von pilight 3.0
+• automatisches Verbinden
+
+Version 1.1
+• Unterstützung von Jalousien
+• Unterstützung von Klimasensorik
+• Reihenfolge der Geräte beachten
+• Nur-lesen-Zustand von Geräten verarbeiten

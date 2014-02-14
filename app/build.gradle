@@ -42,8 +42,8 @@ android {
     defaultConfig {
         minSdkVersion 8
         targetSdkVersion 19
-        versionCode 6
-        versionName "1.1.2"
+        versionCode 7
+        versionName "1.2.0"
 
         buildConfigField "String", "BITBUCKET_REPOSITORY_NAME", \
             "\"" + bitbucketRepositoryName + "\""
@@ -88,7 +88,10 @@ dependencies {
     compile 'com.android.support:appcompat-v7:19.0.+'
     compile 'com.github.codechimp-org.apprater:library:1.0.+'
     compile 'com.github.machinarius:preferencefragment:0.1.1'
-    compile 'ch.acra:acra:4.5.0'
+
+    compile('ch.acra:acra:4.5.0') {
+        exclude module: 'json'
+    }
 
     compile('de.psdev.licensesdialog:licensesdialog:1.4.0') {
         exclude module: 'support-v4'

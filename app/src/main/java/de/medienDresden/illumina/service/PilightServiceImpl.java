@@ -445,6 +445,13 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
     }
 
     private void sendLocationList(Messenger receiver) {
+        // fix due to issue #34
+        if (mSetting == null) {
+            sendBroadcast(News.ERROR, Error.HANDSHAKE_FAILED);
+            mState = PilightState.Disconnected;
+            return;
+        }
+
         final Message message = Message.obtain(null, News.LOCATION_LIST);
         final Bundle data = new Bundle();
 

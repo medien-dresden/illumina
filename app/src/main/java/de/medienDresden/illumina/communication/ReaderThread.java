@@ -51,13 +51,17 @@ public class ReaderThread extends Thread {
                     sleep(10);
                 }
 
-                message = mBufferedReader.readLine();
+                message = mBufferedReader.readLine().trim();
             } catch (InterruptedException | IOException exception) {
                 // happens even when disconnected on purpose
                 Log.i(TAG, "reading was interrupted");
                 bundle.putBoolean(EXTRA_INTERRUPTED, true);
                 mHandler.sendMessage(msg);
                 break;
+            }
+
+            if (TextUtils.isEmpty(message)) {
+                continue;
             }
 
             if (TextUtils.equals("BEAT", message)) {

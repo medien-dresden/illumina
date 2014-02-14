@@ -19,11 +19,17 @@ import org.codechimp.apprater.AppRater;
 
 import de.medienDresden.Illumina;
 import de.medienDresden.illumina.R;
+import de.medienDresden.illumina.communication.PilightSsdpLocator;
+import de.medienDresden.illumina.communication.SsdpLocator;
 import de.medienDresden.illumina.service.PilightService;
 
-public class ConnectionActivity extends BaseActivity {
+public class ConnectionActivity extends BaseActivity implements SsdpLocator.Consumer {
 
     public static final String TAG = ConnectionActivity.class.getSimpleName();
+
+    private SsdpLocator pilightLocator = new PilightSsdpLocator(this);
+
+    private boolean mIsManualDiscovery;
 
     // ------------------------------------------------------------------------
     //
@@ -72,6 +78,15 @@ public class ConnectionActivity extends BaseActivity {
         mProgressBar.setIndeterminate(true);
 
         AppRater.app_launched(this);
+
+        final boolean autoConnect = ((Illumina) getApplication())
+                .getSharedPreferences().getBoolean(Illumina.PREF_AUTO_CONNECT, true);
+
+        if (autoConnect) {
+            setBusy(true);
+            mIsManualDiscovery = false;
+            pilightLocator.discover();
+        }
     }
 
     @Override
@@ -85,9 +100,15 @@ public class ConnectionActivity extends BaseActivity {
         switch (item.getItemId()) {
             case R.id.action_connect:
                 Log.i(TAG, "click on connect");
-                savePreferences();
                 setBusy(true);
-                dispatch(Message.obtain(null, PilightService.Request.PILIGHT_CONNECT));
+                connect();
+                return true;
+
+            case R.id.action_search:
+                Log.i(TAG, "click on search");
+                setBusy(true);
+                mIsManualDiscovery = true;
+                pilightLocator.discover();
                 return true;
 
             default:
@@ -98,6 +119,7 @@ public class ConnectionActivity extends BaseActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         final MenuItem connect = menu.findItem(R.id.action_connect);
+        final MenuItem search = menu.findItem(R.id.action_search);
 
         if (connect != null && mEditTextHost != null && mEditTextPort != null) {
             final Editable host = mEditTextHost.getText();
@@ -108,6 +130,10 @@ public class ConnectionActivity extends BaseActivity {
                     && Integer.parseInt(port.toString()) > 0;
 
             connect.setVisible(isDisconnected() && hasHost && hasPort && !mIsBusy);
+        }
+
+        if (search != null) {
+            search.setVisible(isDisconnected() && !mIsBusy);
         }
 
         return super.onPrepareOptionsMenu(menu);
@@ -162,7 +188,6 @@ public class ConnectionActivity extends BaseActivity {
     @Override
     protected void reset() {
         super.reset();
-
         setBusy(false);
     }
 
@@ -199,6 +224,28 @@ public class ConnectionActivity extends BaseActivity {
 
         mIsBusy = busy;
         supportInvalidateOptionsMenu();
+    }
+
+    private void connect() {
+        savePreferences();
+        dispatch(Message.obtain(null, PilightService.Request.PILIGHT_CONNECT));
+    }
+
+    @Override
+    public void onSsdpServiceFound(String address, int port) {
+        mEditTextHost.setText(address);
+        mEditTextPort.setText(String.valueOf(port));
+        savePreferences();
+        dispatch(Message.obtain(null, PilightService.Request.PILIGHT_CONNECT));
+    }
+
+    @Override
+    public void onNoSsdpServiceFound() {
+        if (mIsManualDiscovery) {
+            showError(R.string.service_not_found);
+        }
+
+        setBusy(false);
     }
 
 }

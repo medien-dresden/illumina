@@ -6,7 +6,7 @@ Highlights:
 • native Android App
 • easy configuration
 • multiple designs
-• high performance pilight connection
+• automatic connection with SSDP
 • distinguishes between places
 • switch radio outlets
 • control compatible dimmers
@@ -19,3 +19,16 @@ If you have questions regarding pilight or the list of compatible devices, consu
 
 Important!
 illumina only works in conjunction with a pilight-daemon and a version greater or equal 2.0 running within your network.
+
+New Features
+===========
+
+Version 1.2
+• support for pilight 3.0
+• automatic connection
+
+Version 1.1
+• screen devices
+• weather devices
+• device ordering
+• device read-only state

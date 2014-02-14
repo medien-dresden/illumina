@@ -42,8 +42,7 @@ import de.psdev.licensesdialog.licenses.CreativeCommonsAttributionNoDerivs30Unpo
                 "PilightBinder:D",
                 "PilightServiceImpl:D",
                 "DeviceAdapter:D",
-                "LocationPagerAdapter:D",
-                "*:E"
+                "LocationPagerAdapter:D"
         },
 
         mode = ReportingInteractionMode.DIALOG,
@@ -62,6 +61,8 @@ public class Illumina extends Application {
     public static final String PREF_PORT = "illumina.port";
 
     public static final String PREF_THEME = "illumina.theme";
+
+    public static final String PREF_AUTO_CONNECT = "illumina.auto_connect";
 
     public static final String PREFERENCES_NAME = BuildConfig.PACKAGE_NAME + "_preferences";
 
