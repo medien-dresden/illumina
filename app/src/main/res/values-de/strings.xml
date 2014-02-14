@@ -13,7 +13,7 @@
     <string name="connect">verbinden</string>
     <string name="hostname_or_ip">Hostname oder IP</string>
     <string name="port">Port</string>
-    <string name="connection_help">Voreinstellung bei pilight ist die Portnummer 5000. Nur IP oder Hostname, bzw. die Adresse des Raspberry hat keinen Standardwert. Für weitere Informationen geh auf http://wiki.pilight.org/doku.php/settings</string>
+    <string name="connection_help">Voreinstellung bei pilight (Version 2) ist die Portnummer 5000. Nur IP oder Hostname, bzw. die Adresse des Raspberry hat keinen Standardwert. Für weitere Informationen geh auf http://wiki.pilight.org/doku.php/settings</string>
     <string name="colon">:</string>
     <string name="unknown_error">Sorry, ein unbekannter Fehler trat auf</string>
     <string name="wrong_settings_error">Verbindung fehlgeschlagen! Bitte prüfe deine Einstellung zum Hostnamen und Port</string>
@@ -48,4 +48,6 @@
     <string name="contact_developer_summary">Hier kannst du dem Entwickler Grüße und Kritik entgegenbringen.</string>
     <string name="search">Raspberry suchen</string>
     <string name="service_not_found">Service nicht gefunden</string>
+    <string name="auto_connect">automatisch verbinden</string>
+    <string name="auto_connect_summary">Ab pilight-Version 3 kann illumina deinen Raspberry suchen und automatisch verbinden.</string>
 </resources>

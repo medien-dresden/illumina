@@ -20,7 +20,7 @@
     <string name="connect">connect</string>
     <string name="hostname_or_ip">Hostname or IP</string>
     <string name="port">Port</string>
-    <string name="connection_help">The default pilight configuration mentions 5000 for the port number. Only IP or hostname, respectively the address of your Raspberry has no default value. For further information consult http://wiki.pilight.org/doku.php/settings</string>
+    <string name="connection_help">The default pilight configuration (version 2) mentions 5000 for the port number. Only IP or hostname, respectively the address of your Raspberry has no default value. For further information consult http://wiki.pilight.org/doku.php/settings</string>
     <string name="colon">:</string>
     <string name="unknown_error">Sorry, this is an unknown error</string>
     <string name="wrong_settings_error">Connection failed! Please reconsider your host and/or port setting</string>
@@ -58,4 +58,6 @@
     <string name="humidity_placeholder">63%</string>
     <string name="search">find Raspberry</string>
     <string name="service_not_found">No service found</string>
+    <string name="auto_connect">connect automatically</string>
+    <string name="auto_connect_summary">Since pilight 3, illumina can find and connect your Raspberry automatically.</string>
 </resources>

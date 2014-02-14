@@ -29,6 +29,8 @@ public class ConnectionActivity extends BaseActivity implements SsdpLocator.Cons
 
     private SsdpLocator pilightLocator = new PilightSsdpLocator(this);
 
+    private boolean mIsManualDiscovery;
+
     // ------------------------------------------------------------------------
     //
     //      Service
@@ -76,6 +78,15 @@ public class ConnectionActivity extends BaseActivity implements SsdpLocator.Cons
         mProgressBar.setIndeterminate(true);
 
         AppRater.app_launched(this);
+
+        final boolean autoConnect = ((Illumina) getApplication())
+                .getSharedPreferences().getBoolean(Illumina.PREF_AUTO_CONNECT, true);
+
+        if (autoConnect) {
+            setBusy(true);
+            mIsManualDiscovery = false;
+            pilightLocator.discover();
+        }
     }
 
     @Override
@@ -96,6 +107,7 @@ public class ConnectionActivity extends BaseActivity implements SsdpLocator.Cons
             case R.id.action_search:
                 Log.i(TAG, "click on search");
                 setBusy(true);
+                mIsManualDiscovery = true;
                 pilightLocator.discover();
                 return true;
 
@@ -224,12 +236,15 @@ public class ConnectionActivity extends BaseActivity implements SsdpLocator.Cons
         mEditTextHost.setText(address);
         mEditTextPort.setText(String.valueOf(port));
         savePreferences();
-        setBusy(false);
+        dispatch(Message.obtain(null, PilightService.Request.PILIGHT_CONNECT));
     }
 
     @Override
     public void onNoSsdpServiceFound() {
-        showError(R.string.service_not_found);
+        if (mIsManualDiscovery) {
+            showError(R.string.service_not_found);
+        }
+
         setBusy(false);
     }
 

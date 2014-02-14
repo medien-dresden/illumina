@@ -62,6 +62,8 @@ public class Illumina extends Application {
 
     public static final String PREF_THEME = "illumina.theme";
 
+    public static final String PREF_AUTO_CONNECT = "illumina.auto_connect";
+
     public static final String PREFERENCES_NAME = BuildConfig.PACKAGE_NAME + "_preferences";
 
     @Override
