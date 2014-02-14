@@ -13,6 +13,12 @@
             android:entryValues="@array/theme_values"
             android:defaultValue="@string/theme_default" />
 
+        <CheckBoxPreference
+            android:key="illumina.auto_connect"
+            android:title="@string/auto_connect"
+            android:summary="@string/auto_connect_summary"
+            android:defaultValue="true"/>
+
     </PreferenceCategory>
 
     <PreferenceCategory
