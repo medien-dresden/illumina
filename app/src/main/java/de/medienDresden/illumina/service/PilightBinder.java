@@ -11,7 +11,9 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
-import android.util.Log;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 
@@ -20,7 +22,7 @@ import de.medienDresden.illumina.pilight.Location;
 
 public class PilightBinder {
 
-    private static final String TAG = PilightBinder.class.getSimpleName();
+    public static final Logger log = LoggerFactory.getLogger(PilightBinder.class);
 
     private final ServiceListener mListener;
 
@@ -139,7 +141,7 @@ public class PilightBinder {
                 // do anything with it; we can count on soon being
                 // disconnected (and then reconnected if it can be restarted)
                 // so there is no need to do anything here.
-                Log.w(TAG, "binding the service failed", exception);
+                log.warn("binding the service failed", exception);
             }
         }
 
@@ -177,7 +179,7 @@ public class PilightBinder {
 
                 } catch (RemoteException exception) {
                     // There is nothing special we need to do if the service has crashed.
-                    Log.w(TAG, "unbinding the service failed", exception);
+                    log.warn("unbinding the service failed", exception);
                 }
             }
 
@@ -192,7 +194,7 @@ public class PilightBinder {
             message.replyTo = mMessenger;
             mService.send(message);
         } catch (RemoteException exception) {
-            Log.w(TAG, "sending failed", exception);
+            log.warn("sending failed", exception);
         }
     }
 

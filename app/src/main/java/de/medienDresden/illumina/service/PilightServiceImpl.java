@@ -9,10 +9,11 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.text.TextUtils;
-import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 
@@ -25,7 +26,7 @@ import de.medienDresden.illumina.pilight.Setting;
 
 public class PilightServiceImpl extends Service implements PilightService, Setting.RemoteChangeHandler {
 
-    public static final String TAG = PilightServiceImpl.class.getSimpleName();
+    public static final Logger log = LoggerFactory.getLogger(PilightServiceImpl.class);
 
     private Setting mSetting;
 
@@ -74,7 +75,7 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
                     break;
 
                 default:
-                    Log.w(TAG, "unhandled message from socket");
+                    log.warn("unhandled message from socket");
                     break;
             }
         }
@@ -85,7 +86,7 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
     private void sendSocketMessage(JSONObject json) {
         final String jsonString = json.toString();
 
-        Log.i(TAG, "sending " + jsonString);
+        log.info("sending " + jsonString);
         mPilight.send(jsonString);
     }
 
@@ -97,25 +98,25 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
     }
 
     private void onSocketConnectionFailed() {
-        Log.w(TAG, "pilight connection failed");
+        log.warn("pilight connection failed");
         sendBroadcast(News.ERROR, Error.CONNECTION_FAILED);
         mState = PilightState.Disconnected;
     }
 
     private void onSocketDisconnected() {
-        Log.i(TAG, "pilight disconnected");
+        log.info("pilight disconnected");
         sendBroadcast(News.DISCONNECTED);
         mState = PilightState.Disconnected;
     }
 
     private void onSocketError() {
-        Log.i(TAG, "pilight socket error");
+        log.info("pilight socket error");
         if (!mCurrentlyTriesReconnecting && mState != PilightState.Disconnected) {
             mCurrentlyTriesReconnecting = true;
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    Log.i(TAG, "reconnecting");
+                    log.info("reconnecting");
                     connect();
                 }
             }, 100);
@@ -128,14 +129,14 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
     }
 
     private void onSocketConnected() {
-        Log.i(TAG, "pilight connected, handshake initiated");
+        log.info("pilight connected, handshake initiated");
 
         final JSONObject json = new JSONObject();
 
         try {
             json.put("message", "client gui");
         } catch (JSONException exception) {
-            Log.e(TAG, "- error creating handshake message", exception);
+            log.error("- error creating handshake message", exception);
         }
 
         sendSocketMessage(json);
@@ -147,13 +148,13 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
         JSONObject json = new JSONObject();
 
         if (TextUtils.isEmpty(message)) {
-            Log.i(TAG, "received message is empty");
+            log.info("received message is empty");
 
         } else {
             try {
                 json = new JSONObject(message);
             } catch (JSONException exception) {
-                Log.i(TAG, "decoding json failed with: " + exception.getMessage());
+                log.info("decoding json failed with: " + exception.getMessage());
                 sendBroadcast(News.ERROR, Error.UNKNOWN);
                 mState = PilightState.Disconnected;
             }
@@ -174,15 +175,15 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
                 break;
 
             case Connecting:
-                Log.w(TAG, "impossible state 'Connecting'");
+                log.warn("impossible state 'Connecting'");
                 break;
 
             case Disconnected:
-                Log.w(TAG, "impossible state 'Disconnected'");
+                log.warn("impossible state 'Disconnected'");
                 break;
 
             case Disconnecting:
-                Log.w(TAG, "impossible state 'Disconnecting'");
+                log.warn("impossible state 'Disconnecting'");
                 break;
 
             default:
@@ -192,19 +193,19 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
     }
 
     private void onPilightMessage(JSONObject json) {
-        Log.i(TAG, "pilight message received: " + json.toString());
+        log.info("pilight message received: " + json.toString());
 
         if (json.isNull("origin")) {
-            Log.w(TAG, "- has no origin, ignored");
+            log.warn("- has no origin, ignored");
         } else if (!TextUtils.equals(json.optString("origin"), "config")) {
-            Log.w(TAG, "- wrong origin, ignored");
+            log.warn("- wrong origin, ignored");
         } else {
             mSetting.update(json);
         }
     }
 
     private void onPilightConfigResponse(JSONObject json) {
-        Log.i(TAG, "pilight config response");
+        log.info("pilight config response");
 
         if (!json.isNull("config")) {
             try {
@@ -220,7 +221,7 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
                 return;
 
             } catch (JSONException exception) {
-                Log.i(TAG, "- error reading config " + exception.getMessage());
+                log.info("- error reading config " + exception.getMessage());
             }
         }
 
@@ -229,7 +230,7 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
     }
 
     private void onPilightHandshakeResponse(JSONObject json) {
-        Log.i(TAG, "pilight handshake response");
+        log.info("pilight handshake response");
 
         if (!json.isNull("message")) {
             try {
@@ -241,7 +242,7 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
                     try {
                         request.put("message", "request config");
                     } catch (JSONException exception) {
-                        Log.e(TAG, "- error creating config request message", exception);
+                        log.error("- error creating config request message", exception);
                     }
 
                     sendSocketMessage(request);
@@ -250,11 +251,11 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
                     return;
 
                 } else {
-                    Log.e(TAG, "- error with message: " + message);
+                    log.error("- error with message: " + message);
                 }
 
             } catch (JSONException exception) {
-                Log.i(TAG, "- error reading message " + exception.getMessage());
+                log.info("- error reading message " + exception.getMessage());
             }
         }
 
@@ -271,17 +272,17 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
     }
 
     public void connect() {
-        Log.i(TAG, "connect request");
+        log.info("connect request");
 
         mPilight.connect(getHostFromPreferences(), getPortFromPreferences());
         mState = PilightState.Connecting;
     }
 
     public void disconnect() {
-        Log.i(TAG, "disconnect request");
+        log.info("disconnect request");
 
         if (mState == PilightState.Disconnected) {
-            Log.i(TAG, "- ignored, already disconnected");
+            log.info("- ignored, already disconnected");
             return;
         }
 
@@ -327,7 +328,7 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
             sendSocketMessage(json);
 
         } catch (JSONException exception) {
-            Log.e(TAG, "sending change failed with " + exception.getMessage());
+            log.error("sending change failed with " + exception.getMessage());
         }
     }
 
@@ -428,7 +429,7 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
                 receiver.send(Message.obtain(null, News.DISCONNECTED));
             }
         } catch (RemoteException exception) {
-            Log.e(TAG, "sending disconnected state failed", exception);
+            log.error("sending disconnected state failed", exception);
         }
     }
 
@@ -444,7 +445,7 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
         try {
             receiver.send(message);
         } catch (RemoteException exception) {
-            Log.e(TAG, "sending location failed", exception);
+            log.error("sending location failed", exception);
         }
     }
 
@@ -468,7 +469,7 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
         try {
             receiver.send(message);
         } catch (RemoteException exception) {
-            Log.e(TAG, "sending location list failed", exception);
+            log.error("sending location list failed", exception);
         }
     }
 

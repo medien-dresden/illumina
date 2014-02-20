@@ -4,7 +4,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
-import android.util.Log;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -15,7 +17,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class StreamingSocketImpl implements StreamingSocket {
 
-    private static final String TAG = StreamingSocketImpl.class.getSimpleName();
+    public static final Logger log = LoggerFactory.getLogger(StreamingSocketImpl.class);
 
     @SuppressWarnings("PointlessArithmeticExpression")
     public static final int HEARTBEAT_INTERVAL = 1 * 1000;
@@ -115,9 +117,9 @@ public class StreamingSocketImpl implements StreamingSocket {
 
             } catch (Exception exception) {
                 if (!TextUtils.isEmpty(exception.getMessage())) {
-                    Log.w(TAG, exception.getMessage(), exception);
+                    log.warn(exception.getMessage(), exception);
                 } else {
-                    Log.w(TAG, "connection failed", exception);
+                    log.warn("connection failed", exception);
                 }
 
                 dispatchError();

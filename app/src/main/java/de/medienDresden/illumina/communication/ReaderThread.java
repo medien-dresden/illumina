@@ -4,7 +4,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
-import android.util.Log;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,7 +16,7 @@ import java.io.UnsupportedEncodingException;
 
 public class ReaderThread extends Thread {
 
-    private static final String TAG = ReaderThread.class.getSimpleName();
+    public static final Logger log = LoggerFactory.getLogger(ReaderThread.class);
 
     public static final String EXTRA_MESSAGE = "message";
 
@@ -32,7 +34,7 @@ public class ReaderThread extends Thread {
         try {
             mBufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
         } catch (UnsupportedEncodingException exception) {
-            Log.e(TAG, "cannot create socket reader", exception);
+            log.error("cannot create socket reader", exception);
         }
     }
 
@@ -54,7 +56,7 @@ public class ReaderThread extends Thread {
                 message = mBufferedReader.readLine().trim();
             } catch (InterruptedException | IOException exception) {
                 // happens even when disconnected on purpose
-                Log.i(TAG, "reading was interrupted");
+                log.info("reading was interrupted");
                 bundle.putBoolean(EXTRA_INTERRUPTED, true);
                 mHandler.sendMessage(msg);
                 break;
@@ -65,9 +67,9 @@ public class ReaderThread extends Thread {
             }
 
             if (TextUtils.equals("BEAT", message)) {
-                Log.v(TAG, "RAW read: " + message);
+                log.info("RAW read: " + message);
             } else {
-                Log.d(TAG, "RAW read: " + message);
+                log.info("RAW read: " + message);
             }
 
             bundle.putString(EXTRA_MESSAGE, message);

@@ -6,20 +6,22 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 
-import de.medienDresden.illumina.widget.LocationPagerAdapter;
-import de.medienDresden.illumina.service.PilightService;
 import de.medienDresden.illumina.R;
 import de.medienDresden.illumina.pilight.Location;
+import de.medienDresden.illumina.service.PilightService;
+import de.medienDresden.illumina.widget.LocationPagerAdapter;
 
 public class LocationListActivity extends BaseActivity {
 
-    public static final String TAG = LocationListActivity.class.getSimpleName();
+    public static final Logger log = LoggerFactory.getLogger(LocationListActivity.class);
 
     // ------------------------------------------------------------------------
     //
@@ -83,7 +85,7 @@ public class LocationListActivity extends BaseActivity {
     }
 
     private void requestLocations() {
-        Log.i(TAG, "requestLocations");
+        log.info("requestLocations");
         dispatch(Message.obtain(null, PilightService.Request.LOCATION_LIST));
     }
 
@@ -148,7 +150,7 @@ public class LocationListActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        Log.i(TAG, "onBackPressed");
+        log.info("onBackPressed");
         dispatch(Message.obtain(null, PilightService.Request.PILIGHT_DISCONNECT));
         super.onBackPressed();
     }
@@ -180,8 +182,8 @@ public class LocationListActivity extends BaseActivity {
     }
 
     @Override
-    protected String getTag() {
-        return TAG;
+    protected Logger getLogger() {
+        return log;
     }
 
 }

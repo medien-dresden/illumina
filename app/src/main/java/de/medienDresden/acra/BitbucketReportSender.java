@@ -1,7 +1,6 @@
 package de.medienDresden.acra;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import org.acra.ACRA;
 import org.acra.ACRAConfiguration;
@@ -20,8 +19,6 @@ import java.util.Map;
 
 import de.medienDresden.illumina.BuildConfig;
 
-import static org.acra.ACRA.LOG_TAG;
-
 public class BitbucketReportSender implements ReportSender {
 
     private static final String TPL_URI = "https://bitbucket.org/api/1.0/repositories/%s/%s/issues";
@@ -33,6 +30,8 @@ public class BitbucketReportSender implements ReportSender {
     private static final String TPL_KEY_VALUE = "* %s: %s\n";
 
     private static final String TPL_CODE_PLAIN = "```\n#!text\n%s\n```\n";
+
+    private static final String TPL_PLAIN = "%s\n";
 
     private final URL mUri;
 
@@ -47,8 +46,6 @@ public class BitbucketReportSender implements ReportSender {
     @Override
     public void send(CrashReportData report) throws ReportSenderException {
         try {
-            Log.d(LOG_TAG, "Connect to " + mUri.toString());
-
             final String login = ACRAConfiguration.isNull(
                     ACRA.getConfig().formUriBasicAuthLogin()) ? null
                         : ACRA.getConfig().formUriBasicAuthLogin();
@@ -119,8 +116,12 @@ public class BitbucketReportSender implements ReportSender {
         content.append(format(TPL_KEY_VALUE, "flavor", BuildConfig.FLAVOR));
 
         content.append(format(TPL_H1, "User Data"));
-        content.append(format(TPL_KEY_VALUE, "comment",
-                report.getProperty(ReportField.USER_COMMENT)));
+
+        if (!TextUtils.isEmpty(report.getProperty(ReportField.USER_COMMENT))) {
+            content.append(format(TPL_KEY_VALUE, "comment",
+                    report.getProperty(ReportField.USER_COMMENT)));
+        }
+
         content.append(format(TPL_KEY_VALUE, "installation",
                 report.getProperty(ReportField.INSTALLATION_ID)));
 
@@ -133,16 +134,17 @@ public class BitbucketReportSender implements ReportSender {
         content.append(preferencesBuilder.toString());
 
         content.append(format(TPL_H1, "Traces and Logs"));
-        content.append(format(TPL_H2, "Stack Trace"));
+        content.append(format(TPL_H2, "Trace"));
         content.append(format(TPL_CODE_PLAIN,
                 report.getProperty(ReportField.STACK_TRACE)));
 
-        final String logCat =  report.getProperty(ReportField.LOGCAT);
+        if (!TextUtils.isEmpty(report.getProperty(ReportField.APPLICATION_LOG))) {
+            content.append(format(TPL_H2, "Log"));
+            content.append(format(TPL_PLAIN,
+                    "|Time|Thread|Level|Class|Message|\n|--|--|--|--|--|"));
 
-        if (!TextUtils.isEmpty(logCat)) {
-            content.append(format(TPL_H2, "Logcat"));
-            content.append(format(TPL_CODE_PLAIN,
-                    report.getProperty(ReportField.LOGCAT)));
+            content.append(format(TPL_PLAIN,
+                    report.getProperty(ReportField.APPLICATION_LOG)));
         }
 
         final String threadingDetails = report.getProperty(ReportField.THREAD_DETAILS);

@@ -5,10 +5,12 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 
 import com.github.machinarius.preferencefragment.PreferenceFragment;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.medienDresden.Illumina;
 import de.medienDresden.illumina.R;
@@ -18,7 +20,7 @@ import de.medienDresden.illumina.R;
 */
 public class SettingsFragment extends PreferenceFragment {
 
-    private static final String TAG = SettingsFragment.class.getSimpleName();
+    public static final Logger log = LoggerFactory.getLogger(SettingsFragment.class);
 
     public static final String RATE = "illumina.rate";
 
@@ -122,8 +124,8 @@ public class SettingsFragment extends PreferenceFragment {
         try {
             mSettingsListener = (SettingsListener) activity;
         } catch (ClassCastException exception) {
-            Log.e(TAG, activity.getClass().getSimpleName() + " should implement "
-                    + getClass().getSimpleName(), exception);
+            log.error(activity.getClass().getSimpleName() + " should implement "
+                    + SettingsListener.class.getSimpleName(), exception);
         }
     }
 
