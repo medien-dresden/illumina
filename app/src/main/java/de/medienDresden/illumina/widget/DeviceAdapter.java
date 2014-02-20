@@ -9,11 +9,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.Filter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import de.medienDresden.illumina.R;
@@ -23,13 +26,52 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
 
     private DimLevelListener mDimLevelListener;
 
+    private List<Device> mOriginalDeviceList;
+
+    private Filter mFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence charSequence) {
+            final FilterResults result = new FilterResults();
+            final List<Device> filteredDeviceList = new ArrayList<>();
+
+            for (Device device : mOriginalDeviceList) {
+                if (!device.isWritable() && device.getType() == Device.TYPE_SCREEN) {
+                    continue;
+                }
+
+                filteredDeviceList.add(device);
+            }
+
+            result.values = filteredDeviceList;
+            result.count = filteredDeviceList.size();
+
+            return result;
+        }
+
+        @Override
+        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+            clear();
+
+            //noinspection unchecked
+            addAll((ArrayList<Device>) filterResults.values);
+
+            if (filterResults.count > 0) {
+                notifyDataSetChanged();
+            } else {
+                notifyDataSetInvalidated();
+            }
+        }
+    };
+
     public interface DimLevelListener {
         void onDimLevelChanged(Device device);
     }
 
     public DeviceAdapter(Context context, List<Device> objects, DimLevelListener dimLevelListener) {
         super(context, 0, objects);
+
         mDimLevelListener = dimLevelListener;
+        mOriginalDeviceList = objects;
 
         final TypedArray typedArray = context.obtainStyledAttributes(
                 new int[]{R.attr.battery_full, R.attr.battery_empty});
@@ -121,6 +163,11 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
         return device != null && device.isWritable();
     }
 
+    @Override
+    public Filter getFilter() {
+        return mFilter;
+    }
+
     private static abstract class DeviceViewHolder {
 
         private Device mDevice;
@@ -174,18 +221,18 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
 
     private static class ScreenViewHolder extends DeviceViewHolder {
 
-        private CheckBox mCheckBox;
+        private ImageButton mUpButton;
+        private ImageButton mDownButton;
 
         ScreenViewHolder(View view) {
             super(view);
-            mCheckBox = (CheckBox) view.findViewById(android.R.id.checkbox);
+
+            mUpButton = (ImageButton) view.findViewById(R.id.up_action);
+            mDownButton = (ImageButton) view.findViewById(R.id.down_action);
         }
 
         void setDevice(Device device) {
             super.setDevice(device);
-
-            mCheckBox.setChecked(device.isUp());
-            mCheckBox.setEnabled(device.isWritable());
         }
 
     }

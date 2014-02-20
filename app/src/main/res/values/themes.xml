@@ -6,9 +6,11 @@
         <item name="battery_empty">@drawable/battery_empty_dark</item>
         <item name="humidity">@drawable/humidity_dark</item>
         <item name="thermometer">@drawable/thermometer_dark</item>
-        <item name="screen_button_style">@style/ScreenButtonDarkStyle</item>
         <item name="search_action_icon">@drawable/ic_action_search_dark</item>
         <item name="connect_action_icon">@drawable/ic_action_connect_dark</item>
+        <item name="up_action">@drawable/ic_action_up_dark</item>
+        <item name="down_action">@drawable/ic_action_down_dark</item>
+        <item name="selector_background">@drawable/abc_list_selector_holo_dark</item>
         <item name="android:windowBackground">@android:color/black</item>
     </style>
 
@@ -17,9 +19,11 @@
         <item name="battery_empty">@drawable/battery_empty_light</item>
         <item name="humidity">@drawable/humidity_light</item>
         <item name="thermometer">@drawable/thermometer_light</item>
-        <item name="screen_button_style">@style/ScreenButtonLightStyle</item>
         <item name="search_action_icon">@drawable/ic_action_search_light</item>
         <item name="connect_action_icon">@drawable/ic_action_connect_light</item>
+        <item name="up_action">@drawable/ic_action_up_light</item>
+        <item name="down_action">@drawable/ic_action_down_light</item>
+        <item name="selector_background">@drawable/abc_list_selector_holo_light</item>
     </style>
 
 </resources>

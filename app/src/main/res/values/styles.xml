@@ -5,12 +5,4 @@
         <item name="android:layout_marginBottom">-8dp</item>
     </style>
 
-    <style name="ScreenButtonLightStyle" parent="android:Widget.CompoundButton.CheckBox">
-        <item name="android:button">@drawable/screen_btn_light</item>
-    </style>
-
-    <style name="ScreenButtonDarkStyle" parent="android:Widget.CompoundButton.CheckBox">
-        <item name="android:button">@drawable/screen_btn_dark</item>
-    </style>
-
 </resources>

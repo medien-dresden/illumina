@@ -92,8 +92,14 @@ public class DeviceListFragment extends BaseListFragment implements DeviceAdapte
             Log.i(TAG, mLocationId + " has no devices to show");
         }
 
-        setListAdapter(new DeviceAdapter(getActivity(), new ArrayList<>(location.values()), this));
-        ((DeviceAdapter) getListAdapter()).sort(mDeviceOrderComparator);
+        final DeviceAdapter adapter = new DeviceAdapter(
+                getActivity(), new ArrayList<>(location.values()), this);
+
+        setListAdapter(adapter);
+        adapter.sort(mDeviceOrderComparator);
+
+        // currently only read-only screens are filtered
+        adapter.getFilter().filter("");
     }
 
     @Override
