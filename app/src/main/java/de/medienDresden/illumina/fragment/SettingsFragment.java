@@ -2,7 +2,6 @@ package de.medienDresden.illumina.fragment;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.text.TextUtils;
@@ -94,6 +93,15 @@ public class SettingsFragment extends PreferenceFragment {
     }
 
     @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        final int padding = (int) getResources().getDimension(R.dimen.settings_margin);
+        getListView().setPadding(padding, 0, padding, 0);
+        getListView().setFooterDividersEnabled(false);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         getPreferences().registerOnSharedPreferenceChangeListener(mPreferenceChangeListener);
@@ -105,15 +113,6 @@ public class SettingsFragment extends PreferenceFragment {
 
         assert getPreferenceManager().getSharedPreferences() != null;
         getPreferences().unregisterOnSharedPreferenceChangeListener(mPreferenceChangeListener);
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            getListView().setScrollBarStyle(View.SCROLLBARS_OUTSIDE_INSET);
-        }
     }
 
     @Override
