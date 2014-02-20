@@ -2,10 +2,12 @@ package de.medienDresden.illumina.fragment;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 
 import com.github.machinarius.preferencefragment.PreferenceFragment;
 
@@ -103,6 +105,15 @@ public class SettingsFragment extends PreferenceFragment {
 
         assert getPreferenceManager().getSharedPreferences() != null;
         getPreferences().unregisterOnSharedPreferenceChangeListener(mPreferenceChangeListener);
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            getListView().setScrollBarStyle(View.SCROLLBARS_OUTSIDE_INSET);
+        }
     }
 
     @Override
