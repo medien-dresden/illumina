@@ -18,7 +18,7 @@ import de.medienDresden.illumina.pilight.Location;
 import de.medienDresden.illumina.service.PilightService;
 import de.medienDresden.illumina.widget.DeviceAdapter;
 
-public class DeviceListFragment extends BaseListFragment implements DeviceAdapter.DimLevelListener {
+public class DeviceListFragment extends BaseListFragment implements DeviceAdapter.DeviceChangeListener {
 
     private static final String TAG = DeviceListFragment.class.getSimpleName();
 
@@ -96,10 +96,9 @@ public class DeviceListFragment extends BaseListFragment implements DeviceAdapte
                 getActivity(), new ArrayList<>(location.values()), this);
 
         setListAdapter(adapter);
-        adapter.sort(mDeviceOrderComparator);
 
-        // currently only read-only screens are filtered
-        adapter.getFilter().filter("");
+        adapter.sort(mDeviceOrderComparator);
+        // adapter.getFilter().filter(""); // FIXME resets scroll position
     }
 
     @Override
@@ -110,13 +109,14 @@ public class DeviceListFragment extends BaseListFragment implements DeviceAdapte
             final DeviceAdapter adapter = (DeviceAdapter) getListAdapter();
             adapter.remove(remoteDevice);
             adapter.add(remoteDevice);
-            ((DeviceAdapter) getListAdapter()).sort(mDeviceOrderComparator);
+            adapter.sort(mDeviceOrderComparator);
+            // adapter.getFilter().filter(""); // FIXME resets scroll position
         }
     }
 
     @Override
-    public void onDimLevelChanged(Device device) {
-        sendDeviceChange(device, Device.PROPERTY_DIM_LEVEL);
+    public void onDeviceChange(Device device, int property) {
+        sendDeviceChange(device, property);
     }
 
     @Override

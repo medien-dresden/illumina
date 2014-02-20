@@ -1,9 +1,11 @@
 package de.medienDresden.illumina.widget;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +26,7 @@ import de.medienDresden.illumina.pilight.Device;
 
 public class DeviceAdapter extends ArrayAdapter<Device> {
 
-    private DimLevelListener mDimLevelListener;
+    private DeviceChangeListener mDeviceChangeListener;
 
     private List<Device> mOriginalDeviceList;
 
@@ -63,14 +65,15 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
         }
     };
 
-    public interface DimLevelListener {
-        void onDimLevelChanged(Device device);
+    public interface DeviceChangeListener {
+        void onDeviceChange(Device device, int property);
     }
 
-    public DeviceAdapter(Context context, List<Device> objects, DimLevelListener dimLevelListener) {
+    public DeviceAdapter(Context context, List<Device> objects,
+                DeviceChangeListener deviceChangeListener) {
         super(context, 0, objects);
 
-        mDimLevelListener = dimLevelListener;
+        mDeviceChangeListener = deviceChangeListener;
         mOriginalDeviceList = objects;
 
         final TypedArray typedArray = context.obtainStyledAttributes(
@@ -127,7 +130,7 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
         assert viewHolder != null;
 
         viewHolder.setDevice(device);
-        viewHolder.setDimLevelListener(mDimLevelListener);
+        viewHolder.setDeviceChangeListener(mDeviceChangeListener);
 
         return view;
     }
@@ -174,7 +177,7 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
 
         private TextView mName;
 
-        private DimLevelListener mDimLevelListener;
+        private DeviceChangeListener mDeviceChangeListener;
 
         DeviceViewHolder(View view) {
             mName = (TextView) view.findViewById(android.R.id.text1);
@@ -191,12 +194,12 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
             return mDevice;
         }
 
-        void setDimLevelListener(DimLevelListener dimLevelListener) {
-            mDimLevelListener = dimLevelListener;
+        void setDeviceChangeListener(DeviceChangeListener deviceChangeListener) {
+            mDeviceChangeListener = deviceChangeListener;
         }
 
-        DimLevelListener getDimLevelListener() {
-            return mDimLevelListener;
+        DeviceChangeListener getDeviceChangeListener() {
+            return mDeviceChangeListener;
         }
 
     }
@@ -221,20 +224,47 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
 
     private static class ScreenViewHolder extends DeviceViewHolder {
 
-        private ImageButton mUpButton;
-        private ImageButton mDownButton;
+        private final ImageButton mUpAction;
+
+        private final ImageButton mDownAction;
 
         ScreenViewHolder(View view) {
             super(view);
 
-            mUpButton = (ImageButton) view.findViewById(R.id.up_action);
-            mDownButton = (ImageButton) view.findViewById(R.id.down_action);
+            mUpAction = (ImageButton) view.findViewById(R.id.up_action);
+            mDownAction = (ImageButton) view.findViewById(R.id.down_action);
+
+            mUpAction.setOnClickListener(new View.OnClickListener() {
+                @Override public void onClick(View view) {
+                    getDevice().setValue(Device.VALUE_UP);
+                    getDeviceChangeListener().onDeviceChange(
+                            getDevice(), Device.PROPERTY_VALUE);
+                }
+            });
+
+            mDownAction.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    getDevice().setValue(Device.VALUE_DOWN);
+                    getDeviceChangeListener().onDeviceChange(
+                            getDevice(), Device.PROPERTY_VALUE);
+                }
+            });
         }
 
+        @Override
+        @TargetApi(Build.VERSION_CODES.HONEYCOMB)
         void setDevice(Device device) {
             super.setDevice(device);
-        }
 
+            mUpAction.setEnabled(device.isWritable());
+            mDownAction.setEnabled(device.isWritable());
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                mUpAction.setAlpha(device.isWritable() ? 1.0f : .5f);
+                mDownAction.setAlpha(device.isWritable() ? 1.0f : .5f);
+            }
+        }
     }
 
     private static class DimmerViewHolder extends SwitchViewHolder {
@@ -254,7 +284,8 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
                 @Override
                 public void onStopTrackingTouch(SeekBar seekBar) {
                     getDevice().setDimLevel(seekBar.getProgress());
-                    getDimLevelListener().onDimLevelChanged(getDevice());
+                    getDeviceChangeListener().onDeviceChange(
+                            getDevice(), Device.PROPERTY_DIM_LEVEL);
                 }
             });
         }
