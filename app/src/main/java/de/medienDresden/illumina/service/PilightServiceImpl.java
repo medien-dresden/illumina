@@ -395,6 +395,10 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
                     break;
 
                 case Request.LOCATION_LIST:
+                    if (mClients.indexOf(msg.replyTo) < 0) { // FIXME dirty hack! (see #36)
+                        mClients.add(msg.replyTo);
+                    }
+
                     sendLocationList(mClients.get(mClients.indexOf(msg.replyTo)));
                     break;
 
