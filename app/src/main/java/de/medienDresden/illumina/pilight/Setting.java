@@ -111,6 +111,10 @@ public class Setting extends LinkedHashMap<String, Location> {
                     if (TextUtils.equals(device.getValue(), Device.VALUE_UP)
                             || TextUtils.equals(device.getValue(), Device.VALUE_DOWN)) {
                         device.setType(Device.TYPE_SCREEN);
+
+                    } else if (TextUtils.equals(device.getValue(), Device.VALUE_OPENED)
+                            || TextUtils.equals(device.getValue(), Device.VALUE_CLOSED)) {
+                        device.setType(Device.TYPE_CONTACT);
                     }
 
                     break;

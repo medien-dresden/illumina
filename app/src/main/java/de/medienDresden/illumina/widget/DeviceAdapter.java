@@ -14,6 +14,7 @@ import android.widget.CheckBox;
 import android.widget.Filter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -104,6 +105,11 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
                     viewHolder = new SwitchViewHolder(view);
                     break;
 
+                case Device.TYPE_CONTACT:
+                    view = inflater.inflate(R.layout.device_list_item_contact, parent, false);
+                    viewHolder = new ContactViewHolder(view);
+                    break;
+
                 case Device.TYPE_DIMMER:
                     view = inflater.inflate(R.layout.device_list_item_dimmer, parent, false);
                     viewHolder = new DimmerViewHolder(view);
@@ -142,7 +148,7 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
 
     @Override
     public int getViewTypeCount() {
-        return 4;
+        return 5;
     }
 
     @Override
@@ -220,6 +226,24 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
             mCheckBox.setEnabled(device.isWritable());
         }
 
+    }
+
+    private static class ContactViewHolder extends DeviceViewHolder {
+
+        private RadioButton mRadioButton;
+
+        ContactViewHolder(View view) {
+            super(view);
+
+            mRadioButton = (RadioButton) view.findViewById(R.id.radiobutton);
+        }
+
+        @Override
+        void setDevice(Device device) {
+            super.setDevice(device);
+
+            mRadioButton.setChecked(device.isClosed());
+        }
     }
 
     private static class ScreenViewHolder extends DeviceViewHolder {
