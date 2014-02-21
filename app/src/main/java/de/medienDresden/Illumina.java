@@ -33,6 +33,7 @@ import de.medienDresden.illumina.pilight.Setting;
 import de.medienDresden.illumina.service.PilightServiceImpl;
 import de.psdev.licensesdialog.LicenseResolver;
 import de.psdev.licensesdialog.licenses.CreativeCommonsAttributionNoDerivs30Unported;
+import de.psdev.licensesdialog.licenses.GnuLesserGeneralPublicLicense21;
 
 @ReportsCrashes(
         formKey = "",
@@ -152,8 +153,8 @@ public class Illumina extends Application {
     }
 
     private void initLicenses() {
-        LicenseResolver.registerLicense(
-                new CreativeCommonsAttributionNoDerivs30Unported());
+        LicenseResolver.registerLicense(new CreativeCommonsAttributionNoDerivs30Unported());
+        LicenseResolver.registerLicense(new GnuLesserGeneralPublicLicense21());
     }
 
     public SharedPreferences getSharedPreferences() {
