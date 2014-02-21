@@ -52,10 +52,10 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
             clear();
 
-            //noinspection unchecked
             addAll((ArrayList<Device>) filterResults.values);
 
             if (filterResults.count > 0) {
