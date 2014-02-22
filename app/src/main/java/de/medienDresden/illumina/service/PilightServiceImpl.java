@@ -379,7 +379,9 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
                     break;
 
                 case Request.UNREGISTER:
-                    mClients.remove(msg.replyTo);
+                    if (mClients.contains(msg.replyTo)) { // FIXME dirty hack! (see #36)
+                        mClients.remove(msg.replyTo);
+                    }
                     break;
 
                 case Request.PILIGHT_CONNECT:
@@ -396,7 +398,7 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
                     break;
 
                 case Request.LOCATION_LIST:
-                    if (mClients.indexOf(msg.replyTo) < 0) { // FIXME dirty hack! (see #36)
+                    if (!mClients.contains(msg.replyTo)) { // FIXME dirty hack! (see #36)
                         mClients.add(msg.replyTo);
                     }
 
@@ -404,6 +406,10 @@ public class PilightServiceImpl extends Service implements PilightService, Setti
                     break;
 
                 case Request.LOCATION:
+                    if (!mClients.contains(msg.replyTo)) { // FIXME dirty hack! (see #36)
+                        mClients.add(msg.replyTo);
+                    }
+
                     assert data != null;
                     sendLocation(data.getString(Extra.LOCATION_ID),
                             mClients.get(mClients.indexOf(msg.replyTo)));
