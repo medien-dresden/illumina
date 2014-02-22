@@ -26,7 +26,6 @@ Version 1.3
 • screen-control revised
 • contact-sensor support added
 • permission for reading the log removed
-• minor bugs fixed
 
 Version 1.2
 • support for pilight 3.0
