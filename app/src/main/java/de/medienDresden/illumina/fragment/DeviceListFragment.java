@@ -3,11 +3,13 @@ package de.medienDresden.illumina.fragment;
 import android.os.Bundle;
 import android.os.Message;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -18,9 +20,9 @@ import de.medienDresden.illumina.pilight.Location;
 import de.medienDresden.illumina.service.PilightService;
 import de.medienDresden.illumina.widget.DeviceAdapter;
 
-public class DeviceListFragment extends BaseListFragment implements DeviceAdapter.DimLevelListener {
+public class DeviceListFragment extends BaseListFragment implements DeviceAdapter.DeviceChangeListener {
 
-    private static final String TAG = DeviceListFragment.class.getSimpleName();
+    public static final Logger log = LoggerFactory.getLogger(DeviceListFragment.class);
 
     public static final String ARG_LOCATION_ID = "locationId";
 
@@ -58,12 +60,12 @@ public class DeviceListFragment extends BaseListFragment implements DeviceAdapte
         mLocationId = getArguments().getString(ARG_LOCATION_ID);
 
         assert mLocationId != null;
-        Log.i(TAG, mLocationId + ": onCreate()");
+        log.info(mLocationId + ": onCreate()");
     }
 
     @Override
-    protected String getLogTag() {
-        return TAG;
+    protected Logger getLogger() {
+        return log;
     }
 
     @Override
@@ -89,11 +91,16 @@ public class DeviceListFragment extends BaseListFragment implements DeviceAdapte
         super.onLocationResponse(location);
 
         if (location.size() < 1) {
-            Log.i(TAG, mLocationId + " has no devices to show");
+            log.info(mLocationId + " has no devices to show");
         }
 
-        setListAdapter(new DeviceAdapter(getActivity(), new ArrayList<>(location.values()), this));
-        ((DeviceAdapter) getListAdapter()).sort(mDeviceOrderComparator);
+        final DeviceAdapter adapter = new DeviceAdapter(
+                getActivity(), new ArrayList<>(location.values()), this);
+
+        setListAdapter(adapter);
+
+        adapter.sort(mDeviceOrderComparator);
+        // adapter.getFilter().filter(""); // FIXME resets scroll position
     }
 
     @Override
@@ -104,13 +111,14 @@ public class DeviceListFragment extends BaseListFragment implements DeviceAdapte
             final DeviceAdapter adapter = (DeviceAdapter) getListAdapter();
             adapter.remove(remoteDevice);
             adapter.add(remoteDevice);
-            ((DeviceAdapter) getListAdapter()).sort(mDeviceOrderComparator);
+            adapter.sort(mDeviceOrderComparator);
+            // adapter.getFilter().filter(""); // FIXME resets scroll position
         }
     }
 
     @Override
-    public void onDimLevelChanged(Device device) {
-        sendDeviceChange(device, Device.PROPERTY_DIM_LEVEL);
+    public void onDeviceChange(Device device, int property) {
+        sendDeviceChange(device, property);
     }
 
     @Override
@@ -135,7 +143,7 @@ public class DeviceListFragment extends BaseListFragment implements DeviceAdapte
     }
 
     private void requestLocation() {
-        Log.i(TAG, "requestLocation: " + mLocationId);
+        log.info("requestLocation: " + mLocationId);
 
         final Message msg = Message.obtain(null, PilightService.Request.LOCATION);
         final Bundle bundle = new Bundle();
@@ -148,7 +156,7 @@ public class DeviceListFragment extends BaseListFragment implements DeviceAdapte
     }
 
     private void sendDeviceChange(Device device, int property) {
-        Log.i(TAG, "sendDeviceChange: " + device.getId());
+        log.info("sendDeviceChange: " + device.getId());
 
         final Message msg = Message.obtain(null, PilightService.Request.DEVICE_CHANGE);
         final Bundle bundle = new Bundle();

@@ -9,12 +9,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.Window;
 
 import org.codechimp.apprater.AppRater;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Locale;
 
@@ -27,7 +28,7 @@ import de.psdev.licensesdialog.LicensesDialogFragment;
 public class PreferenceActivity extends FragmentActivity implements
         SettingsFragment.SettingsListener {
 
-    private static final String TAG = PreferenceActivity.class.getSimpleName();
+    public static final Logger log = LoggerFactory.getLogger(PreferenceActivity.class);
 
     private String mCurrentTheme;
 
@@ -38,7 +39,7 @@ public class PreferenceActivity extends FragmentActivity implements
     @Override
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     protected void onCreate(Bundle savedInstanceState) {
-        Log.i(TAG, "onCreate");
+        log.info("onCreate");
 
         mCurrentTheme = getPreferences().getString(
                 Illumina.PREF_THEME, getString(R.string.theme_default));
@@ -84,7 +85,7 @@ public class PreferenceActivity extends FragmentActivity implements
 
     @Override
     public void rateThisApp() {
-        Log.i(TAG, "rateThisApp");
+        log.info("rateThisApp");
 
         // AppRater.rateNow(this);
         // opens the market with the same task ...
@@ -98,14 +99,14 @@ public class PreferenceActivity extends FragmentActivity implements
 
     @Override
     public void showLicenses() {
-        Log.i(TAG, "showLicenses");
+        log.info("showLicenses");
         LicensesDialogFragment.newInstance(R.raw.licenses, true)
                 .show(getSupportFragmentManager(), null);
     }
 
     @Override
     public void contactDeveloper() {
-        Log.i(TAG, "contactDeveloper");
+        log.info("contactDeveloper");
 
         final Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse(getResources().getString(R.string.developer_url)));

@@ -24,4 +24,10 @@
         <copyright>Copyright 2013 VisualPharm</copyright>
         <license>Creative Commons Attribution-NoDerivs 3.0 Unported</license>
     </notice>
+    <notice>
+        <name>logback-android</name>
+        <url>https://github.com/tony19/logback-android</url>
+        <copyright>Copyright 1999-2013 QOS.ch</copyright>
+        <license>GNU Lesser General Public License 2.1</license>
+    </notice>
 </notices>

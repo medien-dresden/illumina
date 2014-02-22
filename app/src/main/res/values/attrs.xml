@@ -4,7 +4,9 @@
     <attr name="battery_full" format="reference" />
     <attr name="thermometer" format="reference" />
     <attr name="humidity" format="reference" />
-    <attr name="screen_button_style" format="reference" />
     <attr name="search_action_icon" format="reference" />
     <attr name="connect_action_icon" format="reference" />
+    <attr name="up_action" format="reference" />
+    <attr name="down_action" format="reference" />
+    <attr name="selector_background" format="reference" />
 </resources>

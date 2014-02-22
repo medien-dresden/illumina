@@ -14,9 +14,9 @@ public class Device implements Parcelable {
 
     public static final String VALUE_DOWN = "down";
 
-    public static final int DIM_LEVEL_MAX = 15;
+    public static final String VALUE_OPENED = "opened";
 
-    public static final int DIM_LEVEL_MIN = 0;
+    public static final String VALUE_CLOSED = "closed";
 
     public static final int TYPE_SWITCH = 0;
 
@@ -25,6 +25,8 @@ public class Device implements Parcelable {
     public static final int TYPE_SCREEN = 2;
 
     public static final int TYPE_WEATHER = 3;
+
+    public static final int TYPE_CONTACT = 4;
 
     public static final int PROPERTY_DIM_LEVEL = 1;
 
@@ -207,6 +209,14 @@ public class Device implements Parcelable {
         return TextUtils.equals(mValue, VALUE_UP);
     }
 
+    public boolean isOpened() {
+        return TextUtils.equals(mValue, VALUE_OPENED);
+    }
+
+    public boolean isClosed() {
+        return TextUtils.equals(mValue, VALUE_CLOSED);
+    }
+
     public static final Parcelable.Creator<Device> CREATOR
             = new Parcelable.Creator<Device>() {
 
@@ -282,6 +292,8 @@ public class Device implements Parcelable {
             case TYPE_SWITCH:
                 return !mIsReadOnly;
 
+            case TYPE_WEATHER:
+            case TYPE_CONTACT:
             default:
                 return false;
         }

@@ -42,8 +42,8 @@ android {
     defaultConfig {
         minSdkVersion 8
         targetSdkVersion 19
-        versionCode 7
-        versionName "1.2.0"
+        versionCode 8
+        versionName "1.3.0"
 
         buildConfigField "String", "BITBUCKET_REPOSITORY_NAME", \
             "\"" + bitbucketRepositoryName + "\""
@@ -96,4 +96,9 @@ dependencies {
     compile('de.psdev.licensesdialog:licensesdialog:1.4.0') {
         exclude module: 'support-v4'
     }
+
+    // FIXME String.isEmpty (since API 9) in FileUtil
+    compile files('libs/logback-android-core-1.1.1-2-SNAPSHOT.jar')
+    compile 'com.github.tony19:logback-android-classic:1.1.1-1',
+            'org.slf4j:slf4j-api:1.7.6'
 }

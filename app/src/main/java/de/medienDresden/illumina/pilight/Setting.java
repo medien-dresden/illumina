@@ -1,11 +1,12 @@
 package de.medienDresden.illumina.pilight;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -18,7 +19,7 @@ import java.util.Map;
 
 public class Setting extends LinkedHashMap<String, Location> {
 
-    private static final String TAG = Setting.class.getSimpleName();
+    public static final Logger log = LoggerFactory.getLogger(Setting.class);
 
     private final RemoteChangeHandler mRemoteChangeHandler;
 
@@ -77,7 +78,7 @@ public class Setting extends LinkedHashMap<String, Location> {
                         device.setLocationId(location.getId());
                         devices.put(currentLocationAttribute, device);
                     } else {
-                        Log.v(TAG, "unhandled device parameter " + currentLocationAttribute
+                        log.debug("unhandled device parameter " + currentLocationAttribute
                                 + ":" + jsonLocation.optString(currentLocationAttribute));
                     }
 
@@ -111,6 +112,10 @@ public class Setting extends LinkedHashMap<String, Location> {
                     if (TextUtils.equals(device.getValue(), Device.VALUE_UP)
                             || TextUtils.equals(device.getValue(), Device.VALUE_DOWN)) {
                         device.setType(Device.TYPE_SCREEN);
+
+                    } else if (TextUtils.equals(device.getValue(), Device.VALUE_OPENED)
+                            || TextUtils.equals(device.getValue(), Device.VALUE_CLOSED)) {
+                        device.setType(Device.TYPE_CONTACT);
                     }
 
                     break;
@@ -143,7 +148,7 @@ public class Setting extends LinkedHashMap<String, Location> {
                     }
 
                 default:
-                    Log.v(TAG, "unhandled device parameter " + currentDeviceAttribute
+                    log.debug("unhandled device parameter " + currentDeviceAttribute
                             + ":" + jsonDevice.optString(currentDeviceAttribute));
                     break;
             }
@@ -180,7 +185,7 @@ public class Setting extends LinkedHashMap<String, Location> {
                     break;
 
                 default:
-                    Log.v(TAG, "unhandled setting " + valueKey
+                    log.debug("unhandled setting " + valueKey
                             + ":" + jsonSetting.optString(valueKey));
                     break;
             }
@@ -195,7 +200,7 @@ public class Setting extends LinkedHashMap<String, Location> {
                 final String deviceId = deviceIds.getString(i);
                 updateDevice(get(locationId).get(deviceId), jsonValues);
             } catch (JSONException exception) {
-                Log.w(TAG, "- updating values failed", exception);
+                log.warn("- updating values failed", exception);
             }
         }
     }
@@ -228,7 +233,7 @@ public class Setting extends LinkedHashMap<String, Location> {
                     break;
 
                 default:
-                    Log.i(TAG, "device value ignored: " + valueKey);
+                    log.info("device value ignored: " + valueKey);
                     break;
             }
         }
@@ -267,7 +272,7 @@ public class Setting extends LinkedHashMap<String, Location> {
     }
 
     public void update(JSONObject json) {
-        Log.i(TAG, "update setting");
+        log.info("update setting");
 
         final JSONObject jsonDevices = json.optJSONObject("devices");
         final JSONObject jsonValues = json.optJSONObject("values");

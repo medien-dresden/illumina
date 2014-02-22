@@ -3,14 +3,13 @@ You own a Raspberry Pi? You're using pilight (http://pilight.org) for the contro
 illumina allows to you fully control your radio outlets, the brightness of your dimmable lights and opens and closes the screens of your windows. If there is a temperature or humidity sensor connected to your Pi or you've got a compatible weather-station, illumina will visualize those values. Furthermore the order of devices and the possible read-only state will be respected.
 
 Highlights:
-• native Android App
-• easy configuration
 • multiple designs
 • automatic connection with SSDP
 • distinguishes between places
 • switch radio outlets
 • control compatible dimmers
 • open and close screens
+• visualize contact sensors
 • visualize temperature and humidity
 • respects device ordering
 • reacts to changes made by other sources
@@ -22,6 +21,12 @@ illumina only works in conjunction with a pilight-daemon and a version greater o
 
 New Features
 ===========
+
+Version 1.3
+• screen-control revised
+• contact-sensor support added
+• permission for reading the log removed
+• minor bugs fixed
 
 Version 1.2
 • support for pilight 3.0

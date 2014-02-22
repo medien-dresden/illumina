@@ -4,11 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +16,8 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 
 import org.codechimp.apprater.AppRater;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.medienDresden.Illumina;
 import de.medienDresden.illumina.R;
@@ -25,11 +27,13 @@ import de.medienDresden.illumina.service.PilightService;
 
 public class ConnectionActivity extends BaseActivity implements SsdpLocator.Consumer {
 
-    public static final String TAG = ConnectionActivity.class.getSimpleName();
+    public static final Logger log = LoggerFactory.getLogger(ConnectionActivity.class);
 
     private SsdpLocator pilightLocator = new PilightSsdpLocator(this);
 
     private boolean mIsManualDiscovery;
+
+    private Handler mHandler = new Handler();
 
     // ------------------------------------------------------------------------
     //
@@ -78,6 +82,7 @@ public class ConnectionActivity extends BaseActivity implements SsdpLocator.Cons
         mProgressBar.setIndeterminate(true);
 
         AppRater.app_launched(this);
+        log.info("illumina launched");
 
         final boolean autoConnect = ((Illumina) getApplication())
                 .getSharedPreferences().getBoolean(Illumina.PREF_AUTO_CONNECT, true);
@@ -99,13 +104,13 @@ public class ConnectionActivity extends BaseActivity implements SsdpLocator.Cons
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_connect:
-                Log.i(TAG, "click on connect");
+                log.info("click on connect");
                 setBusy(true);
                 connect();
                 return true;
 
             case R.id.action_search:
-                Log.i(TAG, "click on search");
+                log.info("click on search");
                 setBusy(true);
                 mIsManualDiscovery = true;
                 pilightLocator.discover();
@@ -192,8 +197,8 @@ public class ConnectionActivity extends BaseActivity implements SsdpLocator.Cons
     }
 
     @Override
-    protected String getTag() {
-        return TAG;
+    protected Logger getLogger() {
+        return log;
     }
 
     // ------------------------------------------------------------------------
@@ -236,7 +241,13 @@ public class ConnectionActivity extends BaseActivity implements SsdpLocator.Cons
         mEditTextHost.setText(address);
         mEditTextPort.setText(String.valueOf(port));
         savePreferences();
-        dispatch(Message.obtain(null, PilightService.Request.PILIGHT_CONNECT));
+
+        mHandler.postDelayed(new Runnable() { // FIXME #37
+            @Override
+            public void run() {
+                dispatch(Message.obtain(null, PilightService.Request.PILIGHT_CONNECT));
+            }
+        }, 100);
     }
 
     @Override

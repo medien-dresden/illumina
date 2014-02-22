@@ -5,4 +5,6 @@
     <dimen name="centered_message_margin">64dp</dimen>
     <dimen name="settings_margin">0dp</dimen>
     <dimen name="icon_text_gap">8dp</dimen>
+    <dimen name="screen_button_width">77dp</dimen>
+    <dimen name="divider_margin">10dp</dimen>
 </resources>

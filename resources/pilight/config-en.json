@@ -1,17 +1,17 @@
 {
-	"light": {
-		"name": "Living Room",
-		"weather": {
+	"living_room": {
+		"name": "Living room",
+		"room_climate": {
 			"name": "Room Climate",
 			"protocol": [ "generic_weather" ],
 			"id": [{
-				"id": 100
+				"id": 12
 			}],
+			"humidity": 4300,
 			"temperature": 2100,
-			"humidity": 5700,
 			"battery": 1
 		},
-		"kitchen": {
+		"floor_lamp": {
 			"name": "Floor Lamp",
 			"protocol": [ "kaku_dimmer" ],
 			"id": [{
@@ -19,7 +19,7 @@
 				"unit": 9
 			}],
 			"state": "on",
-			"dimlevel": 10,
+			"dimlevel": 9,
 			"settings": {
 				"readonly": 0,
 				"states": "on,off",
@@ -27,22 +27,9 @@
 				"min": 0
 			}
 		},
-		"bed": {
-			"name": "TV Board",
-			"protocol": [ "elro" ],
-			"id": [{
-				"unitcode": 1,
-				"systemcode": 23
-			}],
-			"state": "off",
-			"settings": {
-				"readonly": 0,
-				"states": "on,off"
-			}
-		},
 		"couch": {
 			"name": "Couch",
-			"protocol": [ "elro" ],
+			"protocol": [ "elro_hc" ],
 			"id": [{
 				"unitcode": 2,
 				"systemcode": 23
@@ -53,9 +40,9 @@
 				"states": "on,off"
 			}
 		},
-		"somwhere1": {
+		"main_light": {
 			"name": "Global Lights",
-			"protocol": [ "elro" ],
+			"protocol": [ "elro_hc" ],
 			"id": [{
 				"unitcode": 4,
 				"systemcode": 25
@@ -66,36 +53,61 @@
 				"states": "on,off"
 			}
 		},
-		"kitchen1": {
-			"name": "Reading Chair",
-			"protocol": [ "kaku_dimmer" ],
+		"door": {
+			"name": "Door closed",
+			"protocol": [ "kaku_contact" ],
 			"id": [{
-				"id": 10,
-				"unit": 12
+				"id": 100,
+				"unit": 1
 			}],
-			"state": "on",
-			"dimlevel": 6,
-			"settings": {
-				"readonly": 1,
-				"states": "on,off",
-				"max": 15,
-				"min": 0
-			}
+			"state": "closed"
 		},
-		"screen1": {
-			"name": "Shutter",
+		"window": {
+			"name": "Window closed",
+			"protocol": [ "kaku_contact" ],
+			"id": [{
+				"id": 101,
+				"unit": 1
+			}],
+			"state": "opened"
+		},
+		"screen": {
+			"name": "Screen",
 			"protocol": [ "kaku_screen" ],
 			"id": [{
 				"id": 100,
 				"unit": 1
 			}],
-			"state": "down"
+			"state": "down",
+			"settings": {
+				"readonly": 0
+			}
 		}
 	},
-	"devices": {
-		"name": "Kitchen"
+	"kitchen": {
+		"name": "Kitchen",
+		"room_climate": {
+			"name": "Room Climate",
+			"protocol": [ "generic_weather" ],
+			"id": [{
+				"id": 12
+			}],
+			"humidity": 4300,
+			"temperature": 2100,
+			"battery": 1
+		}
 	},
-	"testing": {
-		"name": "Bedroom"
+	"bedroom": {
+		"name": "Bedroom",
+		"room_climate": {
+			"name": "Room Climate",
+			"protocol": [ "generic_weather" ],
+			"id": [{
+				"id": 12
+			}],
+			"humidity": 4300,
+			"temperature": 2100,
+			"battery": 1
+		}
 	}
 }

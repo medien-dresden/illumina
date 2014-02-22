@@ -1,19 +1,25 @@
 package de.medienDresden.illumina.widget;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.Filter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import de.medienDresden.illumina.R;
@@ -21,15 +27,55 @@ import de.medienDresden.illumina.pilight.Device;
 
 public class DeviceAdapter extends ArrayAdapter<Device> {
 
-    private DimLevelListener mDimLevelListener;
+    private DeviceChangeListener mDeviceChangeListener;
 
-    public interface DimLevelListener {
-        void onDimLevelChanged(Device device);
+    private List<Device> mOriginalDeviceList;
+
+    private Filter mFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence charSequence) {
+            final FilterResults result = new FilterResults();
+            final List<Device> filteredDeviceList = new ArrayList<>();
+
+            for (Device device : mOriginalDeviceList) {
+                if (!device.isWritable() && device.getType() == Device.TYPE_SCREEN) {
+                    continue;
+                }
+
+                filteredDeviceList.add(device);
+            }
+
+            result.values = filteredDeviceList;
+            result.count = filteredDeviceList.size();
+
+            return result;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+            clear();
+
+            addAll((ArrayList<Device>) filterResults.values);
+
+            if (filterResults.count > 0) {
+                notifyDataSetChanged();
+            } else {
+                notifyDataSetInvalidated();
+            }
+        }
+    };
+
+    public interface DeviceChangeListener {
+        void onDeviceChange(Device device, int property);
     }
 
-    public DeviceAdapter(Context context, List<Device> objects, DimLevelListener dimLevelListener) {
+    public DeviceAdapter(Context context, List<Device> objects,
+                DeviceChangeListener deviceChangeListener) {
         super(context, 0, objects);
-        mDimLevelListener = dimLevelListener;
+
+        mDeviceChangeListener = deviceChangeListener;
+        mOriginalDeviceList = objects;
 
         final TypedArray typedArray = context.obtainStyledAttributes(
                 new int[]{R.attr.battery_full, R.attr.battery_empty});
@@ -59,6 +105,11 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
                     viewHolder = new SwitchViewHolder(view);
                     break;
 
+                case Device.TYPE_CONTACT:
+                    view = inflater.inflate(R.layout.device_list_item_contact, parent, false);
+                    viewHolder = new ContactViewHolder(view);
+                    break;
+
                 case Device.TYPE_DIMMER:
                     view = inflater.inflate(R.layout.device_list_item_dimmer, parent, false);
                     viewHolder = new DimmerViewHolder(view);
@@ -85,7 +136,7 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
         assert viewHolder != null;
 
         viewHolder.setDevice(device);
-        viewHolder.setDimLevelListener(mDimLevelListener);
+        viewHolder.setDeviceChangeListener(mDeviceChangeListener);
 
         return view;
     }
@@ -97,7 +148,7 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
 
     @Override
     public int getViewTypeCount() {
-        return 4;
+        return 5;
     }
 
     @Override
@@ -121,13 +172,18 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
         return device != null && device.isWritable();
     }
 
+    @Override
+    public Filter getFilter() {
+        return mFilter;
+    }
+
     private static abstract class DeviceViewHolder {
 
         private Device mDevice;
 
         private TextView mName;
 
-        private DimLevelListener mDimLevelListener;
+        private DeviceChangeListener mDeviceChangeListener;
 
         DeviceViewHolder(View view) {
             mName = (TextView) view.findViewById(android.R.id.text1);
@@ -144,12 +200,12 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
             return mDevice;
         }
 
-        void setDimLevelListener(DimLevelListener dimLevelListener) {
-            mDimLevelListener = dimLevelListener;
+        void setDeviceChangeListener(DeviceChangeListener deviceChangeListener) {
+            mDeviceChangeListener = deviceChangeListener;
         }
 
-        DimLevelListener getDimLevelListener() {
-            return mDimLevelListener;
+        DeviceChangeListener getDeviceChangeListener() {
+            return mDeviceChangeListener;
         }
 
     }
@@ -172,22 +228,67 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
 
     }
 
-    private static class ScreenViewHolder extends DeviceViewHolder {
+    private static class ContactViewHolder extends DeviceViewHolder {
 
-        private CheckBox mCheckBox;
+        private RadioButton mRadioButton;
 
-        ScreenViewHolder(View view) {
+        ContactViewHolder(View view) {
             super(view);
-            mCheckBox = (CheckBox) view.findViewById(android.R.id.checkbox);
+
+            mRadioButton = (RadioButton) view.findViewById(R.id.radiobutton);
         }
 
+        @Override
         void setDevice(Device device) {
             super.setDevice(device);
 
-            mCheckBox.setChecked(device.isUp());
-            mCheckBox.setEnabled(device.isWritable());
+            mRadioButton.setChecked(device.isClosed());
+        }
+    }
+
+    private static class ScreenViewHolder extends DeviceViewHolder {
+
+        private final ImageButton mUpAction;
+
+        private final ImageButton mDownAction;
+
+        ScreenViewHolder(View view) {
+            super(view);
+
+            mUpAction = (ImageButton) view.findViewById(R.id.up_action);
+            mDownAction = (ImageButton) view.findViewById(R.id.down_action);
+
+            mUpAction.setOnClickListener(new View.OnClickListener() {
+                @Override public void onClick(View view) {
+                    getDevice().setValue(Device.VALUE_UP);
+                    getDeviceChangeListener().onDeviceChange(
+                            getDevice(), Device.PROPERTY_VALUE);
+                }
+            });
+
+            mDownAction.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    getDevice().setValue(Device.VALUE_DOWN);
+                    getDeviceChangeListener().onDeviceChange(
+                            getDevice(), Device.PROPERTY_VALUE);
+                }
+            });
         }
 
+        @Override
+        @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+        void setDevice(Device device) {
+            super.setDevice(device);
+
+            mUpAction.setEnabled(device.isWritable());
+            mDownAction.setEnabled(device.isWritable());
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                mUpAction.setAlpha(device.isWritable() ? 1.0f : .5f);
+                mDownAction.setAlpha(device.isWritable() ? 1.0f : .5f);
+            }
+        }
     }
 
     private static class DimmerViewHolder extends SwitchViewHolder {
@@ -207,7 +308,8 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
                 @Override
                 public void onStopTrackingTouch(SeekBar seekBar) {
                     getDevice().setDimLevel(seekBar.getProgress());
-                    getDimLevelListener().onDimLevelChanged(getDevice());
+                    getDeviceChangeListener().onDeviceChange(
+                            getDevice(), Device.PROPERTY_DIM_LEVEL);
                 }
             });
         }

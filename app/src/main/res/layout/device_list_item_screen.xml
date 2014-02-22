@@ -3,20 +3,34 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/list_item_height"
     android:paddingLeft="@dimen/list_item_padding"
-    android:paddingRight="@dimen/list_item_padding"
     android:clickable="false"
     android:focusable="false"
     android:focusableInTouchMode="false">
 
-    <CheckBox
-        android:id="@android:id/checkbox"
-        android:clickable="false"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:layout_width="wrap_content"
+    <ImageButton
+        android:id="@+id/up_action"
+        android:layout_width="@dimen/screen_button_width"
         android:layout_height="match_parent"
-        style="?attr/screen_button_style"
-        android:layout_alignParentRight="true" />
+        android:layout_alignParentRight="true"
+        android:src="?attr/up_action"
+        android:background="?attr/selector_background" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="1px"
+        android:layout_height="match_parent"
+        android:layout_toLeftOf="@id/up_action"
+        android:layout_marginBottom="@dimen/divider_margin"
+        android:layout_marginTop="@dimen/divider_margin"
+        android:background="?android:attr/listDivider" />
+
+    <ImageButton
+        android:id="@+id/down_action"
+        android:layout_width="@dimen/screen_button_width"
+        android:layout_height="match_parent"
+        android:layout_toLeftOf="@id/divider"
+        android:src="?attr/down_action"
+        android:background="?attr/selector_background"/>
 
     <TextView
         android:id="@android:id/text1"

@@ -1,14 +1,16 @@
 package de.medienDresden.illumina.communication;
 
 import android.text.TextUtils;
-import android.util.Log;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.PrintWriter;
 import java.util.concurrent.BlockingQueue;
 
 public class WriterThread extends Thread {
 
-    private static final String TAG = WriterThread.class.getSimpleName();
+    public static final Logger log = LoggerFactory.getLogger(WriterThread.class);
 
     private final BlockingQueue<String> mQueue;
 
@@ -29,14 +31,14 @@ public class WriterThread extends Thread {
             try {
                 message = mQueue.take();
             } catch (InterruptedException exception) {
-                Log.i(TAG, "writing was interrupted");
+                log.info("writing was interrupted");
                 break;
             }
 
             if (TextUtils.equals("HEART", message)) {
-                Log.v(TAG, "RAW write: " + message);
+                log.info("RAW write: " + message);
             } else {
-                Log.d(TAG, "RAW write: " + message);
+                log.info("RAW write: " + message);
             }
 
             mStream.write(message + "\n");

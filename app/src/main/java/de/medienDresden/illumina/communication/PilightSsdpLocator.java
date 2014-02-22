@@ -1,7 +1,9 @@
 package de.medienDresden.illumina.communication;
 
 import android.os.Handler;
-import android.util.Log;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -22,7 +24,7 @@ import java.util.regex.Pattern;
 
 public class PilightSsdpLocator implements SsdpLocator {
 
-    public static final String TAG = PilightSsdpLocator.class.getSimpleName();
+    public static final Logger log = LoggerFactory.getLogger(PilightSsdpLocator.class);
 
     private final static String DISCOVER_MESSAGE =
                     "M-SEARCH * HTTP/1.1\r\n" +
@@ -45,7 +47,7 @@ public class PilightSsdpLocator implements SsdpLocator {
                 final DatagramSocket socket = sendDiscoveryBroadcast();
                 final DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 
-                socket.setSoTimeout(2000);
+                socket.setSoTimeout(5000);
                 socket.receive(packet);
 
                 final String response = convertStreamToString(
@@ -66,7 +68,7 @@ public class PilightSsdpLocator implements SsdpLocator {
                 }
 
             } catch (Exception exception) {
-                Log.w(TAG, "service discovery failed", exception);
+                log.warn("service discovery failed", exception);
             }
 
             handler.post(new Runnable() {
@@ -132,7 +134,7 @@ public class PilightSsdpLocator implements SsdpLocator {
             stream.close();
 
         } catch (IOException exception) {
-            Log.w(TAG, "converting stream to string failed", exception);
+            log.warn("converting stream to string failed", exception);
         }
 
         return builder.toString();

@@ -3,13 +3,14 @@ package de.medienDresden.illumina.fragment;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.v4.app.ListFragment;
-import android.util.Log;
+
+import org.slf4j.Logger;
 
 import java.util.ArrayList;
 
-import de.medienDresden.illumina.service.PilightBinder;
 import de.medienDresden.illumina.pilight.Device;
 import de.medienDresden.illumina.pilight.Location;
+import de.medienDresden.illumina.service.PilightBinder;
 
 public abstract class BaseListFragment extends ListFragment implements
         PilightBinder.ServiceListener {
@@ -18,42 +19,42 @@ public abstract class BaseListFragment extends ListFragment implements
 
     @Override
     public void onPilightError(int cause) {
-        Log.i(getLogTag(), "onPilightError(" + cause + ")");
+        getLogger().info("onPilightError(" + cause + ")");
     }
 
     @Override
     public void onPilightConnected() {
-        Log.i(getLogTag(), "onPilightConnected");
+        getLogger().info("onPilightConnected");
     }
 
     @Override
     public void onPilightDisconnected() {
-        Log.i(getLogTag(), "onPilightDisconnected");
+        getLogger().info("onPilightDisconnected");
     }
 
     @Override
     public void onPilightDeviceChange(Device device) {
-        Log.i(getLogTag(), "onPilightDeviceChange(" + device.getId() + ")");
+        getLogger().info("onPilightDeviceChange(" + device.getId() + ")");
     }
 
     @Override
     public void onServiceConnected() {
-        Log.i(getLogTag(), "onServiceConnected");
+        getLogger().info("onServiceConnected");
     }
 
     @Override
     public void onServiceDisconnected() {
-        Log.i(getLogTag(), "onServiceDisconnected");
+        getLogger().info("onServiceDisconnected");
     }
 
     @Override
     public void onLocationListResponse(ArrayList<Location> locations) {
-        Log.i(getLogTag(), "onLocationListResponse, #locations = " + locations.size());
+        getLogger().info("onLocationListResponse, #locations = " + locations.size());
     }
 
     @Override
     public void onLocationResponse(Location location) {
-        Log.i(getLogTag(), "onLocationResponse(" + location.getId() + ")");
+        getLogger().info("onLocationResponse(" + location.getId() + ")");
     }
 
     @Override
@@ -76,10 +77,10 @@ public abstract class BaseListFragment extends ListFragment implements
     }
 
     protected void dispatch(Message message) {
-        Log.i(getLogTag(), "dispatch(" + message.what + ")");
+        getLogger().info("dispatch(" + message.what + ")");
         mBinder.send(message);
     }
 
-    abstract protected String getLogTag();
+    abstract protected Logger getLogger();
 
 }
