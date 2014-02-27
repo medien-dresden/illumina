@@ -61,7 +61,7 @@ public class Setting extends LinkedHashMap<String, Location> {
 
             switch (currentLocationAttribute) {
                 case "name":
-                    location.setName(jsonLocation.optString(currentLocationAttribute));
+                    location.setName(jsonLocation.optString(currentLocationAttribute).trim());
                     break;
 
                 case "order":
@@ -99,7 +99,7 @@ public class Setting extends LinkedHashMap<String, Location> {
 
             switch (currentDeviceAttribute) {
                 case "name":
-                    device.setName(jsonDevice.optString(currentDeviceAttribute));
+                    device.setName(jsonDevice.optString(currentDeviceAttribute).trim());
                     break;
 
                 case "order":
