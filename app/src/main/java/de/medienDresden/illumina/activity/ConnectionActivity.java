@@ -19,6 +19,8 @@ import org.codechimp.apprater.AppRater;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.CountDownLatch;
+
 import de.medienDresden.Illumina;
 import de.medienDresden.illumina.R;
 import de.medienDresden.illumina.communication.PilightSsdpLocator;
@@ -35,6 +37,8 @@ public class ConnectionActivity extends BaseActivity implements SsdpLocator.Cons
 
     private Handler mHandler = new Handler();
 
+    private CountDownLatch mServiceConnectionLatch = new CountDownLatch(1);
+
     // ------------------------------------------------------------------------
     //
     //      Service
@@ -46,6 +50,12 @@ public class ConnectionActivity extends BaseActivity implements SsdpLocator.Cons
         super.onPilightConnected();
         setBusy(true);
         startActivity(new Intent(this, LocationListActivity.class));
+    }
+
+    @Override
+    public void onServiceConnected() {
+        super.onServiceConnected();
+        mServiceConnectionLatch.countDown();
     }
 
     // ------------------------------------------------------------------------
@@ -242,12 +252,20 @@ public class ConnectionActivity extends BaseActivity implements SsdpLocator.Cons
         mEditTextPort.setText(String.valueOf(port));
         savePreferences();
 
-        mHandler.postDelayed(new Runnable() { // FIXME #37
+        mHandler.post(new Runnable() {
             @Override
             public void run() {
-                dispatch(Message.obtain(null, PilightService.Request.PILIGHT_CONNECT));
+                try {
+                    mServiceConnectionLatch.await();
+                } catch (InterruptedException exception) {
+                    log.error(
+                            "waiting for connected service failed", exception);
+                }
+
+                dispatch(Message.obtain(null,
+                        PilightService.Request.PILIGHT_CONNECT));
             }
-        }, 100);
+        });
     }
 
     @Override

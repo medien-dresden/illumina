@@ -26,7 +26,6 @@ Version 1.3
 • Jalousiesteuerung überarbeitet
 • Verarbeitung von Kontaktsensorik
 • Berechtigung zum Lesen der Logs entfernt
-• kleinere Fehler behoben
 
 Version 1.2
 • Unterstützung von pilight 3.0
