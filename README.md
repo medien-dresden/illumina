@@ -1,7 +1,7 @@
 illumina
 =======
 
-Android app frontend for [pilight](http://www.pilight.org/)
+Android app frontend for [pilight](http://www.pilight.org/). For contribution see the [Development Wiki page](https://github.com/medien-dresden/illumina/wiki/Development).
 
 License
 -------
