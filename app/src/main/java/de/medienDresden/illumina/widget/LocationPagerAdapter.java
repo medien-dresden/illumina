@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2014 Peter Heisig.
+ *
+ * This work is licensed under a Creative Commons
+ * Attribution-NonCommercial-NoDerivs 3.0 Unported License.
+ */
+
 package de.medienDresden.illumina.widget;
 
 import android.support.v4.app.Fragment;
