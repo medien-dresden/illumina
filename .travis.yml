@@ -12,3 +12,6 @@ android:
 
 script:
     - gradle check || true
+
+notifications:
+  email: false
