@@ -3,6 +3,8 @@ illumina
 
 Android app frontend for [pilight](http://www.pilight.org/). For contribution see the [Development Wiki page](https://github.com/medien-dresden/illumina/wiki/Development).
 
+[![Build Status](https://travis-ci.org/medien-dresden/illumina.svg?branch=develop)](https://travis-ci.org/medien-dresden/illumina)
+
 License
 -------
 
