@@ -14,14 +14,13 @@ repositories {
     mavenCentral()
 }
 
-assert project.hasProperty("keystoreFile")
-assert project.hasProperty("keystoreAlias")
-assert project.hasProperty("keystorePassword")
+if (!hasProperty("keystoreAlias")) keystoreAlias = ''
+if (!hasProperty("keystorePassword")) keystorePassword = ''
 
-assert project.hasProperty("bitbucketRepositoryUser")
-assert project.hasProperty("bitbucketRepositoryName")
-assert project.hasProperty("bitbucketReporterUser")
-assert project.hasProperty("bitbucketReporterPassword")
+if (!hasProperty("bitbucketRepositoryUser")) bitbucketRepositoryUser = ''
+if (!hasProperty("bitbucketRepositoryName")) bitbucketRepositoryName = ''
+if (!hasProperty("bitbucketReporterUser")) bitbucketReporterUser = ''
+if (!hasProperty("bitbucketReporterPassword")) bitbucketReporterPassword = ''
 
 android {
     compileSdkVersion 19
@@ -60,7 +59,10 @@ android {
 
     signingConfigs {
         release {
-            storeFile file(keystoreFile)
+            if (hasProperty("keystoreFile")) {
+                storeFile file(keystoreFile)
+            }
+
             storePassword keystorePassword
             keyAlias keystoreAlias
             keyPassword keystorePassword
