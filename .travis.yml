@@ -10,8 +10,5 @@ android:
     - build-tools-19.0.1
     - android-8
 
-script:
-    - gradle check || true
-
 notifications:
   email: false
