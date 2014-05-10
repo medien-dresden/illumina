@@ -1,6 +1,12 @@
 language: android
 
-script: gradle build
+android:
+  components:
+    - build-tools-19.0.1
+
+script:
+  - gradle assembleGoogleDebug
+  - assembleAmazonDebug
 
 notifications:
   email: false
