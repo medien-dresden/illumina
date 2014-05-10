@@ -4,7 +4,7 @@ android:
   components:
     - build-tools-19.0.1
 
-script: gradle assembleGoogleDebug assembleAmazonDebug
+script: gradle build || true
 
 notifications:
   email: false
